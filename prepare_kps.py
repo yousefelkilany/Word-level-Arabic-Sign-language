@@ -1,4 +1,5 @@
 import os
+import cv2
 import numpy as np
 import mediapipe as mp
 from tqdm import tqdm
@@ -79,10 +80,11 @@ for u, v in list(mp.solutions.face_mesh_connections.FACEMESH_IRISES)[:3]:
     print(face_kps_idx[FACE_KPS2IDX[u]], face_kps_idx[FACE_KPS2IDX[v]])
 
 
-def extract_frame_keypoints(frame_path, timestamp, pose_model, face_model, hands_model):
+def extract_frame_keypoints(frame_rgb, timestamp):
     # TODO: normalize(?) keypoints after adjustment
 
     # define numpy views, pose -> face -> rh -> lh
+
     all_kps = np.zeros((184, 3))  # (pose=6 + face=136 + rh+lh=42), xyz=3
     pose_kps = all_kps[KP2SLICE["pose"]]
     face_kps = all_kps[KP2SLICE["face"]]
@@ -90,10 +92,9 @@ def extract_frame_keypoints(frame_path, timestamp, pose_model, face_model, hands
     lh_kps = all_kps[KP2SLICE["lh"]]
     np_xyz = np.dtype((float, 3))
 
-    frame = mp.Image.create_from_file(frame_path)
+    frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
 
     def get_pose():
-        nonlocal pose_kps
         results = pose_model.detect_for_video(frame, timestamp)
         if results.pose_landmarks is None:
             return
@@ -105,7 +106,6 @@ def extract_frame_keypoints(frame_path, timestamp, pose_model, face_model, hands
         # pose_kps -= pose_kps[mp_pose_nose_idx]
 
     def get_face():
-        nonlocal face_kps
         results = face_model.detect_for_video(frame, timestamp)
         if results.face_landmarks is None:
             return
@@ -117,7 +117,6 @@ def extract_frame_keypoints(frame_path, timestamp, pose_model, face_model, hands
         # face_kps -= face_kps[mp_face_nose_idx]
 
     def get_hands():
-        nonlocal rh_kps, lh_kps
         results = hands_model.detect_for_video(frame, timestamp)
         if results.hand_landmarks is None:
             return
@@ -137,34 +136,47 @@ def extract_frame_keypoints(frame_path, timestamp, pose_model, face_model, hands
     return all_kps
 
 
-def process_video(video_dir):
-    video_dir = os_join(*video_dir)
-
-    video_kps = []
+def init_worker():
+    global pose_model, face_model, hands_model
     pose_model = vision.PoseLandmarker.create_from_options(mp_pose_options)
     face_model = vision.FaceLandmarker.create_from_options(mp_face_options)
     hands_model = vision.HandLandmarker.create_from_options(mp_hands_options)
-    with pose_model, face_model, hands_model:
-        for idx, frame in enumerate(sorted(os.listdir(video_dir))):
-            frame_path = os_join(video_dir, frame)
-            timestamp = int(idx * MS_30FPS)
-            video_kps.append(
-                extract_frame_keypoints(
-                    frame_path, timestamp, pose_model, face_model, hands_model
-                )
-            )
+    print(f"Worker process {os.getpid()} initialized.")
 
-    return np.array(video_kps)
+
+def process_video(video_dir_tuple):
+    video_dir = os_join(*video_dir_tuple)
+
+    video_kps = []
+    for idx, frame in enumerate(sorted(os.listdir(video_dir))):
+        frame_path = os_join(video_dir, frame)
+
+        frame_bgr = cv2.imread(frame_path)
+        if frame_bgr is None:
+            continue
+
+        frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
+        timestamp = int(idx * MS_30FPS)
+        video_kps.append(extract_frame_keypoints(frame_rgb, timestamp))
+
+    return np.array(video_kps) if video_kps else None
 
 
 def store_keypoint_arrays(word_dir, out_dir, split, signer, word, max_videos):
-    video_dirs = [(word_dir, video) for video in os.listdir(word_dir)]
+    video_dirs = [(word_dir, video) for video in os.listdir(word_dir)[:max_videos]]
     desc = f"Processing Videos for split={split}, signer={signer}, word={word}"
-    with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
-        videos_kps = executor.map(process_video, video_dirs)
+
+    num_workers = min(4, os.cpu_count())
+    chunksize = int(len(video_dirs) / num_workers + 0.5)  # ceiling
+    print(f"Using {num_workers} workers with chunksize={chunksize}")
+
+    with ProcessPoolExecutor(
+        max_workers=num_workers, initializer=init_worker
+    ) as executor:
+        videos_kps = executor.map(process_video, video_dirs, chunksize=chunksize)
         results = list(tqdm(videos_kps, total=len(video_dirs), desc=desc, leave=False))
 
-    all_kps = [kps for kps in results if kps is not None]
+    all_kps = [kps for kps in results if kps is not None and kps.size > 0]
 
     word_kps_path = os_join(out_dir, "all_kps", f"{signer}-{split}", word)
     os.makedirs(os.path.dirname(word_kps_path), exist_ok=True)
@@ -176,7 +188,7 @@ def extract_keypoints_from_frames(
 ):
     splits = splits or ["train", "test"]
     signers = signers or ["01", "02", "03"]
-    selected_words = selected_words or tuple((f"{v:04}" for v in range(46, 503)))
+    selected_words = selected_words or tuple((f"{v:04}" for v in range(1, 3)))
     words_bar = tqdm(selected_words)
     for word in words_bar:
         words_bar.set_description(f"Current word: {word}")
@@ -188,7 +200,7 @@ def extract_keypoints_from_frames(
                 splits_bar.set_description(f"Current split: {split}")
                 word_dir = os_join(data_dir, signer, signer, split, word)
                 store_keypoint_arrays(
-                    word_dir, kps_dir, split, signer, word, max_videos=10
+                    word_dir, kps_dir, split, signer, word, max_videos=None
                 )
 
 
