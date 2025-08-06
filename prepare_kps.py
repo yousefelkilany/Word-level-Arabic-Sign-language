@@ -7,7 +7,23 @@ import numpy as np
 import mediapipe as mp
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from mediapipe.tasks.python import BaseOptions, vision
+from mediapipe.tasks.python import vision
+
+from utils import (
+    pose_kps_idx,
+    mp_pose_options,
+    mp_pose_nose_idx,
+    mp_pose_shoulders_idx,
+    face_kps_idx,
+    mp_face_options,
+    mp_face_nose_idx,
+    mp_face_eyes_idx,
+    mp_hands_options,
+    mp_hand_wrist_idx,
+    mp_hands_palm_idx,
+    KP2SLICE,
+)
+
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -16,87 +32,6 @@ os_join = os.path.join
 DATA_DIR = "/kaggle/input/karsl-502"
 KPS_DIR = "/kaggle/working/karsl-kps"
 MS_30FPS = 1000 / 30
-
-
-delegate = BaseOptions.Delegate.CPU
-pose_base_options = BaseOptions(
-    model_asset_path="pose_landmarker.task", delegate=delegate
-)
-face_base_options = BaseOptions(
-    model_asset_path="face_landmarker.task", delegate=delegate
-)
-hand_base_options = BaseOptions(
-    model_asset_path="hand_landmarker.task", delegate=delegate
-)
-
-running_mode = vision.RunningMode.IMAGE
-mp_pose_options = vision.PoseLandmarkerOptions(
-    base_options=pose_base_options, running_mode=running_mode
-)
-mp_face_options = vision.FaceLandmarkerOptions(
-    base_options=face_base_options, running_mode=running_mode, num_faces=1
-)
-mp_hands_options = vision.HandLandmarkerOptions(
-    base_options=hand_base_options, running_mode=running_mode, num_hands=2
-)
-
-pose_kps_idx = tuple(
-    (
-        mp.solutions.pose.PoseLandmark.LEFT_SHOULDER,
-        mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER,
-        mp.solutions.pose.PoseLandmark.LEFT_ELBOW,
-        mp.solutions.pose.PoseLandmark.RIGHT_ELBOW,
-        mp.solutions.pose.PoseLandmark.LEFT_WRIST,
-        mp.solutions.pose.PoseLandmark.RIGHT_WRIST,
-    )
-)
-face_kps_idx = tuple(
-    sorted(
-        set(
-            point
-            for edge in [
-                *mp.solutions.face_mesh_connections.FACEMESH_CONTOURS,
-                *mp.solutions.face_mesh_connections.FACEMESH_IRISES,
-            ]
-            for point in edge
-        )
-    )
-)
-hand_kps_idx = tuple(range(len(mp.solutions.hands.HandLandmark)))
-
-mp_pose_nose_idx = mp.solutions.pose.PoseLandmark.NOSE
-mp_pose_shoulders_idx = (
-    mp.solutions.pose.PoseLandmark.LEFT_SHOULDER,
-    mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER,
-)
-
-mp_face_nose_idx = sorted(mp.solutions.face_mesh_connections.FACEMESH_NOSE)[0][0]
-left_iris = mp.solutions.face_mesh_connections.FACEMESH_LEFT_IRIS
-right_iris = mp.solutions.face_mesh_connections.FACEMESH_RIGHT_IRIS
-mp_face_eyes_idx = (list(sorted(left_iris))[0][0], list(sorted(right_iris))[0][0])
-
-mp_hand_wrist_idx = mp.solutions.hands.HandLandmark.WRIST
-mp_hands_palm_idx = (
-    mp.solutions.hands.HandLandmark.THUMB_MCP,
-    mp.solutions.hands.HandLandmark.PINKY_MCP,
-)
-
-POSE_NUM = len(pose_kps_idx)
-FACE_NUM = len(face_kps_idx)
-HAND_NUM = len(hand_kps_idx)
-
-POSE_KB2SLICE = (slice(0, POSE_NUM),)
-FACE_KB2SLICE = (slice(POSE_NUM, POSE_NUM + FACE_NUM),)
-RH_KB2SLICE = (slice(POSE_NUM + FACE_NUM, POSE_NUM + FACE_NUM + HAND_NUM),)
-LH_KB2SLICE = (
-    slice(POSE_NUM + FACE_NUM + HAND_NUM, POSE_NUM + FACE_NUM + HAND_NUM * 2),
-)
-KP2SLICE = {
-    "pose": POSE_KB2SLICE,
-    "face": FACE_KB2SLICE,
-    "rh": RH_KB2SLICE,
-    "lh": LH_KB2SLICE,
-}
 
 
 def init_worker():
