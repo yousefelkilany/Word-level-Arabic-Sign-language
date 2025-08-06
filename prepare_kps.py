@@ -1,5 +1,6 @@
 from collections import defaultdict
 import os
+import math
 import cv2
 import numpy as np
 import mediapipe as mp
@@ -7,7 +8,7 @@ from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from mediapipe.tasks.python import BaseOptions, vision
 
-os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
+# os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os_join = os.path.join
 
@@ -15,26 +16,28 @@ DATA_DIR = "/kaggle/input/karsl-502"
 KPS_DIR = "/kaggle/working/karsl-kps"
 MS_30FPS = 1000 / 30
 
-VisionRunningMode = vision.RunningMode
 
-pose_base_options = BaseOptions(model_asset_path="pose_landmarker.task")
-face_base_options = BaseOptions(
-    model_asset_path="face_landmarker_v2_with_blendshapes.task"
+delegate = BaseOptions.Delegate.CPU
+pose_base_options = BaseOptions(
+    model_asset_path="pose_landmarker.task", delegate=delegate
 )
-hand_base_options = BaseOptions(model_asset_path="hand_landmarker.task")
+face_base_options = BaseOptions(
+    model_asset_path="face_landmarker.task", delegate=delegate
+)
+hand_base_options = BaseOptions(
+    model_asset_path="hand_landmarker.task", delegate=delegate
+)
+
+running_mode = vision.RunningMode.VIDEO
 mp_pose_options = vision.PoseLandmarkerOptions(
-    base_options=pose_base_options, running_mode=VisionRunningMode.VIDEO
+    base_options=pose_base_options, running_mode=running_mode
 )
 mp_face_options = vision.FaceLandmarkerOptions(
-    base_options=face_base_options, running_mode=VisionRunningMode.VIDEO, num_faces=1
+    base_options=face_base_options, running_mode=running_mode, num_faces=1
 )
 mp_hands_options = vision.HandLandmarkerOptions(
-    base_options=hand_base_options, running_mode=VisionRunningMode.VIDEO, num_hands=2
+    base_options=hand_base_options, running_mode=running_mode, num_hands=2
 )
-
-mp_pose_nose_idx = mp.solutions.pose.PoseLandmark.NOSE
-mp_face_nose_idx = sorted(mp.solutions.face_mesh_connections.FACEMESH_NOSE)[0][0]
-mp_hand_wrist_idx = mp.solutions.hands.HandLandmark.WRIST
 
 pose_kps_idx = tuple(
     (
@@ -60,6 +63,23 @@ face_kps_idx = tuple(
 )
 hand_kps_idx = tuple(range(len(mp.solutions.hands.HandLandmark)))
 
+mp_pose_nose_idx = mp.solutions.pose.PoseLandmark.NOSE
+mp_pose_shoulders_idx = (
+    mp.solutions.pose.PoseLandmark.LEFT_SHOULDER,
+    mp.solutions.pose.PoseLandmark.RIGHT_SHOULDER,
+)
+
+mp_face_nose_idx = sorted(mp.solutions.face_mesh_connections.FACEMESH_NOSE)[0][0]
+left_iris = mp.solutions.face_mesh_connections.FACEMESH_LEFT_IRIS
+right_iris = mp.solutions.face_mesh_connections.FACEMESH_RIGHT_IRIS
+mp_face_eyes_idx = (list(sorted(left_iris))[0][0], list(sorted(right_iris))[0][0])
+
+mp_hand_wrist_idx = mp.solutions.hands.HandLandmark.WRIST
+mp_hands_palm_idx = (
+    mp.solutions.hands.HandLandmark.THUMB_MCP,
+    mp.solutions.hands.HandLandmark.PINKY_MCP,
+)
+
 POSE_NUM = len(pose_kps_idx)
 FACE_NUM = len(face_kps_idx)
 HAND_NUM = len(hand_kps_idx)
@@ -72,16 +92,16 @@ KP2SLICE = {
 }
 
 
-def init_worker():
-    global pose_model, face_model, hands_model
-    pose_model = vision.PoseLandmarker.create_from_options(mp_pose_options)
-    face_model = vision.FaceLandmarker.create_from_options(mp_face_options)
-    hands_model = vision.HandLandmarker.create_from_options(mp_hands_options)
-    print(f"Worker process {os.getpid()} initialized.")
+# def init_worker():
+#     global pose_model, face_model, hands_model
+#     pose_model = vision.PoseLandmarker.create_from_options(mp_pose_options)
+#     face_model = vision.FaceLandmarker.create_from_options(mp_face_options)
+#     hands_model = vision.HandLandmarker.create_from_options(mp_hands_options)
+#     print(f"Worker process {os.getpid()} initialized.")
 
 
-def extract_frame_keypoints(frame_rgb, timestamp):
-    # TODO: normalize(?) keypoints after adjustment
+def extract_frame_keypoints(models, frame_rgb, timestamp):
+    pose_model, face_model, hands_model = models
 
     # define numpy views, pose -> face -> rh -> lh
     all_kps = np.zeros((184, 3))  # (pose=6 + face=136 + rh+lh=42), xyz=3
@@ -93,8 +113,13 @@ def extract_frame_keypoints(frame_rgb, timestamp):
 
     frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
 
+    def landmarks_distance(lms_list, lm_idx):
+        p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
+        return math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2 + (p1.z - p2.z) ** 2)
+
     def get_pose():
-        results = pose_model.detect_for_video(frame, timestamp)
+        nonlocal pose_kps
+        results = pose_model.detect_for_video(frame, timestamp)  # detect(frame)
         if results.pose_landmarks is None:
             return
 
@@ -102,10 +127,14 @@ def extract_frame_keypoints(frame_rgb, timestamp):
         pose_kps[:] = np.fromiter(
             ((lms[idx].x, lms[idx].y, lms[idx].z) for idx in pose_kps_idx), dtype=np_xyz
         )
-        # pose_kps -= pose_kps[mp_pose_nose_idx]
+        # print(f'{pose_kps.sum() = }')
+        pose_kps -= pose_kps[mp_pose_nose_idx]
+        pose_kps /= landmarks_distance(lms, mp_pose_shoulders_idx)  # shoulders_dist
+        # print(f'{pose_kps.sum() = }')
 
     def get_face():
-        results = face_model.detect_for_video(frame, timestamp)
+        nonlocal face_kps
+        results = face_model.detect_for_video(frame, timestamp)  # detect(frame)
         if results.face_landmarks is None:
             return
 
@@ -113,10 +142,14 @@ def extract_frame_keypoints(frame_rgb, timestamp):
         face_kps[:] = np.fromiter(
             ((lms[idx].x, lms[idx].y, lms[idx].z) for idx in face_kps_idx), dtype=np_xyz
         )
-        # face_kps -= face_kps[mp_face_nose_idx]
+        # print(f'{face_kps.sum() = }')
+        face_kps -= face_kps[mp_face_nose_idx]
+        face_kps /= landmarks_distance(lms, mp_face_eyes_idx)  # eyes_dist
+        # print(f'{face_kps.sum() = }')
 
     def get_hands():
-        results = hands_model.detect_for_video(frame, timestamp)
+        nonlocal rh_kps, lh_kps
+        results = hands_model.detect_for_video(frame, timestamp)  # detect(frame)
         if results.hand_landmarks is None:
             return
 
@@ -125,17 +158,23 @@ def extract_frame_keypoints(frame_rgb, timestamp):
             target_hand[:] = np.fromiter(
                 ((lm.x, lm.y, lm.z) for lm in hand_lms), dtype=np_xyz
             )
+            # print(f'{target_hand.sum() = }')
             # target_hand -= target_hand[mp_hand_wrist_idx]
+            # target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)  # palm_dist
+            # print(f'{target_hand.sum() = }')
 
     with ThreadPoolExecutor(max_workers=3) as executor:
-        executor.submit(get_pose)
-        executor.submit(get_face)
-        executor.submit(get_hands)
+        _pose_res = executor.submit(get_pose)
+        # _pose_res.result()
+        _face_res = executor.submit(get_face)
+        # _face_res.result()
+        _hand_res = executor.submit(get_hands)
+        # _hand_res.result()
 
     return all_kps
 
 
-def process_video(video_dir):
+def process_video(models, video_dir):
     video_kps = []
     for idx, frame in enumerate(sorted(os.listdir(video_dir))):
         frame_path = os_join(video_dir, frame)
@@ -146,7 +185,7 @@ def process_video(video_dir):
 
         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
         timestamp = int(idx * MS_30FPS)
-        video_kps.append(extract_frame_keypoints(frame_rgb, timestamp))
+        video_kps.append(extract_frame_keypoints(models, frame_rgb, timestamp))
 
     return np.array(video_kps) if video_kps else None
 
@@ -156,24 +195,30 @@ def process_video_wrapper(task_info):
     A wrapper that calls the real worker and returns the result
     along with the identifiers needed for grouping.
     """
+
+    pose_model = vision.PoseLandmarker.create_from_options(mp_pose_options)
+    face_model = vision.FaceLandmarker.create_from_options(mp_face_options)
+    hands_model = vision.HandLandmarker.create_from_options(mp_hands_options)
+    models = [pose_model, face_model, hands_model]
+
     word_dir, video_name, signer, split, word = task_info
 
     video_dir = os_join(word_dir, video_name)
     video_group_key = (signer, split, word)
-    keypoints_array = process_video(video_dir)
-    return (video_group_key, keypoints_array)
+    video_kps = process_video(models, video_dir)
+    return (video_group_key, video_name, video_kps)
 
 
 def save_grouped_results(result):
     try:
-        video_group_key, videos_kps = result
+        video_group_key, videos_name_kps = result
         signer, split, word = video_group_key
 
         word_kps_path = os_join(KPS_DIR, "all_kps", f"{signer}-{split}", word)
         os.makedirs(os.path.dirname(word_kps_path), exist_ok=True)
 
-        final_keypoints = np.concatenate(videos_kps, axis=0)
-        np.savez_compressed(word_kps_path, keypoints=final_keypoints)
+        final_keypoints = {video_name: kps for video_name, kps in videos_name_kps}
+        np.savez_compressed(word_kps_path, **final_keypoints)
         return True
 
     except Exception as e:
@@ -183,9 +228,9 @@ def save_grouped_results(result):
 def extract_keypoints_from_frames(
     splits=None, signers=None, selected_words=None, max_videos=None
 ):
-    splits = splits or ["train", "test"]
-    signers = signers or ["01", "02", "03"]
-    selected_words = selected_words or tuple((f"{v:04}" for v in range(1, 503)))
+    splits = splits or ["train", "test"][1:]
+    signers = signers or ["01", "02", "03"][:1]
+    selected_words = selected_words or tuple((f"{v:04}" for v in range(1, 2)))
 
     print("Stage 1: Generating task list...")
     videos_tasks = []
@@ -208,7 +253,7 @@ def extract_keypoints_from_frames(
     # chunksize = int(len(videos_tasks) / num_workers + 0.5)  # ceiling
     # print(f"Using {num_workers} workers with chunksize={chunksize}")
     with ProcessPoolExecutor(
-        max_workers=num_workers, initializer=init_worker
+        max_workers=num_workers  # , initializer=init_worker
     ) as executor:
         # experiment with chunksize=chunksize
         results_itr = executor.map(process_video_wrapper, videos_tasks)
@@ -221,8 +266,8 @@ def extract_keypoints_from_frames(
 
     print("\nStage 3: Grouping results...")
     grouped_results = defaultdict(list)
-    for video_group_key, keypoints_array in tqdm(videos_results, desc="Grouping"):
-        grouped_results[video_group_key].append(keypoints_array)
+    for video_group_key, video_name, video_kps in tqdm(videos_results, desc="Grouping"):
+        grouped_results[video_group_key].append((video_name, video_kps))
 
     print(f"\nStage 4: Saving {len(grouped_results)} NPZ files...")
     save_tasks = grouped_results.items()
