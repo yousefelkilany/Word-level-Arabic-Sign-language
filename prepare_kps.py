@@ -1,9 +1,11 @@
 from collections import defaultdict
+import argparse
 import os
 import math
 import cv2
 import numpy as np
 import mediapipe as mp
+from rsa import sign
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from mediapipe.tasks.python import BaseOptions, vision
@@ -28,7 +30,7 @@ hand_base_options = BaseOptions(
     model_asset_path="hand_landmarker.task", delegate=delegate
 )
 
-running_mode = vision.RunningMode.VIDEO
+running_mode = vision.RunningMode.IMAGE
 mp_pose_options = vision.PoseLandmarkerOptions(
     base_options=pose_base_options, running_mode=running_mode
 )
@@ -92,19 +94,17 @@ KP2SLICE = {
 }
 
 
-# def init_worker():
-#     global pose_model, face_model, hands_model
-#     pose_model = vision.PoseLandmarker.create_from_options(mp_pose_options)
-#     face_model = vision.FaceLandmarker.create_from_options(mp_face_options)
-#     hands_model = vision.HandLandmarker.create_from_options(mp_hands_options)
-#     print(f"Worker process {os.getpid()} initialized.")
+def init_worker():
+    global pose_model, face_model, hands_model
+    pose_model = vision.PoseLandmarker.create_from_options(mp_pose_options)
+    face_model = vision.FaceLandmarker.create_from_options(mp_face_options)
+    hands_model = vision.HandLandmarker.create_from_options(mp_hands_options)
+    print(f"Worker process {os.getpid()} initialized.")
 
 
-def extract_frame_keypoints(models, frame_rgb, timestamp):
-    pose_model, face_model, hands_model = models
-
-    # define numpy views, pose -> face -> rh -> lh
-    all_kps = np.zeros((184, 3))  # (pose=6 + face=136 + rh+lh=42), xyz=3
+def extract_frame_keypoints(frame_rgb, timestamp):
+    # define numpy views, pose=6 -> face=136 -> rh=21 -> lh=21
+    all_kps = np.zeros((184, 3))
     pose_kps = all_kps[KP2SLICE["pose"]]
     face_kps = all_kps[KP2SLICE["face"]]
     rh_kps = all_kps[KP2SLICE["rh"]]
@@ -119,7 +119,7 @@ def extract_frame_keypoints(models, frame_rgb, timestamp):
 
     def get_pose():
         nonlocal pose_kps
-        results = pose_model.detect_for_video(frame, timestamp)  # detect(frame)
+        results = pose_model.detect(frame)  # detect_for_video(frame, timestamp)
         if results.pose_landmarks is None:
             return
 
@@ -127,14 +127,12 @@ def extract_frame_keypoints(models, frame_rgb, timestamp):
         pose_kps[:] = np.fromiter(
             ((lms[idx].x, lms[idx].y, lms[idx].z) for idx in pose_kps_idx), dtype=np_xyz
         )
-        # print(f'{pose_kps.sum() = }')
         pose_kps -= pose_kps[mp_pose_nose_idx]
         pose_kps /= landmarks_distance(lms, mp_pose_shoulders_idx)  # shoulders_dist
-        # print(f'{pose_kps.sum() = }')
 
     def get_face():
         nonlocal face_kps
-        results = face_model.detect_for_video(frame, timestamp)  # detect(frame)
+        results = face_model.detect(frame)
         if results.face_landmarks is None:
             return
 
@@ -142,14 +140,12 @@ def extract_frame_keypoints(models, frame_rgb, timestamp):
         face_kps[:] = np.fromiter(
             ((lms[idx].x, lms[idx].y, lms[idx].z) for idx in face_kps_idx), dtype=np_xyz
         )
-        # print(f'{face_kps.sum() = }')
         face_kps -= face_kps[mp_face_nose_idx]
         face_kps /= landmarks_distance(lms, mp_face_eyes_idx)  # eyes_dist
-        # print(f'{face_kps.sum() = }')
 
     def get_hands():
         nonlocal rh_kps, lh_kps
-        results = hands_model.detect_for_video(frame, timestamp)  # detect(frame)
+        results = hands_model.detect(frame)
         if results.hand_landmarks is None:
             return
 
@@ -158,23 +154,21 @@ def extract_frame_keypoints(models, frame_rgb, timestamp):
             target_hand[:] = np.fromiter(
                 ((lm.x, lm.y, lm.z) for lm in hand_lms), dtype=np_xyz
             )
-            # print(f'{target_hand.sum() = }')
-            # target_hand -= target_hand[mp_hand_wrist_idx]
-            # target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)  # palm_dist
-            # print(f'{target_hand.sum() = }')
+            target_hand -= target_hand[mp_hand_wrist_idx]
+            target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)  # palm_dist
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         _pose_res = executor.submit(get_pose)
-        # _pose_res.result()
         _face_res = executor.submit(get_face)
-        # _face_res.result()
         _hand_res = executor.submit(get_hands)
+        # _pose_res.result()
+        # _face_res.result()
         # _hand_res.result()
 
     return all_kps
 
 
-def process_video(models, video_dir):
+def process_video(video_dir):
     video_kps = []
     for idx, frame in enumerate(sorted(os.listdir(video_dir))):
         frame_path = os_join(video_dir, frame)
@@ -185,7 +179,7 @@ def process_video(models, video_dir):
 
         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
         timestamp = int(idx * MS_30FPS)
-        video_kps.append(extract_frame_keypoints(models, frame_rgb, timestamp))
+        video_kps.append(extract_frame_keypoints(frame_rgb, timestamp))
 
     return np.array(video_kps) if video_kps else None
 
@@ -195,17 +189,11 @@ def process_video_wrapper(task_info):
     A wrapper that calls the real worker and returns the result
     along with the identifiers needed for grouping.
     """
-
-    pose_model = vision.PoseLandmarker.create_from_options(mp_pose_options)
-    face_model = vision.FaceLandmarker.create_from_options(mp_face_options)
-    hands_model = vision.HandLandmarker.create_from_options(mp_hands_options)
-    models = [pose_model, face_model, hands_model]
-
     word_dir, video_name, signer, split, word = task_info
 
     video_dir = os_join(word_dir, video_name)
     video_group_key = (signer, split, word)
-    video_kps = process_video(models, video_dir)
+    video_kps = process_video(video_dir)
     return (video_group_key, video_name, video_kps)
 
 
@@ -230,7 +218,8 @@ def extract_keypoints_from_frames(
 ):
     splits = splits or ["train", "test"][1:]
     signers = signers or ["01", "02", "03"][:1]
-    selected_words = selected_words or tuple((f"{v:04}" for v in range(1, 2)))
+    selected_words = selected_words or range(1, 2)
+    selected_words = tuple((f"{v:04}" for v in selected_words))
 
     print("Stage 1: Generating task list...")
     videos_tasks = []
@@ -253,7 +242,7 @@ def extract_keypoints_from_frames(
     # chunksize = int(len(videos_tasks) / num_workers + 0.5)  # ceiling
     # print(f"Using {num_workers} workers with chunksize={chunksize}")
     with ProcessPoolExecutor(
-        max_workers=num_workers  # , initializer=init_worker
+        max_workers=num_workers, initializer=init_worker
     ) as executor:
         # experiment with chunksize=chunksize
         results_itr = executor.map(process_video_wrapper, videos_tasks)
@@ -277,5 +266,23 @@ def extract_keypoints_from_frames(
             ...
 
 
+def cli():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--splits", nargs="+", default=["train", "test"])
+    parser.add_argument("--signers", nargs="+", default=["01", "02", "03"])
+    parser.add_argument("--selected_words_from", type=int, default=0)
+    parser.add_argument("--selected_words_to", type=int, default=0)
+    parser.add_argument("--max_videos", type=int, default=None)
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    extract_keypoints_from_frames()
+    cli_args = cli()
+    extract_keypoints_from_frames(
+        splits=cli_args.splits,
+        signers=cli_args.signers,
+        selected_words=range(
+            cli_args.selected_words_from, cli_args.selected_words_to + 1
+        ),
+        max_videos=cli_args.max_videos,
+    )
