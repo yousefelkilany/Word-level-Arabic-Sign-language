@@ -5,7 +5,6 @@ import math
 import cv2
 import numpy as np
 import mediapipe as mp
-from rsa import sign
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from mediapipe.tasks.python import BaseOptions, vision
@@ -86,11 +85,17 @@ POSE_NUM = len(pose_kps_idx)
 FACE_NUM = len(face_kps_idx)
 HAND_NUM = len(hand_kps_idx)
 
+POSE_KB2SLICE = (slice(0, POSE_NUM),)
+FACE_KB2SLICE = (slice(POSE_NUM, POSE_NUM + FACE_NUM),)
+RH_KB2SLICE = (slice(POSE_NUM + FACE_NUM, POSE_NUM + FACE_NUM + HAND_NUM),)
+LH_KB2SLICE = (
+    slice(POSE_NUM + FACE_NUM + HAND_NUM, POSE_NUM + FACE_NUM + HAND_NUM * 2),
+)
 KP2SLICE = {
-    "pose": slice(0, POSE_NUM),
-    "face": slice(POSE_NUM, POSE_NUM + FACE_NUM),
-    "rh": slice(POSE_NUM + FACE_NUM, POSE_NUM + FACE_NUM + HAND_NUM),
-    "lh": slice(POSE_NUM + FACE_NUM + HAND_NUM, POSE_NUM + FACE_NUM + HAND_NUM * 2),
+    "pose": POSE_KB2SLICE,
+    "face": FACE_KB2SLICE,
+    "rh": RH_KB2SLICE,
+    "lh": LH_KB2SLICE,
 }
 
 
@@ -216,14 +221,16 @@ def save_grouped_results(result):
 def extract_keypoints_from_frames(
     splits=None, signers=None, selected_words=None, max_videos=None
 ):
-    splits = splits or ["train", "test"][1:]
-    signers = signers or ["01", "02", "03"][:1]
+    splits = splits or ["train", "test"][-1:]
+    signers = signers or ["01", "02", "03"][-1:]
     selected_words = selected_words or range(1, 2)
-    selected_words = tuple((f"{v:04}" for v in selected_words))
 
     print("Stage 1: Generating task list...")
     videos_tasks = []
     for word in tqdm(selected_words, desc="Words"):
+        if 1 > word or word > 502:
+            break
+        word = f"{word:04}"
         for signer in signers:
             for split in splits:
                 word_dir = os_join(DATA_DIR, signer, signer, split, word)
@@ -268,8 +275,8 @@ def extract_keypoints_from_frames(
 
 def cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--splits", nargs="+", default=["train", "test"])
-    parser.add_argument("--signers", nargs="+", default=["01", "02", "03"])
+    parser.add_argument("--splits", nargs="+", default=None)
+    parser.add_argument("--signers", nargs="+", default=None)
     parser.add_argument("--selected_words_from", type=int, default=0)
     parser.add_argument("--selected_words_to", type=int, default=0)
     parser.add_argument("--max_videos", type=int, default=None)
