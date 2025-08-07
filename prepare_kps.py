@@ -1,15 +1,19 @@
-from collections import defaultdict
-import argparse
 import os
-import math
 import cv2
+import argparse
 import numpy as np
-import mediapipe as mp
 from tqdm import tqdm
+from itertools import product
+from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+
+import mediapipe as mp
 from mediapipe.tasks.python import vision
 
 from utils import (
+    DATA_DIR,
+    KPS_DIR,
+    KP2SLICE,
     pose_kps_idx,
     mp_pose_options,
     mp_pose_nose_idx,
@@ -21,17 +25,12 @@ from utils import (
     mp_hands_options,
     mp_hand_wrist_idx,
     mp_hands_palm_idx,
-    KP2SLICE,
 )
 
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os_join = os.path.join
-
-DATA_DIR = "/kaggle/input/karsl-502"
-KPS_DIR = "/kaggle/working/karsl-kps"
-MS_30FPS = 1000 / 30
 
 
 def init_worker():
@@ -42,7 +41,7 @@ def init_worker():
     print(f"Worker process {os.getpid()} initialized.")
 
 
-def extract_frame_keypoints(frame_rgb, timestamp):
+def extract_frame_keypoints(frame_rgb, adjusted=False):
     # define numpy views, pose=6 -> face=136 -> rh=21 -> lh=21
     all_kps = np.zeros((184, 3))
     pose_kps = all_kps[KP2SLICE["pose"]]
@@ -55,33 +54,36 @@ def extract_frame_keypoints(frame_rgb, timestamp):
 
     def landmarks_distance(lms_list, lm_idx):
         p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
-        return math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2 + (p1.z - p2.z) ** 2)
+        # return math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2 + (p1.z - p2.z) ** 2)
+        return (abs(p1.x - p2.x), abs(p1.y - p2.y), abs(p1.z - p2.z))
 
     def get_pose():
         nonlocal pose_kps
-        results = pose_model.detect(frame)  # detect_for_video(frame, timestamp)
-        if results.pose_landmarks is None:
+        results = pose_model.detect(frame)
+        if results.pose_landmarks is None or len(results.pose_landmarks) == 0:
             return
 
         lms = results.pose_landmarks[0]
         pose_kps[:] = np.fromiter(
             ((lms[idx].x, lms[idx].y, lms[idx].z) for idx in pose_kps_idx), dtype=np_xyz
         )
-        pose_kps -= pose_kps[mp_pose_nose_idx]
-        pose_kps /= landmarks_distance(lms, mp_pose_shoulders_idx)  # shoulders_dist
+        if adjusted:
+            pose_kps -= pose_kps[mp_pose_nose_idx]
+            pose_kps /= landmarks_distance(lms, mp_pose_shoulders_idx)
 
     def get_face():
         nonlocal face_kps
         results = face_model.detect(frame)
-        if results.face_landmarks is None:
+        if results.face_landmarks is None or len(results.face_landmarks) == 0:
             return
 
         lms = results.face_landmarks[0]
         face_kps[:] = np.fromiter(
             ((lms[idx].x, lms[idx].y, lms[idx].z) for idx in face_kps_idx), dtype=np_xyz
         )
-        face_kps -= face_kps[mp_face_nose_idx]
-        face_kps /= landmarks_distance(lms, mp_face_eyes_idx)  # eyes_dist
+        if adjusted:
+            face_kps -= face_kps[mp_face_nose_idx]
+            face_kps /= landmarks_distance(lms, mp_face_eyes_idx)
 
     def get_hands():
         nonlocal rh_kps, lh_kps
@@ -94,8 +96,9 @@ def extract_frame_keypoints(frame_rgb, timestamp):
             target_hand[:] = np.fromiter(
                 ((lm.x, lm.y, lm.z) for lm in hand_lms), dtype=np_xyz
             )
-            target_hand -= target_hand[mp_hand_wrist_idx]
-            target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)  # palm_dist
+            if adjusted:
+                target_hand -= target_hand[mp_hand_wrist_idx]
+                target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         _pose_res = executor.submit(get_pose)
@@ -108,7 +111,7 @@ def extract_frame_keypoints(frame_rgb, timestamp):
     return all_kps
 
 
-def process_video(video_dir):
+def process_video(video_dir, adjusted):
     video_kps = []
     for idx, frame in enumerate(sorted(os.listdir(video_dir))):
         frame_path = os_join(video_dir, frame)
@@ -118,8 +121,7 @@ def process_video(video_dir):
             continue
 
         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-        timestamp = int(idx * MS_30FPS)
-        video_kps.append(extract_frame_keypoints(frame_rgb, timestamp))
+        video_kps.append(extract_frame_keypoints(frame_rgb, adjusted))
 
     return np.array(video_kps) if video_kps else None
 
@@ -129,11 +131,11 @@ def process_video_wrapper(task_info):
     A wrapper that calls the real worker and returns the result
     along with the identifiers needed for grouping.
     """
-    word_dir, video_name, signer, split, word = task_info
+    word_dir, video_name, signer, split, word, adjusted = task_info
 
     video_dir = os_join(word_dir, video_name)
     video_group_key = (signer, split, word)
-    video_kps = process_video(video_dir)
+    video_kps = process_video(video_dir, adjusted)
     return (video_group_key, video_name, video_kps)
 
 
@@ -154,7 +156,7 @@ def save_grouped_results(result):
 
 
 def extract_keypoints_from_frames(
-    splits=None, signers=None, selected_words=None, max_videos=None
+    splits=None, signers=None, selected_words=None, max_videos=None, adjusted=False
 ):
     splits = splits or ["train", "test"][-1:]
     signers = signers or ["01", "02", "03"][-1:]
@@ -166,11 +168,12 @@ def extract_keypoints_from_frames(
         if 1 > word or word > 502:
             break
         word = f"{word:04}"
-        for signer in signers:
-            for split in splits:
-                word_dir = os_join(DATA_DIR, signer, signer, split, word)
-                for video_name in os.listdir(word_dir)[:max_videos]:
-                    videos_tasks.append((word_dir, video_name, signer, split, word))
+        for signer, split in product(signers, splits):
+            word_dir = os_join(DATA_DIR, signer, signer, split, word)
+            for video_name in os.listdir(word_dir)[:max_videos]:
+                videos_tasks.append(
+                    (word_dir, video_name, signer, split, word, adjusted)
+                )
 
     if not videos_tasks:
         print("No videos found to process. Exiting.")
@@ -215,6 +218,7 @@ def cli():
     parser.add_argument("--selected_words_from", type=int, default=0)
     parser.add_argument("--selected_words_to", type=int, default=0)
     parser.add_argument("--max_videos", type=int, default=None)
+    parser.add_argument("--adjusted", type=bool, default=False)
     return parser.parse_args()
 
 
@@ -227,4 +231,5 @@ if __name__ == "__main__":
             cli_args.selected_words_from, cli_args.selected_words_to + 1
         ),
         max_videos=cli_args.max_videos,
+        adjusted=cli_args.adjusted,
     )
