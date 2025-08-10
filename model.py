@@ -1,4 +1,7 @@
 from torch import nn
+import torch
+
+from dataloader import FEAT_NUM
 
 
 class ResidualBiLSTMBlock(nn.Module):
@@ -29,7 +32,7 @@ class AttentionBiLSTM(nn.Module):
 
         self.lstm_proj_layer = nn.Linear(input_size, hidden_size)
         self.lstms = nn.Sequential(
-            [
+            *[
                 ResidualBiLSTMBlock(hidden_size, lstm_dropout_prob)
                 for _ in range(num_lstm_blocks)
             ]
@@ -59,3 +62,33 @@ class AttentionBiLSTM(nn.Module):
         dropped_out = self.dropout(aggregated_output)
         logits = self.fc(dropped_out)
         return logits
+
+
+def save_model(checkpoint_path, model, optimizer, scheduler):
+    try:
+        torch.save(
+            {
+                "model": model.state_dict(),
+                "optimizer": optimizer.state_dict(),
+                "scheduler": scheduler.state_dict(),
+            },
+            checkpoint_path,
+        )
+        return True
+    except Exception as e:
+        print(e)
+
+
+def get_model_instance(num_words):
+    input_size = FEAT_NUM * 3
+    hidden_size = 512
+    num_lstm_blocks = 2
+    return AttentionBiLSTM(input_size, hidden_size, num_lstm_blocks, num_words)
+
+
+def load_model(checkpoint_path, model=None):
+    model = model or get_model_instance()
+    model.load_state_dict(
+        torch.load(checkpoint_path, map_location=torch.device("cpu"))["model"]
+    )
+    return model

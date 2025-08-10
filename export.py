@@ -1,0 +1,62 @@
+import argparse
+from torch import onnx
+import torch
+
+import onnxruntime
+from dataloader import FEAT_NUM, SEQ_LEN
+from model import load_model
+
+
+def cli():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--checkpoint_path", type=str, required=True)
+    parser.add_argument("--onnx_checkpoint_path", type=str, default=None)
+    return parser.parse_args()
+
+
+if __name__ == "__init__":
+    args = cli()
+    checkpoint_path = args.checkpoint_path
+    assert checkpoint_path is not None, "--checkpoint_path is required"
+
+    model = load_model(checkpoint_path)
+    model.eval()
+
+    torch_input = (torch.rand(2, SEQ_LEN, FEAT_NUM * 3, device="cpu"),)
+    batch_dim = torch.export.Dim("batch_size")
+    onnx_checkpoint_path = args.onnx_checkpoint_path or f"{checkpoint_path}.onnx"
+    onnx_model = onnx.export(
+        model,
+        torch_input,
+        onnx_checkpoint_path,
+        export_params=True,
+        input_names=["input"],
+        output_names=["output"],
+        opset_version=13,
+        dynamic_shapes={
+            "input": {0: batch_dim},
+            "output": {0: batch_dim},
+        },
+        dynamo=True,
+    )
+    model_checked = onnx.checker.check_model(onnx_model)
+    assert model_checked
+    print("✅ ONNX model checked! ✅")
+
+    ort_session = onnxruntime.InferenceSession(
+        onnx_checkpoint_path, providers=["CPUExecutionProvider"]
+    )
+    onnx_input = [tensor.numpy(force=True) for tensor in torch_input]
+    onnxruntime_input = {
+        input_arg.name: input_value
+        for input_arg, input_value in zip(ort_session.get_inputs(), onnx_input)
+    }
+
+    onnxruntime_output = ort_session.run(None, onnxruntime_input)[0]
+    torch_output = model(*torch_input)
+
+    assert len(torch_output) == len(onnxruntime_output)
+    for torch_output, onnxruntime_output in zip(torch_output, onnxruntime_output):
+        torch.testing.assert_close(torch_output, torch.tensor(onnxruntime_output))
+
+    print("✅ PyTorch🔥 and ONNX Runtime output matched! ✅")

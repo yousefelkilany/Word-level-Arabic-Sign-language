@@ -2,7 +2,7 @@ import numpy as np
 from tqdm.notebook import tqdm
 from os.path import join as os_join
 
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader, random_split
 
 KPS_DIR = "/kaggle/working/karsl-kps"
 SEQ_LEN = 60
@@ -12,13 +12,10 @@ FEAT_NUM = 184
 class KArSLDataset(Dataset):
     def __init__(self, split, signers, selected_words):
         super().__init__()
-
         self.X, self.y = self._load_kps(split, signers, selected_words)
         self.X = self.prepare_kps(self.X)
-        self.y = self.prepare_labels(self.y, self.X)
+        self.y = self.prepare_labels(self.y, self.X) - 1
         self.X = np.concatenate(self.X, dtype=np.float32)
-        self.num_classes = self.y.shape[1]
-        print(self.X.shape, self.y.shape)
 
     def prepare_kps(self, X):
         def pad_split_seq(kps):
@@ -43,9 +40,7 @@ class KArSLDataset(Dataset):
 
     def prepare_labels(self, y, X):
         y = [y_ for y_, x in zip(y, X) for _ in range(x.shape[0])]
-        gt_labels = np.zeros((len(y), np.max(self.y) + 1))
-        gt_labels[np.arange(len(y)), y] = 1
-        return gt_labels
+        return np.array(y)
 
     def _load_kps(self, split, signers, selected_words):
         X, y = [], []
@@ -66,6 +61,19 @@ class KArSLDataset(Dataset):
         return len(self.X)
 
     def __getitem__(self, idx):
-        # print(self.X.shape, self.y.shape)
-        # print(self.X[idx].shape, self.y[idx].shape)
         return self.X[idx], self.y[idx]
+
+
+def prepare_dataloaders(signers, selected_words, shuffle_train=True):
+    train_val = KArSLDataset("train", signers, selected_words)
+    train_size = int(len(train_val) * 0.8)
+    val_size = len(train_val) - train_size
+    train_ds, val_ds = random_split(train_val, [train_size, val_size])
+
+    batch_size = 64
+    train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=shuffle_train)
+    val_dl = DataLoader(val_ds, batch_size=batch_size)
+
+    test_ds = KArSLDataset("test", signers, selected_words)
+    test_dl = DataLoader(test_ds, batch_size=batch_size)
+    return train_dl, val_dl, test_dl
