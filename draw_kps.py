@@ -6,18 +6,18 @@ from itertools import product
 from mediapipe import solutions
 from mediapipe.framework.formats import landmark_pb2
 
-from solutions.drawing_styles import (
+from mediapipe.python.solutions.drawing_utils import DrawingSpec
+from mediapipe.python.solutions.drawing_styles import (
     get_default_pose_landmarks_style,
     get_default_face_mesh_tesselation_style,
     get_default_hand_landmarks_style,
     get_default_hand_connections_style,
 )
-from solutions.drawing_utils import DrawingSpec
 
 from utils import (
     DATA_DIR,
     KPS_DIR,
-    KB2SLICE,
+    KP2SLICE,
     pose_kps_idx,
     POSE_KPS_CONNECTIONS,
     face_kps_idx,
@@ -25,7 +25,6 @@ from utils import (
     hand_kps_idx,
     HAND_KPS_CONNECTIONS,
 )
-
 
 landmark_styling_fallback = DrawingSpec(
     color=(224, 224, 224), thickness=1, circle_radius=1
@@ -96,20 +95,21 @@ def draw_hand_kps_on_image(rgb_image, hand_kps):
 def draw_all_kps_on_image(rgb_image, frame_kps):
     annotated_image = np.copy(rgb_image)
     annotated_image = draw_pose_kps_on_image(
-        annotated_image, frame_kps[KB2SLICE["pose"]]
+        annotated_image, frame_kps[KP2SLICE["pose"]]
     )
     annotated_image = draw_face_kps_on_image(
-        annotated_image, frame_kps[KB2SLICE["face"]]
+        annotated_image, frame_kps[KP2SLICE["face"]]
     )
-    annotated_image = draw_hand_kps_on_image(annotated_image, frame_kps[KB2SLICE["rh"]])
-    annotated_image = draw_hand_kps_on_image(annotated_image, frame_kps[KB2SLICE["lh"]])
+    annotated_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["rh"]])
+    annotated_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["lh"]])
     return annotated_image
 
 
-if __name__ == "__init__":
-    # This script requires extracted keypoints to be neither adjusted nor normalized
-    # i.e., call `extract_frame_keypoints` with adjusted=False
-
+if __name__ == "__main__":
+    # Drawing keypoints requires the extracted keypoints to be neither centered
+    # nor normalized, i.e., run `prepare_kps.py` without --adjusted cli arg
+    # For actual training, you may train on unadjusted keypoints, but
+    # it's not recommended and you should extract them with --adjusted
     splits = ["train", "test"][-1:]
     signers = ["01", "02", "03"][-1:]
     words = [f"{502:04}"]
@@ -122,16 +122,20 @@ if __name__ == "__init__":
         video_dir = os.path.join(DATA_DIR, signer, signer, split, word, video_name)
         video_frames = sorted(os.listdir(video_dir))
 
-        assert video_kps.min() != 0 and video_kps.max() != 0
+        assert video_kps.min() != 0 and video_kps.max() != 0, (
+            "Corrupted Keypoints, all keypoints are zeros"
+        )
 
         frame_idx = 0
-        frame = cv2.imread(os.path.join(video_dir, video_frames[frame_idx]))
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame_path = os.path.join(video_dir, video_frames[frame_idx])
+        frame = cv2.imread(frame_path)
 
+        print(f"Annotating frame {frame_path}")
         annotated_frame = draw_all_kps_on_image(frame, video_kps[frame_idx])
         annotated_frame_name = (
-            f"{signer}-{split}-{word}-{video_name}-frame_{frame_idx}-annotated.jpg"
+            f"{signer}-{split}-{word}/{video_name}-frame_{frame_idx}-annotated.jpg"
         )
+        os.makedirs(os.path.dirname(annotated_frame_name), exist_ok=True)
 
         annotated_frame = np.hstack((frame, annotated_frame))
         if cv2.imwrite(annotated_frame_name, annotated_frame):

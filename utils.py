@@ -83,15 +83,15 @@ POSE_NUM = len(pose_kps_idx)
 FACE_NUM = len(face_kps_idx)
 HAND_NUM = len(hand_kps_idx)
 
-POSE_KB2SLICE = (slice(0, POSE_NUM),)
-FACE_KB2SLICE = (slice(POSE_NUM, POSE_NUM + FACE_NUM),)
-RH_KB2SLICE = (slice(POSE_NUM + FACE_NUM, POSE_NUM + FACE_NUM + HAND_NUM),)
-LH_KB2SLICE = (
+POSE_KP2SLICE = (slice(0, POSE_NUM),)
+FACE_KP2SLICE = (slice(POSE_NUM, POSE_NUM + FACE_NUM),)
+RH_KP2SLICE = (slice(POSE_NUM + FACE_NUM, POSE_NUM + FACE_NUM + HAND_NUM),)
+LH_KP2SLICE = (
     slice(POSE_NUM + FACE_NUM + HAND_NUM, POSE_NUM + FACE_NUM + HAND_NUM * 2),
 )
 KP2SLICE = {
-    "pose": POSE_KB2SLICE,
-    "face": FACE_KB2SLICE,
-    "rh": RH_KB2SLICE,
-    "lh": LH_KB2SLICE,
+    "pose": POSE_KP2SLICE,
+    "face": FACE_KP2SLICE,
+    "rh": RH_KP2SLICE,
+    "lh": LH_KP2SLICE,
 }

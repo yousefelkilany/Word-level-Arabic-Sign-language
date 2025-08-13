@@ -79,7 +79,7 @@ def test_confusion_matrix(model, test_dl):
     return confusion_matrix(test_labels, test_predicted)
 
 
-if __name__ == "__init__":
+if __name__ == "__main__":
     signers = ["01", "02", "03"]
     num_words = 10
     train_dl, val_dl, test_dl = prepare_dataloaders(signers, range(1, num_words + 1))

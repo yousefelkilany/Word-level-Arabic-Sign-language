@@ -14,7 +14,7 @@ def cli():
     return parser.parse_args()
 
 
-if __name__ == "__init__":
+if __name__ == "__main__":
     args = cli()
     checkpoint_path = args.checkpoint_path
     assert checkpoint_path is not None, "--checkpoint_path is required"

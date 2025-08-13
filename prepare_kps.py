@@ -55,6 +55,8 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
     def landmarks_distance(lms_list, lm_idx):
         p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
         # return math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2 + (p1.z - p2.z) ** 2)
+        # EPS = 1e-10
+        # return (abs(p1.x - p2.x) + EPS, abs(p1.y - p2.y) + EPS, abs(p1.z - p2.z) + EPS)
         return (abs(p1.x - p2.x), abs(p1.y - p2.y), abs(p1.z - p2.z))
 
     def get_pose():
@@ -104,9 +106,9 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
         _pose_res = executor.submit(get_pose)
         _face_res = executor.submit(get_face)
         _hand_res = executor.submit(get_hands)
-        # _pose_res.result()
-        # _face_res.result()
-        # _hand_res.result()
+        _pose_res.result()
+        _face_res.result()
+        _hand_res.result()
 
     return all_kps
 
@@ -160,9 +162,11 @@ def extract_keypoints_from_frames(
 ):
     splits = splits or ["train", "test"][-1:]
     signers = signers or ["01", "02", "03"][-1:]
-    selected_words = selected_words or range(1, 2)
+    selected_words = list(selected_words or range(1, 2))
 
-    print("Stage 1: Generating task list...")
+    print(
+        f"Stage 1: Generating task list for words {selected_words[0]} to {selected_words[-1]}..."
+    )
     videos_tasks = []
     for word in tqdm(selected_words, desc="Words"):
         if 1 > word or word > 502:
@@ -218,12 +222,14 @@ def cli():
     parser.add_argument("--selected_words_from", type=int, default=0)
     parser.add_argument("--selected_words_to", type=int, default=0)
     parser.add_argument("--max_videos", type=int, default=None)
-    parser.add_argument("--adjusted", type=bool, default=False)
+    parser.add_argument("--adjusted", action="store_true")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     cli_args = cli()
+    print("Extracting keypoints from frames...")
+    print("Arguments:", cli_args)
     extract_keypoints_from_frames(
         splits=cli_args.splits,
         signers=cli_args.signers,
