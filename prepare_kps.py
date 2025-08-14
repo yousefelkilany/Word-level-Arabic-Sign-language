@@ -8,21 +8,18 @@ from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 
 import mediapipe as mp
-from mediapipe.tasks.python import vision
 
 from utils import (
     DATA_DIR,
     KPS_DIR,
     KP2SLICE,
+    init_mediapipe_worker,
     pose_kps_idx,
-    mp_pose_options,
     mp_pose_nose_idx,
     mp_pose_shoulders_idx,
     face_kps_idx,
-    mp_face_options,
     mp_face_nose_idx,
     mp_face_eyes_idx,
-    mp_hands_options,
     mp_hand_wrist_idx,
     mp_hands_palm_idx,
 )
@@ -32,13 +29,8 @@ from utils import (
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os_join = os.path.join
 
-
-def init_worker():
-    global pose_model, face_model, hands_model
-    pose_model = vision.PoseLandmarker.create_from_options(mp_pose_options)
-    face_model = vision.FaceLandmarker.create_from_options(mp_face_options)
-    hands_model = vision.HandLandmarker.create_from_options(mp_hands_options)
-    print(f"Worker process {os.getpid()} initialized.")
+# set by `init_mediapipe_worker`
+pose_model, face_model, hands_model = None, None, None
 
 
 def extract_frame_keypoints(frame_rgb, adjusted=False):
@@ -191,7 +183,7 @@ def extract_keypoints_from_frames(
     # chunksize = int(len(videos_tasks) / num_workers + 0.5)  # ceiling
     # print(f"Using {num_workers} workers with chunksize={chunksize}")
     with ProcessPoolExecutor(
-        max_workers=num_workers, initializer=init_worker
+        max_workers=num_workers, initializer=init_mediapipe_worker()
     ) as executor:
         # experiment with chunksize=chunksize
         results_itr = executor.map(process_video_wrapper, videos_tasks)

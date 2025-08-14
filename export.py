@@ -2,15 +2,14 @@ import argparse
 from torch import onnx
 import torch
 
-import onnxruntime
 from dataloader import FEAT_NUM, SEQ_LEN
-from model import load_model
+from model import load_model, load_onnx_model, onnx_inference
 
 
 def cli():
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint_path", type=str, required=True)
-    parser.add_argument("--onnx_checkpoint_path", type=str, default=None)
+    parser.add_argument("--onnx_model_path", type=str, default=None)
     return parser.parse_args()
 
 
@@ -24,11 +23,11 @@ if __name__ == "__main__":
 
     torch_input = (torch.rand(2, SEQ_LEN, FEAT_NUM * 3, device="cpu"),)
     batch_dim = torch.export.Dim("batch_size")
-    onnx_checkpoint_path = args.onnx_checkpoint_path or f"{checkpoint_path}.onnx"
+    onnx_model_path = args.onnx_model_path or f"{checkpoint_path}.onnx"
     onnx_model = onnx.export(
         model,
         torch_input,
-        onnx_checkpoint_path,
+        onnx_model_path,
         export_params=True,
         input_names=["input"],
         output_names=["output"],
@@ -43,18 +42,11 @@ if __name__ == "__main__":
     assert model_checked
     print("✅ ONNX model checked! ✅")
 
-    ort_session = onnxruntime.InferenceSession(
-        onnx_checkpoint_path, providers=["CPUExecutionProvider"]
-    )
     onnx_input = [tensor.numpy(force=True) for tensor in torch_input]
-    onnxruntime_input = {
-        input_arg.name: input_value
-        for input_arg, input_value in zip(ort_session.get_inputs(), onnx_input)
-    }
+    ort_session = load_onnx_model(onnx_model_path)
+    onnxruntime_output = onnx_inference(ort_session, onnx_input)
 
-    onnxruntime_output = ort_session.run(None, onnxruntime_input)[0]
     torch_output = model(*torch_input)
-
     assert len(torch_output) == len(onnxruntime_output)
     for torch_output, onnxruntime_output in zip(torch_output, onnxruntime_output):
         torch.testing.assert_close(torch_output, torch.tensor(onnxruntime_output))

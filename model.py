@@ -1,3 +1,4 @@
+import onnxruntime
 from torch import nn
 import torch
 
@@ -92,3 +93,15 @@ def load_model(checkpoint_path, model=None):
         torch.load(checkpoint_path, map_location=torch.device("cpu"))["model"]
     )
     return model
+
+
+def load_onnx_model(onnx_model_path):
+    return onnxruntime.InferenceSession(
+        onnx_model_path, providers=["CPUExecutionProvider"]
+    )
+
+
+def onnx_inference(ort_session, input_data):
+    input_name = ort_session.get_inputs()[0].name
+    output_name = ort_session.get_outputs()[0].name
+    return ort_session.run([output_name], {input_name: input_data})[0]
