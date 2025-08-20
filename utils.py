@@ -1,15 +1,22 @@
 import os
 import cv2
 from mediapipe.tasks.python import BaseOptions, vision
-from mediapipe import solutions
+
 import numpy as np
 import pandas as pd
 
-LABELS_PATH = "/kaggle/working/KARSL-502_Labels.xlsx"
-DATA_DIR = "/kaggle/input/karsl-502"
-KPS_DIR = "/kaggle/working/karsl-kps"
+os_join = os.path.join
+
+LOCAL_DEV = int(os.environ.get("LOCAL_DEV", False))
+print(f"{LOCAL_DEV = }")
+LABELS_PATH = os_join(["/kaggle/working", "data"][LOCAL_DEV], "KARSL-502_Labels.xlsx")
+DATA_DIR = os_join(["/kaggle/input", "data"][LOCAL_DEV], "karsl-502")
+KPS_DIR = os_join(["/kaggle/working", "data"][LOCAL_DEV], "karsl-kps")
+MODELS_DIR = os_join(["/kaggle/working", ""][LOCAL_DEV], "models")
 MS_30FPS = 1000 / 30
 MS_30FPS_INT = 1000 // 30
+SEQ_LEN = 60
+FEAT_NUM = 184
 
 words = pd.read_excel(LABELS_PATH, usecols=["Sign-Arabic", "Sign-English"])
 AR_WORDS, EN_WORDS = words.to_dict(orient="list").items()
@@ -30,9 +37,9 @@ hand_base_options = BaseOptions(
 # exp 2: I tried VIDEO mode with global timestamp so it doesn't require re-initialization, but misses faces and hands alot, since it loses track of the older ones but doesn't re-detect them.
 running_mode = vision.RunningMode.IMAGE
 
-mp_pose_landmark = solutions.pose.PoseLandmark
-mp_facemesh = solutions.face_mesh_connections
-mp_hand_landmark = solutions.hands.HandLandmark
+from mediapipe.python.solutions.pose import PoseLandmark as mp_pose_landmark
+from mediapipe.python.solutions import face_mesh_connections as mp_facemesh
+from mediapipe.python.solutions.hands import HandLandmark as mp_hand_landmark
 
 POSE_KPS_CONNECTIONS = [
     (mp_pose_landmark.LEFT_SHOULDER, mp_pose_landmark.RIGHT_SHOULDER),
@@ -45,7 +52,7 @@ FACE_KPS_CONNECTIONS = [
     *mp_facemesh.FACEMESH_CONTOURS,
     *mp_facemesh.FACEMESH_IRISES,
 ]
-HAND_KPS_CONNECTIONS = solutions.hands_connections.HAND_CONNECTIONS
+from mediapipe.python.solutions.hands import HAND_CONNECTIONS as HAND_KPS_CONNECTIONS
 
 pose_kps_idx = tuple(
     (
@@ -97,6 +104,23 @@ KP2SLICE = {
 }
 
 
+def is_in_ipython_session():
+    global tqdm
+    try:
+        _ = __IPYTHON__  # type: ignore
+        from tqdm.notebook import tqdm
+
+        return True
+    except NameError:
+        from tqdm import tqdm
+
+        return False
+
+
+tqdm = None
+is_in_ipython_session()
+
+
 def init_mediapipe_worker(inference_mode=False):
     running_mode = (
         vision.RunningMode.VIDEO if inference_mode else vision.RunningMode.IMAGE
@@ -124,7 +148,7 @@ def init_mediapipe_worker(inference_mode=False):
 
 def gaussian_blur(diff, sigma_factor=0.005, kernel_dim=1):
     def ksize(sigma):
-        max(3, sigma + 1 - sigma % 2)
+        return max(3, sigma + 1 - sigma % 2)
 
     h, w = diff.shape
     sigmax = sigma_factor * w
@@ -140,9 +164,10 @@ def gaussian_blur(diff, sigma_factor=0.005, kernel_dim=1):
     return cv2.sepFilter2D(diff, -1, gaussian_x, gaussian_y)
 
 
-def detect_motion(prev_frame, frame, motion_thresh=0.1):
-    prev_gray = cv2.cvtColor(prev_frame, cv2.COLOR_BGR2GRAY)
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+def detect_motion(prev_gray, gray, motion_thresh=0.1):
+    if prev_gray is None or gray is None:
+        return (None,) * 3
+
     diff = cv2.absdiff(prev_gray, gray)
 
     # (ksizex, ksizey), (sigmax, sigmay) = get_gaussian_kernel(frame, kernel_dim=2)
@@ -152,6 +177,20 @@ def detect_motion(prev_frame, frame, motion_thresh=0.1):
     #     gaussian_x, gaussian_y = get_gaussian_kernel(frame)
     # blur = cv2.sepFilter2D(diff, -1, gaussian_x, gaussian_y)
 
-    blur = gaussian_blur(diff, kernel_dim=1)
+    blur = gaussian_blur(diff, kernel_dim=2)
     _, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)
-    return np.count_nonzero(thresh) // np.size(thresh) > motion_thresh
+    return blur, thresh, np.count_nonzero(thresh) // np.size(thresh) > motion_thresh
+
+
+def extract_num_words_from_checkpoint(checkpoint_path) -> int | None:
+    import re
+
+    matches = re.search(r".*?words_(\d+).*?", checkpoint_path)
+    if not matches:
+        raise ValueError(
+            f"Couldn't find number of words in checkpoint path: {checkpoint_path}"
+        )
+
+    num_words = int(matches.groups()[0])
+    print(f"Number of words in checkpoint: {num_words}")
+    return num_words

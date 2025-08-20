@@ -2,7 +2,6 @@ import os
 import cv2
 import argparse
 import numpy as np
-from tqdm import tqdm
 from itertools import product
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
@@ -10,6 +9,7 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 import mediapipe as mp
 
 from utils import (
+    tqdm,
     DATA_DIR,
     KPS_DIR,
     KP2SLICE,

@@ -1,19 +1,21 @@
 import onnxruntime
-from torch import nn
 import torch
+from torch import nn
 
-from dataloader import FEAT_NUM
+import numpy as np
+
+from utils import FEAT_NUM, extract_num_words_from_checkpoint
 
 
 class ResidualBiLSTMBlock(nn.Module):
-    def __init__(self, hidden_size, drop_prop=0.3):
+    def __init__(self, hidden_size, dropout_prob=0.3):
         super().__init__()
 
         self.lstm = nn.LSTM(
             hidden_size, hidden_size // 2, batch_first=True, bidirectional=True
         )
         self.layer_norm = nn.LayerNorm(hidden_size)
-        self.dropout = nn.Dropout(drop_prop)
+        self.dropout = nn.Dropout(dropout_prob)
 
     def forward(self, x):
         return self.layer_norm(x + self.dropout(self.lstm(x)[0]))
@@ -26,10 +28,13 @@ class AttentionBiLSTM(nn.Module):
         hidden_size,
         num_lstm_blocks,
         num_classes,
-        dropout_prob=0.3,
         lstm_dropout_prob=0.3,
+        attn_dropout_prob=0.3,
+        network_dropout_prob=0.3,
     ):
         super().__init__()
+
+        self.num_classes = num_classes
 
         self.lstm_proj_layer = nn.Linear(input_size, hidden_size)
         self.lstms = nn.Sequential(
@@ -42,27 +47,46 @@ class AttentionBiLSTM(nn.Module):
         self.attention = nn.MultiheadAttention(
             embed_dim=hidden_size,
             num_heads=8,
-            dropout=dropout_prob,
+            dropout=attn_dropout_prob,
             batch_first=True,
         )
 
         self.attn_layer_norm = nn.LayerNorm(hidden_size)
 
-        self.dropout = nn.Dropout(dropout_prob)
+        self.dropout = nn.Dropout(network_dropout_prob)
+
         self.fc = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x):
+        # print("shape:", x.shape, ", input:", torch.isnan(x).any())
+
         x = self.lstm_proj_layer(x)
+        # print("shape:", x.shape, ", lstm proj layer:", torch.isnan(x).any())
+
         for lstm_block in self.lstms:
             x = lstm_block(x)
+        # print("shape:", x.shape, ", lstm blocks:", torch.isnan(x).any())
 
-        attn_output = self.attn_layer_norm(x + self.attention(x, x, x)[0])
+        x = self.attn_layer_norm(x + self.attention(x, x, x)[0])
+        # print("shape:", x.shape, ", attention:", torch.isnan(x).any())
 
-        aggregated_output = attn_output.mean(dim=1)
+        x = x.mean(dim=1)
+        # print("shape:", x.shape, ", mean pooling:", torch.isnan(x).any())
 
-        dropped_out = self.dropout(aggregated_output)
-        logits = self.fc(dropped_out)
+        x = self.dropout(x)
+        # print("shape:", x.shape, ", dropout:", torch.isnan(x).any())
+
+        logits = self.fc(x)
+        # print("shape:", logits.shape, ", logits:", torch.isnan(logits).any())
         return logits
+
+
+def get_model_instance(num_words, device="cpu"):
+    input_size = FEAT_NUM * 3
+    hidden_size = 384
+    num_lstm_blocks = 3
+    model = AttentionBiLSTM(input_size, hidden_size, num_lstm_blocks, num_words)
+    return model.to(device)
 
 
 def save_model(checkpoint_path, model, optimizer, scheduler):
@@ -80,28 +104,29 @@ def save_model(checkpoint_path, model, optimizer, scheduler):
         print(e)
 
 
-def get_model_instance(num_words):
-    input_size = FEAT_NUM * 3
-    hidden_size = 512
-    num_lstm_blocks = 2
-    return AttentionBiLSTM(input_size, hidden_size, num_lstm_blocks, num_words)
+def load_model(checkpoint_path, model=None, num_words=None, device="cpu") -> nn.Module:
+    num_words = num_words or extract_num_words_from_checkpoint(checkpoint_path)
+    assert model or num_words, "Either a model instance or `num_words` must be provided"
 
-
-def load_model(checkpoint_path, model=None):
-    model = model or get_model_instance()
+    model = model or get_model_instance(num_words, device)
     model.load_state_dict(
-        torch.load(checkpoint_path, map_location=torch.device("cpu"))["model"]
+        torch.load(checkpoint_path, map_location=torch.device(device))["model"]
     )
     return model
 
 
-def load_onnx_model(onnx_model_path):
-    return onnxruntime.InferenceSession(
-        onnx_model_path, providers=["CPUExecutionProvider"]
-    )
+def load_onnx_model(onnx_model_path, device="cpu"):
+    providers = [
+        ["CPUExecutionProvider"],
+        [("CUDAExecutionProvider", {"device_id": 0})],
+    ][int(device == "cuda")]
+    return onnxruntime.InferenceSession(onnx_model_path, providers=providers)
 
 
-def onnx_inference(ort_session, input_data):
-    input_name = ort_session.get_inputs()[0].name
+def onnx_inference(ort_session, input_data) -> np.ndarray:
+    inputs = {
+        ort_input.name: input_tensor
+        for ort_input, input_tensor in zip(ort_session.get_inputs(), input_data)
+    }
     output_name = ort_session.get_outputs()[0].name
-    return ort_session.run([output_name], {input_name: input_data})[0]
+    return ort_session.run([output_name], inputs)[0]

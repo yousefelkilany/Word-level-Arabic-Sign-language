@@ -3,16 +3,15 @@ import cv2
 import numpy as np
 from itertools import product
 
-from mediapipe import solutions
 from mediapipe.framework.formats import landmark_pb2
-
-from mediapipe.python.solutions.drawing_utils import DrawingSpec
+from mediapipe.python.solutions.drawing_utils import DrawingSpec, draw_landmarks
 from mediapipe.python.solutions.drawing_styles import (
     get_default_pose_landmarks_style,
     get_default_face_mesh_tesselation_style,
     get_default_hand_landmarks_style,
     get_default_hand_connections_style,
 )
+from mediapipe.python.solutions import face_mesh, hands
 
 from utils import (
     DATA_DIR,
@@ -20,6 +19,7 @@ from utils import (
     KP2SLICE,
     pose_kps_idx,
     POSE_KPS_CONNECTIONS,
+    mp_pose_landmark,
     face_kps_idx,
     FACE_KPS_CONNECTIONS,
     hand_kps_idx,
@@ -41,14 +41,14 @@ def draw_kps_on_image(
     landmark_style=None,
     connection_style=None,
 ):
-    lms_list = [landmark_pb2.NormalizedLandmark() for _ in range(lms_num)]
+    lms_list = [landmark_pb2.NormalizedLandmark() for _ in range(lms_num)]  # type: ignore
     for idx, kp in zip(kps_idx, kps):
-        lms_list[idx] = landmark_pb2.NormalizedLandmark(x=kp[0], y=kp[1], z=kp[2])
+        lms_list[idx] = landmark_pb2.NormalizedLandmark(x=kp[0], y=kp[1], z=kp[2])  # type: ignore
 
-    landmarks_proto = landmark_pb2.NormalizedLandmarkList()
+    landmarks_proto = landmark_pb2.NormalizedLandmarkList()  # type: ignore
     landmarks_proto.landmark.extend(lms_list)
 
-    solutions.drawing_utils.draw_landmarks(
+    draw_landmarks(
         annotated_image,
         landmarks_proto,
         kp_connections,
@@ -63,7 +63,7 @@ def draw_pose_kps_on_image(rgb_image, pose_kps):
         rgb_image,
         pose_kps,
         pose_kps_idx,
-        len(solutions.pose.PoseLandmark),
+        len(mp_pose_landmark),
         POSE_KPS_CONNECTIONS,
         get_default_pose_landmarks_style(),
     )
@@ -74,7 +74,7 @@ def draw_face_kps_on_image(rgb_image, face_kps):
         rgb_image,
         face_kps,
         face_kps_idx,
-        solutions.face_mesh.FACEMESH_NUM_LANDMARKS_WITH_IRISES,
+        face_mesh.FACEMESH_NUM_LANDMARKS_WITH_IRISES,
         FACE_KPS_CONNECTIONS,
         get_default_face_mesh_tesselation_style(),
     )
@@ -85,7 +85,7 @@ def draw_hand_kps_on_image(rgb_image, hand_kps):
         rgb_image,
         hand_kps,
         hand_kps_idx,
-        len(solutions.hands.HandLandmark),
+        len(hands.HandLandmark),
         HAND_KPS_CONNECTIONS,
         get_default_hand_landmarks_style(),
         get_default_hand_connections_style(),
