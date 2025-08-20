@@ -3,14 +3,19 @@ import os
 import asyncio
 from concurrent.futures import ProcessPoolExecutor
 
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+import uvicorn
 import fastapi
+from starlette.middleware.cors import CORSMiddleware
 
 import numpy as np
 import cv2
 
+from dataloader import SEQ_LEN
 from model import load_onnx_model, onnx_inference
 from prepare_kps import extract_frame_keypoints
-from utils import AR_WORDS, detect_motion, init_mediapipe_worker
+from utils import AR_WORDS, MODELS_DIR, detect_motion, init_mediapipe_worker
 
 
 async def get_frame_kps(frame):
@@ -28,12 +33,12 @@ def run_inference(kps_buffer):
     return onnx_inference(model, kps_buffer)
 
 
-onnx_checkpoint_path = os.path.join(os.getcwd(), "model.onnx")
+onnx_checkpoint_path = os.path.join(MODELS_DIR, "checkpoint_Aug10_14-59-17-9.pth.onnx")
 model = load_onnx_model(onnx_checkpoint_path)
 
 NUM_IDLE_FRAMES = 10
 MIN_SIGN_FRAMES = 15
-MAX_SIGN_FARMES = 60
+MAX_SIGN_FARMES = SEQ_LEN
 
 detection_buffers = defaultdict(list)
 default_state = {"is_idle": True, "idle_frames_num": 0}
@@ -46,23 +51,24 @@ keypoints_detection_executor = ProcessPoolExecutor(
 origins = ["localhost"]  # TODO: update with domain name
 app = fastapi.FastAPI()
 app.add_middleware(
-    fastapi.middleware.cors.CORSMiddleware,
+    CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+app.mount("/static", StaticFiles(directory=".", html=True), name="static")
 
-# add route for websocket and server-side detection
+
 @app.websocket("/live-signs")
-async def websocket_endpoint(websocket: fastapi.WebSocket):
+async def ws_live_signs(websocket: fastapi.WebSocket):
     client_id = websocket.client
     print(f"Connected client: {client_id}")
     await websocket.accept()
 
     try:
-        prev_frame = None
+        prev_gray = None
         # h, w = None, None
         # gaussian_x, gaussian_y = None, None
         client_buffer = detection_buffers[client_id]
@@ -71,17 +77,25 @@ async def websocket_endpoint(websocket: fastapi.WebSocket):
         while True:
             data = await websocket.receive_bytes()
             frame = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
-            if not frame:
+            if frame is None:
                 continue
 
-            # if not prev_frame:  # first frame - initialization
-            #     prev_frame = frame
+            # if not prev_gray:  # first frame - initialization
+            #     prev_gray = frame
             #     h, w = frame.shape
             #     gaussian_x, gaussian_y = get_gaussian_kernels(frame)
             #     continue
 
-            has_changes = prev_frame and detect_motion(prev_frame, frame, 0.1)
-            prev_frame = frame
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            motion_detected = detect_motion(prev_gray, gray, 0.1)
+            has_changes = (prev_gray is not None) and motion_detected[2]
+            prev_gray = gray
+
+            if motion_detected[1] is not None:
+                gray_3ch = np.tile(motion_detected[1][:, :, None], (1, 1, 3))
+                await websocket.send_bytes(
+                    cv2.imencode(".jpg", frame + gray_3ch)[1].tobytes()
+                )
 
             if not has_changes:
                 client_state["idle_frames_num"] += 1
@@ -124,6 +138,32 @@ async def websocket_endpoint(websocket: fastapi.WebSocket):
         print(f"Error: {e}")
 
 
+@app.get("/live-signs")
+async def live_signs_ui():
+    return FileResponse("live-signs.html")
+
+
 @app.get("/")
 async def root():
     return {"instructions": "go to /live-signs to start detection"}
+
+
+@app.websocket("/live-chat")
+async def ws_live_chat(websocket: fastapi.WebSocket):
+    await websocket.accept()
+    while True:
+        try:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Message text was: {data}")
+        except Exception as e:
+            print(f"Error: {e}")
+            break
+
+
+@app.get("/live-chat")
+async def live_chat_ui():
+    return FileResponse("live-chat.html")
+
+
+if __name__ == "__main__":
+    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
