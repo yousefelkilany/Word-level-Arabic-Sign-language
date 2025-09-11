@@ -13,9 +13,8 @@ from mediapipe.python.solutions.drawing_styles import (
 )
 from mediapipe.python.solutions import face_mesh, hands
 
-from utils import (
-    DATA_DIR,
-    KPS_DIR,
+from utils import DATA_DIR, KPS_DIR
+from mediapipe_utils import (
     KP2SLICE,
     pose_kps_idx,
     POSE_KPS_CONNECTIONS,

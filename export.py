@@ -2,7 +2,7 @@ import argparse
 import torch
 import onnx
 
-from dataloader import FEAT_NUM, SEQ_LEN
+from utils import DEVICE, FEAT_NUM, SEQ_LEN
 from model import load_model, load_onnx_model, onnx_inference
 
 
@@ -18,11 +18,10 @@ if __name__ == "__main__":
     checkpoint_path = args.checkpoint_path
     assert checkpoint_path is not None, "--checkpoint_path is required"
 
-    device = "cpu"
-    model = load_model(checkpoint_path, device=device)
+    model = load_model(checkpoint_path, device=DEVICE)
     model.eval()
 
-    torch_input = (torch.rand(2, SEQ_LEN, FEAT_NUM * 3, device=device),)
+    torch_input = (torch.rand(2, SEQ_LEN, FEAT_NUM * 3, device=DEVICE),)
     torch_output = model(*torch_input)
 
     onnx_model_path = args.onnx_model_path or f"{checkpoint_path}.onnx"

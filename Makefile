@@ -1,8 +1,18 @@
 checkpoint_path_arg = --checkpoint_path $(checkpoint_path)
-local_setup = export LOCAL_DEV=1
+
+ifeq ($(OS), Windows_NT)
+	local_setup = export LOCAL_DEV=1
+	cpu_setup = export USE_CPU=1
+else
+	local_setup = set LOCAL_DEV=1
+	cpu_setup = set USE_CPU=1
+endif
 
 train:
 	python train.py
+
+cpu_train:
+	$(cpu_setup) && python train.py
 
 local_train:
 	$(local_setup) && python train.py

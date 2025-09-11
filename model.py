@@ -58,34 +58,37 @@ class AttentionBiLSTM(nn.Module):
         self.fc = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x):
-        # print("shape:", x.shape, ", input:", torch.isnan(x).any())
-
         x = self.lstm_proj_layer(x)
-        # print("shape:", x.shape, ", lstm proj layer:", torch.isnan(x).any())
 
         for lstm_block in self.lstms:
             x = lstm_block(x)
-        # print("shape:", x.shape, ", lstm blocks:", torch.isnan(x).any())
 
         x = self.attn_layer_norm(x + self.attention(x, x, x)[0])
-        # print("shape:", x.shape, ", attention:", torch.isnan(x).any())
 
         x = x.mean(dim=1)
-        # print("shape:", x.shape, ", mean pooling:", torch.isnan(x).any())
 
         x = self.dropout(x)
-        # print("shape:", x.shape, ", dropout:", torch.isnan(x).any())
 
         logits = self.fc(x)
-        # print("shape:", logits.shape, ", logits:", torch.isnan(logits).any())
         return logits
 
 
 def get_model_instance(num_words, device="cpu"):
     input_size = FEAT_NUM * 3
     hidden_size = 384
-    num_lstm_blocks = 3
-    model = AttentionBiLSTM(input_size, hidden_size, num_lstm_blocks, num_words)
+    num_lstm_blocks = 4
+    model = AttentionBiLSTM(
+        input_size,
+        hidden_size,
+        num_lstm_blocks,
+        num_words,
+        lstm_dropout_prob=0.5,
+        attn_dropout_prob=0.5,
+        network_dropout_prob=0.5,
+    )
+    if device == "cuda" and torch.cuda.device_count() > 1:
+        print(f"Using {torch.cuda.device_count()} GPUs!")
+        model = nn.DataParallel(model)
     return model.to(device)
 
 

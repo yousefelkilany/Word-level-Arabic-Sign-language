@@ -12,10 +12,11 @@ from starlette.middleware.cors import CORSMiddleware
 import numpy as np
 import cv2
 
-from dataloader import SEQ_LEN
 from model import load_onnx_model, onnx_inference
 from prepare_kps import extract_frame_keypoints
-from utils import AR_WORDS, MODELS_DIR, detect_motion, init_mediapipe_worker
+from utils import SEQ_LEN, AR_WORDS, MODELS_DIR
+from cv2_utils import detect_motion
+from mediapipe_utils import init_mediapipe_worker
 
 
 async def get_frame_kps(frame):
@@ -93,9 +94,8 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
 
             if motion_detected[1] is not None:
                 gray_3ch = np.tile(motion_detected[1][:, :, None], (1, 1, 3))
-                await websocket.send_bytes(
-                    cv2.imencode(".jpg", frame + gray_3ch)[1].tobytes()
-                )
+                frame = frame + gray_3ch
+                await websocket.send_bytes(cv2.imencode(".jpg", frame)[1].tobytes())
 
             if not has_changes:
                 client_state["idle_frames_num"] += 1

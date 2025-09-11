@@ -1,7 +1,8 @@
 import torch
 import numpy as np
+from tqdm import tqdm
 
-from utils import tqdm, extract_num_words_from_checkpoint
+from utils import DEVICE, extract_num_words_from_checkpoint
 from dataloader import prepare_dataloader
 from model import load_onnx_model, onnx_inference
 from export import cli
@@ -17,15 +18,13 @@ if __name__ == "__main__":
     )
     onnx_model_path = onnx_model_path or f"{checkpoint_path}.onnx"
 
-    device = ["cpu", "cuda"][0]
     num_words = extract_num_words_from_checkpoint(checkpoint_path)
     if not num_words:
         raise ValueError("Couldn't determine `num_words` for loading dataset")
 
-    test_dl = prepare_dataloader("test", range(1, num_words + 1), device=device)
+    test_dl = prepare_dataloader("test", range(1, num_words + 1))
 
-    device = ["cpu", "cuda"][0]
-    ort_session = load_onnx_model(onnx_model_path, device=device)
+    ort_session = load_onnx_model(onnx_model_path, device=DEVICE)
 
     # test_acc = 0
     all_labels = []

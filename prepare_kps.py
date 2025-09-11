@@ -5,13 +5,13 @@ import numpy as np
 from itertools import product
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from tqdm import tqdm
 
 import mediapipe as mp
 
-from utils import (
-    tqdm,
-    DATA_DIR,
-    KPS_DIR,
+from utils import DATA_DIR, KPS_DIR
+import mediapipe_utils as mp_utils
+from mediapipe_utils import (
     KP2SLICE,
     init_mediapipe_worker,
     pose_kps_idx,
@@ -24,13 +24,9 @@ from utils import (
     mp_hands_palm_idx,
 )
 
-
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os_join = os.path.join
-
-# set by `init_mediapipe_worker`
-pose_model, face_model, hands_model = None, None, None
 
 
 def extract_frame_keypoints(frame_rgb, adjusted=False):
@@ -41,6 +37,12 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
     rh_kps = all_kps[KP2SLICE["rh"]]
     lh_kps = all_kps[KP2SLICE["lh"]]
     np_xyz = np.dtype((float, 3))
+
+    pose_model, face_model, hands_model = (
+        mp_utils.pose_model,
+        mp_utils.face_model,
+        mp_utils.hands_model,
+    )
 
     frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
 
@@ -134,10 +136,10 @@ def process_video_wrapper(task_info):
 
 
 def save_grouped_results(result):
-    try:
-        video_group_key, videos_name_kps = result
-        signer, split, word = video_group_key
+    video_group_key, videos_name_kps = result
+    signer, split, word = video_group_key
 
+    try:
         word_kps_path = os_join(KPS_DIR, "all_kps", f"{signer}-{split}", word)
         os.makedirs(os.path.dirname(word_kps_path), exist_ok=True)
 
@@ -183,7 +185,7 @@ def extract_keypoints_from_frames(
     # chunksize = int(len(videos_tasks) / num_workers + 0.5)  # ceiling
     # print(f"Using {num_workers} workers with chunksize={chunksize}")
     with ProcessPoolExecutor(
-        max_workers=num_workers, initializer=init_mediapipe_worker()
+        max_workers=num_workers, initializer=init_mediapipe_worker
     ) as executor:
         # experiment with chunksize=chunksize
         results_itr = executor.map(process_video_wrapper, videos_tasks)

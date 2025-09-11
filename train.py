@@ -1,8 +1,6 @@
 import os
 from datetime import datetime
-
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 import torch
 from torch import optim, nn
@@ -10,25 +8,28 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from dataloader import prepare_dataloaders
 from model import get_model_instance, load_model, save_model
-from utils import tqdm
+from utils import DEVICE
 
 
-def train(model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs):
+def train(
+    model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, device="cpu"
+):
     best_val_loss = float("inf")
     best_checkpoint = ""
     timestamp = datetime.now().strftime("%b%d_%H-%M-%S")
     checkpoint_root = f"checkpoints/checkpoint_{timestamp}-words_{model.num_classes}"
     os.makedirs(checkpoint_root)
 
-    for epoch in tqdm(range(num_epochs), desc="Training"):
+    for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
         model.train()
         train_loss = 0.0
         for kps, labels in tqdm(
             train_dl,
-            desc=f"Training Epoch {epoch + 1}",
+            desc=f"Training Epoch {epoch}",
             total=len(train_dl),
             leave=False,
         ):
+            kps, labels = kps.to(device), labels.to(device)
             optimizer.zero_grad()
             predicted = model(kps)
             loss_ = loss(predicted, labels)
@@ -39,8 +40,9 @@ def train(model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs):
         model.eval()
         val_loss = 0.0
         for kps, labels in tqdm(
-            val_dl, desc=f"Eval Epoch {epoch + 1}", total=len(val_dl), leave=False
+            val_dl, desc=f"Eval Epoch {epoch}", total=len(val_dl), leave=False
         ):
+            kps, labels = kps.to(device), labels.to(device)
             predicted = model(kps)
             val_loss += loss(predicted, labels).item()
 
@@ -58,47 +60,56 @@ def train(model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs):
         if abs(new_lr - last_lr) > 1e-6:
             print(f"new lr = {new_lr}")
 
-        print(f"Epoch {epoch + 1}/{num_epochs}")
+        print(f"Epoch {epoch}/{num_epochs}")
         print(f"Training Loss: {train_loss:.4f}")
         print(f"Validation Loss: {val_loss:.4f}")
 
     return best_checkpoint
 
 
-def test_confusion_matrix(model, test_dl):
-    model.eval()
-    test_labels = []
-    test_predicted = []
-    with torch.no_grad():
-        for kps, labels in tqdm(test_dl, desc="Testing"):
-            test_labels.extend(labels)
-            outputs = model(kps)
-            _, predicted = torch.max(outputs.data, 1)
-            test_predicted.extend(predicted)
-    return confusion_matrix(test_labels, test_predicted)
+def visualize_metrics(best_checkpoint):
+    from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+    import matplotlib.pyplot as plt
+
+    def test_confusion_matrix(model, test_dl, device="cpu"):
+        model.eval()
+        test_labels = []
+        test_predicted = []
+        with torch.no_grad():
+            for kps, labels in tqdm(test_dl, desc="Testing"):
+                kps, labels = kps.to(device), labels.to(device)
+                test_labels.extend(labels)
+                outputs = model(kps)
+                _, predicted = torch.max(outputs.data, 1)
+                test_predicted.extend(predicted)
+        return confusion_matrix(test_labels, test_predicted)
+
+    model = load_model(best_checkpoint, device=DEVICE)
+    conf_mat = test_confusion_matrix(model, test_dl, DEVICE)
+    disp = ConfusionMatrixDisplay(conf_mat)
+    disp.plot(cmap=plt.cm.Blues)  # type: ignore
+    plt.title("KArSL Confusion Matrix")
+    plt.savefig("KArSL Confusion Matrix.jpg")
 
 
 if __name__ == "__main__":
-    device = ["cpu", "cuda"][0]
-    num_words = 263
+    num_words = 502
     train_dl, val_dl, test_dl = prepare_dataloaders(
-        range(1, num_words + 1), device=device
+        range(1, num_words + 1), num_workers=4
     )
 
-    num_epochs = 10
+    num_epochs = 20
     lr = 1e-3
     weight_decay = 1e-4
-    model = get_model_instance(num_words, device)
+    model = get_model_instance(num_words, DEVICE)
     loss = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = ReduceLROnPlateau(optimizer, "min", factor=0.2, patience=3)
 
     best_checkpoint = train(
-        model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs
+        model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, DEVICE
     )
-    model = load_model(best_checkpoint, device=device)
-    conf_mat = test_confusion_matrix(model, test_dl)
-    disp = ConfusionMatrixDisplay(conf_mat)
-    disp.plot(cmap=plt.cm.Blues)  # type: ignore
-    plt.title("KArSL Confusion Matrix")
-    plt.savefig("KArSL Confusion Matrix.jpg")
+
+    print(f"Best model checkpoint: {best_checkpoint}")
+
+    # visualize_metrics(best_checkpoint)
