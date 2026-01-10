@@ -32,6 +32,9 @@ if __name__ == "__main__":
         for kps, labels in tqdm(test_dl, desc="Testing"):
             onnx_input = [tensor.numpy(force=True) for tensor in (kps,)]
             predicted = onnx_inference(ort_session, onnx_input)
+            if not predicted:
+                continue
+
             predicted = np.argmax(predicted, 1)
             # test_acc += (predicted == labels).sum().item()
             all_labels.extend(labels)

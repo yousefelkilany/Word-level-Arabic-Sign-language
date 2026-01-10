@@ -35,4 +35,4 @@ def detect_motion(prev_gray, gray, motion_thresh=0.1):
 
     blur = gaussian_blur(diff, kernel_dim=2)
     _, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)
-    return blur, thresh, np.count_nonzero(thresh) // np.size(thresh) > motion_thresh
+    return blur, thresh, (np.count_nonzero(thresh) // np.size(thresh)) > motion_thresh

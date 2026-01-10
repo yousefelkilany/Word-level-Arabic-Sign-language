@@ -30,19 +30,25 @@ os_join = os.path.join
 
 
 def extract_frame_keypoints(frame_rgb, adjusted=False):
+    # do some preprocessing on frame if needed
+    ...
+
     # define numpy views, pose=6 -> face=136 -> rh=21 -> lh=21
-    all_kps = np.zeros((184, 3))
+    all_kps_num = (
+        len(KP2SLICE["pose"])
+        + len(KP2SLICE["face"])
+        + len(KP2SLICE["rh"])
+        + len(KP2SLICE["lh"])
+    )
+    all_kps = np.zeros((all_kps_num, 3))
     pose_kps = all_kps[KP2SLICE["pose"]]
     face_kps = all_kps[KP2SLICE["face"]]
     rh_kps = all_kps[KP2SLICE["rh"]]
     lh_kps = all_kps[KP2SLICE["lh"]]
     np_xyz = np.dtype((float, 3))
 
-    pose_model, face_model, hands_model = (
-        mp_utils.pose_model,
-        mp_utils.face_model,
-        mp_utils.hands_model,
-    )
+    def lm_xyz(lm):
+        return (lm.x, lm.y, lm.z)
 
     frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
 
@@ -55,13 +61,13 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
 
     def get_pose():
         nonlocal pose_kps
-        results = pose_model.detect(frame)
+        results = mp_utils.pose_model.detect(frame)
         if results.pose_landmarks is None or len(results.pose_landmarks) == 0:
             return
 
         lms = results.pose_landmarks[0]
         pose_kps[:] = np.fromiter(
-            ((lms[idx].x, lms[idx].y, lms[idx].z) for idx in pose_kps_idx), dtype=np_xyz
+            (lm_xyz(lms[idx]) for idx in pose_kps_idx), dtype=np_xyz
         )
         if adjusted:
             pose_kps -= pose_kps[mp_pose_nose_idx]
@@ -69,13 +75,13 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
 
     def get_face():
         nonlocal face_kps
-        results = face_model.detect(frame)
+        results = mp_utils.face_model.detect(frame)
         if results.face_landmarks is None or len(results.face_landmarks) == 0:
             return
 
         lms = results.face_landmarks[0]
         face_kps[:] = np.fromiter(
-            ((lms[idx].x, lms[idx].y, lms[idx].z) for idx in face_kps_idx), dtype=np_xyz
+            (lm_xyz(lms[idx]) for idx in face_kps_idx), dtype=np_xyz
         )
         if adjusted:
             face_kps -= face_kps[mp_face_nose_idx]
@@ -83,15 +89,13 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
 
     def get_hands():
         nonlocal rh_kps, lh_kps
-        results = hands_model.detect(frame)
+        results = mp_utils.hands_model.detect(frame)
         if results.hand_landmarks is None:
             return
 
         for handedness, hand_lms in zip(results.handedness, results.hand_landmarks):
             target_hand = lh_kps if handedness[0].category_name == "Left" else rh_kps
-            target_hand[:] = np.fromiter(
-                ((lm.x, lm.y, lm.z) for lm in hand_lms), dtype=np_xyz
-            )
+            target_hand[:] = np.fromiter((lm_xyz(lm) for lm in hand_lms), dtype=np_xyz)
             if adjusted:
                 target_hand -= target_hand[mp_hand_wrist_idx]
                 target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)
@@ -103,6 +107,9 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
         _pose_res.result()
         _face_res.result()
         _hand_res.result()
+
+    # do some preprocessing on kps if needed
+    ...
 
     return all_kps
 

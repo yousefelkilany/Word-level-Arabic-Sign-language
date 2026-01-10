@@ -6,11 +6,7 @@ from os.path import join as os_join
 import numpy as np
 from tqdm import tqdm
 
-KAGGLE_KPS_DIR = "/kaggle/input"
-LOCAL_DEV = int(os.environ.get("LOCAL_DEV", 0))
-KPS_DIR = os_join([KAGGLE_KPS_DIR, "data"][LOCAL_DEV], "karsl-kps")
-SEQ_LEN = 60
-FEAT_NUM = 184
+from utils import FEAT_NUM, KPS_DIR, SEQ_LEN
 
 
 def load_raw_kps(split, signers, selected_words):

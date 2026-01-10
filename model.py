@@ -1,6 +1,7 @@
 import numpy as np
 import onnxruntime
 import torch
+from onnxruntime.capi.onnxruntime_inference_collection import InferenceSession
 from torch import nn
 
 from utils import FEAT_NUM, extract_num_words_from_checkpoint
@@ -117,7 +118,7 @@ def load_model(checkpoint_path, model=None, num_words=None, device="cpu") -> nn.
     return model
 
 
-def load_onnx_model(onnx_model_path, device="cpu"):
+def load_onnx_model(onnx_model_path, device="cpu") -> InferenceSession:
     providers = [
         ["CPUExecutionProvider"],
         [("CUDAExecutionProvider", {"device_id": 0})],
@@ -125,10 +126,12 @@ def load_onnx_model(onnx_model_path, device="cpu"):
     return onnxruntime.InferenceSession(onnx_model_path, providers=providers)
 
 
-def onnx_inference(ort_session, input_data) -> np.ndarray:
+def onnx_inference(ort_session: InferenceSession, input_data) -> np.ndarray | None:
     inputs = {
         ort_input.name: input_tensor
         for ort_input, input_tensor in zip(ort_session.get_inputs(), input_data)
     }
     output_name = ort_session.get_outputs()[0].name
-    return ort_session.run([output_name], inputs)[0]
+    outputs = ort_session.run([output_name], inputs)[0]
+    if isinstance(outputs, np.ndarray):
+        return outputs

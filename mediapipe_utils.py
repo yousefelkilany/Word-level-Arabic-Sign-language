@@ -88,6 +88,14 @@ KP2SLICE = {
     "lh": LH_KP2SLICE,
 }
 
+from mediapipe.tasks.python.vision.pose_landmarker import PoseLandmarker
+from mediapipe.tasks.python.vision.face_landmarker import FaceLandmarker
+from mediapipe.tasks.python.vision.hand_landmarker import HandLandmarker
+
+pose_model: PoseLandmarker
+face_model: FaceLandmarker
+hands_model: HandLandmarker
+
 
 def init_mediapipe_worker(inference_mode=False):
     global pose_model, face_model, hands_model

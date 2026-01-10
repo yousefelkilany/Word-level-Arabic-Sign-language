@@ -22,15 +22,17 @@ MS_30FPS_INT = 1000 // 30
 SEQ_LEN = 60
 FEAT_NUM = 184
 
+MAX_WORKERS = 4
+
 
 def init_words():
     global AR_WORDS, EN_WORDS
-    if AR_WORDS is None or EN_WORDS is None:
+    if len(AR_WORDS) == 0 or len(EN_WORDS) == 0:
         words = pd.read_excel(LABELS_PATH, usecols=["Sign-Arabic", "Sign-English"])
         AR_WORDS, EN_WORDS = words.to_dict(orient="list").items()
 
 
-AR_WORDS, EN_WORDS = (None,) * 2
+AR_WORDS, EN_WORDS = [], []
 init_words()
 
 
