@@ -1,29 +1,29 @@
 import os
-import cv2
-import numpy as np
 from itertools import product
 
+import cv2
+import numpy as np
 from mediapipe.framework.formats import landmark_pb2
-from mediapipe.python.solutions.drawing_utils import DrawingSpec, draw_landmarks
-from mediapipe.python.solutions.drawing_styles import (
-    get_default_pose_landmarks_style,
-    get_default_face_mesh_tesselation_style,
-    get_default_hand_landmarks_style,
-    get_default_hand_connections_style,
-)
 from mediapipe.python.solutions import face_mesh, hands
-
-from utils import DATA_DIR, KPS_DIR
-from mediapipe_utils import (
-    KP2SLICE,
-    pose_kps_idx,
-    POSE_KPS_CONNECTIONS,
-    mp_pose_landmark,
-    face_kps_idx,
-    FACE_KPS_CONNECTIONS,
-    hand_kps_idx,
-    HAND_KPS_CONNECTIONS,
+from mediapipe.python.solutions.drawing_styles import (
+    get_default_face_mesh_tesselation_style,
+    get_default_hand_connections_style,
+    get_default_hand_landmarks_style,
+    get_default_pose_landmarks_style,
 )
+from mediapipe.python.solutions.drawing_utils import DrawingSpec, draw_landmarks
+
+from mediapipe_utils import (
+    FACE_KPS_CONNECTIONS,
+    HAND_KPS_CONNECTIONS,
+    KP2SLICE,
+    POSE_KPS_CONNECTIONS,
+    face_kps_idx,
+    hand_kps_idx,
+    mp_pose_landmark,
+    pose_kps_idx,
+)
+from utils import DATA_DIR, KPS_DIR
 
 landmark_styling_fallback = DrawingSpec(
     color=(224, 224, 224), thickness=1, circle_radius=1

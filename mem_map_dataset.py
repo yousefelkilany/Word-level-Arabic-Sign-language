@@ -1,6 +1,8 @@
-import numpy as np
 from os.path import join as os_join
+
+import numpy as np
 from torch.utils.data import Dataset
+
 from utils import PREPROCESSED_DIR
 
 
@@ -18,5 +20,5 @@ class KArSLDataset(Dataset):
     def __len__(self):
         return len(self.y)
 
-    def __getitem__(self, idx):
-        return self.X[idx], self.y[idx]
+    def __getitem__(self, index):
+        return self.X[index], self.y[index]

@@ -1,7 +1,6 @@
-import numpy as np
 from torch.utils.data import Dataset
 
-from dataset_preprocessing import load_raw_kps, prepare_raw_kps, prepare_labels
+from dataset_preprocessing import load_raw_kps, prepare_labels, prepare_raw_kps
 
 
 class KArSLDataset(Dataset):
@@ -14,5 +13,5 @@ class KArSLDataset(Dataset):
     def __len__(self):
         return len(self.X)
 
-    def __getitem__(self, idx):
-        return self.X[idx], self.y[idx]
+    def __getitem__(self, index):
+        return self.X[index], self.y[index]

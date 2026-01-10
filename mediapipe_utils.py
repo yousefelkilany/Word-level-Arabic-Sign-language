@@ -1,4 +1,5 @@
 import os
+
 from mediapipe.tasks.python import BaseOptions, vision
 
 delegate = BaseOptions.Delegate.CPU

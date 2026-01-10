@@ -1,9 +1,10 @@
 import argparse
-import torch
-import onnx
 
-from utils import DEVICE, FEAT_NUM, SEQ_LEN
+import onnx
+import torch
+
 from model import load_model, load_onnx_model, onnx_inference
+from utils import DEVICE, FEAT_NUM, SEQ_LEN
 
 
 def cli():

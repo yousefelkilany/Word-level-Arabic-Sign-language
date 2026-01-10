@@ -1,13 +1,12 @@
-import torch
 import numpy as np
+import torch
+from sklearn.metrics import accuracy_score, f1_score
 from tqdm import tqdm
 
-from utils import DEVICE, extract_num_words_from_checkpoint
 from dataloader import prepare_dataloader
-from model import load_onnx_model, onnx_inference
 from export import cli
-
-from sklearn.metrics import f1_score, accuracy_score
+from model import load_onnx_model, onnx_inference
+from utils import DEVICE, extract_num_words_from_checkpoint
 
 if __name__ == "__main__":
     args = cli()

@@ -1,28 +1,28 @@
-import os
-import cv2
 import argparse
-import numpy as np
-from itertools import product
+import os
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from itertools import product
+
+import cv2
+import mediapipe as mp
+import numpy as np
 from tqdm import tqdm
 
-import mediapipe as mp
-
-from utils import DATA_DIR, KPS_DIR
 import mediapipe_utils as mp_utils
 from mediapipe_utils import (
     KP2SLICE,
-    init_mediapipe_worker,
-    pose_kps_idx,
-    mp_pose_nose_idx,
-    mp_pose_shoulders_idx,
     face_kps_idx,
-    mp_face_nose_idx,
+    init_mediapipe_worker,
     mp_face_eyes_idx,
+    mp_face_nose_idx,
     mp_hand_wrist_idx,
     mp_hands_palm_idx,
+    mp_pose_nose_idx,
+    mp_pose_shoulders_idx,
+    pose_kps_idx,
 )
+from utils import DATA_DIR, KPS_DIR
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"

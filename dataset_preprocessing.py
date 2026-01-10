@@ -1,9 +1,9 @@
 import argparse
-import numpy as np
-from os.path import join as os_join
-import os
 import gc as garbage_collect
+import os
+from os.path import join as os_join
 
+import numpy as np
 from tqdm import tqdm
 
 KAGGLE_KPS_DIR = "/kaggle/input"

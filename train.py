@@ -1,10 +1,10 @@
 import os
 from datetime import datetime
-from tqdm import tqdm
 
 import torch
-from torch import optim, nn
+from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from tqdm import tqdm
 
 from dataloader import prepare_dataloaders
 from model import get_model_instance, load_model, save_model
@@ -68,8 +68,8 @@ def train(
 
 
 def visualize_metrics(best_checkpoint):
-    from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
     import matplotlib.pyplot as plt
+    from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
     def test_confusion_matrix(model, test_dl, device="cpu"):
         model.eval()

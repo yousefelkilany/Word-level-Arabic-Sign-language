@@ -1,8 +1,7 @@
+import numpy as np
 import onnxruntime
 import torch
 from torch import nn
-
-import numpy as np
 
 from utils import FEAT_NUM, extract_num_words_from_checkpoint
 

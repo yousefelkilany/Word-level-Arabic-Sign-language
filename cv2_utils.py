@@ -1,5 +1,5 @@
-import numpy as np
 import cv2
+import numpy as np
 
 
 def gaussian_blur(diff, sigma_factor=0.005, kernel_dim=1):

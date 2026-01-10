@@ -1,22 +1,22 @@
-from collections import defaultdict
-import os
 import asyncio
+import os
+from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 
+import cv2
+import fastapi
+import numpy as np
+import uvicorn
+from dotenv import dotenv_values
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-import uvicorn
-import fastapi
-from starlette.middleware.cors import CORSMiddleware
 
-import numpy as np
-import cv2
-
-from model import load_onnx_model, onnx_inference
-from prepare_kps import extract_frame_keypoints
-from utils import SEQ_LEN, AR_WORDS, MODELS_DIR
 from cv2_utils import detect_motion
 from mediapipe_utils import init_mediapipe_worker
+from model import load_onnx_model, onnx_inference
+from prepare_kps import extract_frame_keypoints
+from utils import AR_WORDS, MODELS_DIR, SEQ_LEN
 
 
 async def get_frame_kps(frame):
@@ -34,7 +34,11 @@ def run_inference(kps_buffer):
     return onnx_inference(model, kps_buffer)
 
 
-onnx_checkpoint_path = os.path.join(MODELS_DIR, "checkpoint_Aug10_14-59-17-9.pth.onnx")
+env = dotenv_values()
+ONNX_CHECKPOINT_FILENAME = (
+    env.get("ONNX_CHECKPOINT_FILENAME") or "ONNX_CHECKPOINT_FILENAME"
+)
+onnx_checkpoint_path = os.path.join(MODELS_DIR, ONNX_CHECKPOINT_FILENAME)
 model = load_onnx_model(onnx_checkpoint_path)
 
 NUM_IDLE_FRAMES = 10

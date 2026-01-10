@@ -1,9 +1,9 @@
-import numpy as np
-from os.path import join as os_join
 from functools import lru_cache
-from tqdm import tqdm
+from os.path import join as os_join
 
+import numpy as np
 from torch.utils.data import Dataset
+from tqdm import tqdm
 
 from dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 from utils import KPS_DIR
@@ -44,7 +44,7 @@ class KArSLDataset(Dataset):
         """Loads a single sequence from a file and processes it."""
         return prepare_raw_kps([self._load_file(path)[vid]])[0]
 
-    def __getitem__(self, idx):
-        path, vid, chunk_idx, label = self.samples[idx]
+    def __getitem__(self, index):
+        path, vid, chunk_idx, label = self.samples[index]
         processed_chunks = self._load_and_process_file(path, vid)
         return processed_chunks[chunk_idx], np.longlong(label)
