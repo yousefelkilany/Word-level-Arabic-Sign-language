@@ -9,12 +9,26 @@ This project implements a real-time Arabic Sign Language (ArSL) recognition syst
 * **Deep Learning Model**: Bidirectional LSTM with Multi-Head Self-Attention.
 * **Efficient Pipeline**: Preprocessing and keypoint extraction pipeline optimized for CPU execution.
 
+## Configuration
+
+Create a `.env` file in the root directory based on `.env.example`. This is **required** for correct path resolution.
+
+```bash
+cp .env.example .env
+```
+
+| Variable                   | Description                                                                                       | Default                 |
+| -------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------- |
+| `ONNX_CHECKPOINT_FILENAME` | Filename of the ONNX model in `models/`                                                           | `checkpoint...onnx`     |
+| `DOMAIN_NAME`              | Allowed origin for CORS (Frontend URL)                                                            | `http://localhost:8000` |
+| `LOCAL_DEV`                | **Important**: Set to `1` to use local `data/` and `models/` directories instead of Kaggle paths. | `1`                     |
+
 ## Installation
 
 ### Prerequisites
 
-* Python 3.12 or higher
-* [uv](https://github.com/astral-sh/uv) package manager
+* **Docker** (Recommended for easy setup)
+* *OR* **Python 3.12+** and [uv](https://github.com/astral-sh/uv)
 
 ### Steps
 
@@ -25,33 +39,55 @@ This project implements a real-time Arabic Sign Language (ArSL) recognition syst
     cd word-level-arabic-sign-language
     ```
 
-2. **Install Dependencies:**
-    This project uses `uv` for dependency management.
-
-    ```bash
-    # Sync dependencies from pyproject.toml
-    uv sync
-    ```
+2. **Setup Configuration:**
+    Ensure you have created the `.env` file as described in the Configuration section.
 
 ## Usage
 
-### Running the Backend
+### Option 1: Running with Docker (Recommended)
 
-Start the FastAPI server using `uvicorn` (or the provided `Makefile` if on Windows/Linux with Make installed).
+Build and start the services using Docker Compose. This handles all dependencies and environment setup.
 
 ```bash
-python api.py
-# OR if you have make installed
-make local_setup && python api.py
+docker-compose up --build
 ```
 
-The server defaults to `http://0.0.0.0:8000`.
+The API will be available at `http://localhost:8000`.
+
+*Note: The project mounts the current directory to `/app` in the container, so code changes are reflected immediately.*
+
+### Option 2: Running Locally
+
+1. **Install Dependencies:**
+
+    ```bash
+    uv sync
+    ```
+
+2. **Run the Backend:**
+
+    You can run the application directly with Python or use the provided Makefile.
+
+    ```bash
+    # Direct Python execution (Ensure LOCAL_DEV=1 is in .env)
+    python api.py
+
+    # OR with Make (Linux/Windows with Make)
+    make local_setup && python api.py
+    ```
+
+    **Makefile commands:**
+    * `make local_setup`: Sets `LOCAL_DEV=1` for the command duration.
+    * `make train`: Runs the training script.
+    * `make cpu_train`: Runs training on CPU (`USE_CPU=1`).
 
 ### Accessing the Web Interface
 
 Navigate to [http://localhost:8000/live-signs](http://localhost:8000/live-signs) in a web browser. Ensure the browser has permission to access the webcam. The system will detect the user's pose and hands to predict Arabic signs in real-time.
 
-### Local Setup
+### Local Setup (Data/Labels)
+
+For training or evaluation manually:
 
 * **Labels**: Download `KARSL-502_Labels.xlsx` from the Google Drive link and place it in the `data/` directory.
 * **Data**: Place raw videos or preprocessed keypoints in the `data/` directory.
@@ -64,6 +100,8 @@ Navigate to [http://localhost:8000/live-signs](http://localhost:8000/live-signs)
 * `utils.py`, `mediapipe_utils.py`: Helper functions for data processing and keypoint extraction.
 * `live-signs.html/js`: Frontend interface files.
 * `onnx_benchmark.py`: Utility for benchmarking ONNX model performance.
+* `Dockerfile` & `docker-compose.yml`: Container configuration.
+* `models/`: Directory for ONNX models.
 
 ## Model Architecture
 
@@ -74,13 +112,13 @@ The core model is an **AttentionBiLSTM** consisting of the following components:
 3. **Self-Attention**: Multi-Head Attention mechanism to capture temporal dependencies.
 4. **Classification Head**: Fully Connected layer to output probabilities for 502 classes.
 
-### Resources
+## Resources
 
 * **[Official Website](https://hamzah-luqman.github.io/KArSL/)**: The primary source for information about the dataset.
 * **[Kaggle Dataset](https://www.kaggle.com/datasets/yousefdotpy/karsl-502)**: Used for training models and extracting keypoints on Kaggle GPUs.
 * **[Google Drive](https://drive.google.com/drive/folders/1LI6L7MSXOIwSgbVL0zmjnw7wryZ6aYl-)**: Contains the raw dataset and the required `KARSL-502_Labels.xlsx` file.
 
-## Dataset
+### Dataset
 
 This project relies on the **KArSL (Video dataset for Word-Level Arabic sign language)** dataset.
 
