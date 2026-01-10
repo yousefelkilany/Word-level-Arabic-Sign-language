@@ -18,6 +18,10 @@ hand_base_options = BaseOptions(
 # exp 2: I tried VIDEO mode with global timestamp so it doesn't require re-initialization, but misses faces and hands alot, since it loses track of the older ones but doesn't re-detect them.
 running_mode = vision.RunningMode.IMAGE
 
+# The idea of points selection is inspired from MuteMotion notebook, I then updated
+# magic numbers to corresponding keypoints names from mediapipe class members definitions
+# https://www.kaggle.com/code/abd0kamel/mutemotion-wlasl-translation-model?scriptVersionId=154920607&cellId=17
+
 from mediapipe.python.solutions.pose import PoseLandmark as mp_pose_landmark
 from mediapipe.python.solutions import face_mesh_connections as mp_facemesh
 from mediapipe.python.solutions.hands import HandLandmark as mp_hand_landmark

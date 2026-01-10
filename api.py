@@ -56,7 +56,7 @@ keypoints_detection_executor = ProcessPoolExecutor(
 origins = ["localhost"]  # TODO: update with domain name
 app = fastapi.FastAPI()
 app.add_middleware(
-    CORSMiddleware,
+    CORSMiddleware,  # type: ignore
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
