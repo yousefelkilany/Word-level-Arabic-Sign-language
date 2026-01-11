@@ -12,13 +12,12 @@ from fastapi.staticfiles import StaticFiles
 
 from live_frame_processing import (
     FrameBuffer,
+    get_frame_kps,
     process_motion,
     producer_handler,
-    get_frame_kps,
 )
 from model import load_onnx_model, onnx_inference
 from utils import AR_WORDS, MODELS_DIR, SEQ_LEN
-
 
 env = dotenv_values()
 ONNX_CHECKPOINT_FILENAME = (
@@ -48,7 +47,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="./static", html=True), name="static")
+static_assets_dir = "./static"
+app.mount("/static", StaticFiles(directory=static_assets_dir, html=True), name="static")
 
 
 @app.websocket("/live-signs")
@@ -168,14 +168,10 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
             del detection_state[client_id]
 
 
+@app.get("/")
 @app.get("/live-signs")
 async def live_signs_ui():
-    return FileResponse("live-signs.html")
-
-
-@app.get("/")
-async def root():
-    return {"instructions": "go to /live-signs to start detection"}
+    return FileResponse(f"{static_assets_dir}/live-signs.html")
 
 
 if __name__ == "__main__":

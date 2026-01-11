@@ -7,5 +7,4 @@ services:
       - .env
     volumes:
       - .:/app
-    # Restart policy
     restart: unless-stopped

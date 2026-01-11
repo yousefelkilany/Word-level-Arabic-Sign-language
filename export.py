@@ -38,7 +38,7 @@ if __name__ == "__main__":
         dynamo=True,
     )
     if not onnx_model:
-        raise ValueError("Failed to export ONNX model")
+        raise ValueError("❌ Failed to export ONNX model ❌")
 
     try:
         onnx.checker.check_model(onnx_model.model_proto)
@@ -51,13 +51,11 @@ if __name__ == "__main__":
     ort_session = load_onnx_model(onnx_model_path)
     onnxruntime_output = onnx_inference(ort_session, onnx_input)
 
-    # print(f"{torch_output.shape = }")
-    # print(f"{onnxruntime_output.shape = }")
-    # print("Torch output:", torch_output[0])
-    # print("ONNX Runtime output:", onnxruntime_output[0])
+    if onnxruntime_output is None:
+        raise Exception("❌ ONNX Runtime inference failed! ❌")
 
     assert len(torch_output) == len(onnxruntime_output), (
-        "Mismatch in number of outputs between PyTorch and ONNX Runtime"
+        "❌ Mismatch in number of outputs between PyTorch and ONNX Runtime ❌"
     )
     for torch_output, onnxruntime_output in zip(torch_output, onnxruntime_output):
         torch.testing.assert_close(
