@@ -22,6 +22,7 @@ cp .env.example .env
 | `ONNX_CHECKPOINT_FILENAME` | Filename of the ONNX model in `models/`                                                           | `checkpoint...onnx`     |
 | `DOMAIN_NAME`              | Allowed origin for CORS (Frontend URL)                                                            | `http://localhost:8000` |
 | `LOCAL_DEV`                | **Important**: Set to `1` to use local `data/` and `models/` directories instead of Kaggle paths. | `1`                     |
+| `USE_CPU`                  | Force PyTorch and ONNX to use CPU even if GPU is available.                                       | `1`                     |
 
 ## Installation
 
@@ -78,8 +79,26 @@ The API will be available at `http://localhost:8000`.
 
     **Makefile commands:**
     * `make local_setup`: Sets `LOCAL_DEV=1` for the command duration.
-    * `make train`: Runs the training script.
+    * `make train`: Runs the training script (`train.py`).
     * `make cpu_train`: Runs training on CPU (`USE_CPU=1`).
+    * `make export_model`: Exports a PyTorch checkpoint to ONNX (`export.py`).
+    * `make onnx_benchmark`: Benchmarks the ONNX model performance (`onnx_benchmark.py`).
+
+### Model Export
+
+To export a trained PyTorch model to ONNX format:
+
+```bash
+make export_model checkpoint_path=path/to/checkpoint.pth onnx_path=path/to/output_onnx/
+```
+
+### Benchmarking
+
+To benchmark the inference speed of an ONNX model:
+
+```bash
+make onnx_benchmark checkpoint_path=path/to/model_onnx.onnx
+```
 
 ### Accessing the Web Interface
 
@@ -95,13 +114,20 @@ For training or evaluation manually:
 ## Repository Structure
 
 * `api.py`: FastAPI application and WebSocket handlers.
-* `model.py`: PyTorch model architecture definition.
-* `train.py`: Training loop and validation procedures.
-* `utils.py`, `mediapipe_utils.py`: Helper functions for data processing and keypoint extraction.
-* `live-signs.html/js`: Frontend interface files.
-* `onnx_benchmark.py`: Utility for benchmarking ONNX model performance.
-* `Dockerfile` & `docker-compose.yml`: Container configuration.
-* `models/`: Directory for ONNX models.
+* `run.py`: Entry point for starting the FastAPI server with reload enabled.
+* `model.py`: PyTorch model architecture definition (**AttentionBiLSTM**).
+* `train.py`: Training loop, validation, and checkpoint saving.
+* `export.py`: Utility to export PyTorch models to ONNX with consistency checking.
+* `onnx_benchmark.py`: Benchmarks ONNX model inference latency.
+* `dataset_preprocessing.py`: Processes raw dataset videos into structured formats.
+* `prepare_kps.py`: Extracts keypoints from the dataset using MediaPipe.
+* `draw_kps.py`: Visualization utility for MediaPipe keypoints.
+* `utils.py`, `mediapipe_utils.py`, `cv2_utils.py`: Core utilities for processing and landmarks.
+* `static/`: Frontend interface files (`live-signs.html`, JS, CSS).
+* `*.task`: Pre-trained MediaPipe landmark models for hands, pose, and face.
+* `Dockerfile` & `docker-compose.yml`: Containerization configuration.
+* `models/`: Production-ready ONNX models.
+* `checkpoints/`: Training output and model weights.
 
 ## Model Architecture
 
