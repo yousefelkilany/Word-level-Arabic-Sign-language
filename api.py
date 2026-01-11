@@ -92,7 +92,7 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
                 continue
 
             prev_gray = gray
-            gray, motion_frame, _, motion_thresh, has_motion = await asyncio.to_thread(
+            gray, motion_frame, motion_thresh, has_motion = await asyncio.to_thread(
                 process_motion, frame, prev_gray
             )
 

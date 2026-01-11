@@ -42,7 +42,7 @@ def process_motion(frame, prev_gray):
     has_motion = (prev_gray is not None) and motion_detected
 
     motion_frame = None
-    if motion_thresh:
+    if motion_thresh is not None:
         gray_3ch = np.tile(motion_thresh[:, :, None], (1, 1, 3))
         motion_frame = cv2.add(frame, gray_3ch)
 

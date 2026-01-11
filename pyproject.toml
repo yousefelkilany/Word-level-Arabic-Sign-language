@@ -12,7 +12,7 @@ dependencies = [
     "onnx==1.18.0",
     "onnxruntime>=1.23.2",
     "onnxscript==0.2.7",
-    "opencv-python>=4.11.0.86",
+    "opencv-python-headless>=4.11.0.86",
     "openpyxl>=3.1.5",
     "pandas>=2.3.3",
     "scikit-learn>=1.8.0",
