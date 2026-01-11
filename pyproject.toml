@@ -19,7 +19,7 @@ dependencies = [
     "torch==2.7.1",
     "torchvision>=0.22.1",
     "tqdm>=4.67.1",
-    "uvicorn>=0.40.0",
+    "uvicorn[standard]>=0.40.0",
 ]
 
 [tool.uv.sources]
