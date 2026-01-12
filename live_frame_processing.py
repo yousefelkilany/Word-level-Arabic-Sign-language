@@ -38,15 +38,16 @@ class FrameBuffer:
 
 def process_motion(frame, prev_gray):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    _motion_blur, motion_thresh, motion_detected = detect_motion(prev_gray, gray, 0.1)
+    _motion_blur, _motion_thresh, motion_detected = detect_motion(prev_gray, gray, 0.1)
     has_motion = (prev_gray is not None) and motion_detected
 
-    motion_frame = None
-    if motion_thresh is not None:
-        gray_3ch = np.tile(motion_thresh[:, :, None], (1, 1, 3))
-        motion_frame = cv2.add(frame, gray_3ch)
+    # motion_frame = None
+    # if motion_thresh is not None:
+    #     gray_3ch = np.tile(motion_thresh[:, :, None], (1, 1, 3))
+    #     motion_frame = cv2.add(frame, gray_3ch)
 
-    return gray, motion_frame, motion_thresh, has_motion
+    # return gray, motion_frame, motion_thresh, has_motion
+    return gray, has_motion
 
 
 async def producer_handler(websocket, buffer):
@@ -76,3 +77,8 @@ async def get_frame_kps(frame):
     return await asyncio.get_event_loop().run_in_executor(
         keypoints_detection_executor, extract_frame_keypoints, frame, True
     )
+
+
+def softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()

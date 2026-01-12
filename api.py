@@ -2,13 +2,14 @@ import asyncio
 import os
 from collections import defaultdict
 
-import cv2
+from torch import nn
 import fastapi
 import uvicorn
 from dotenv import dotenv_values
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+import numpy as np
 
 from live_frame_processing import (
     FrameBuffer,
@@ -17,7 +18,7 @@ from live_frame_processing import (
     producer_handler,
 )
 from model import load_onnx_model, onnx_inference
-from utils import AR_WORDS, MODELS_DIR, SEQ_LEN
+from utils import AR_WORDS, EN_WORDS, MODELS_DIR, SEQ_LEN
 
 env = dotenv_values()
 ONNX_CHECKPOINT_FILENAME = (
@@ -30,6 +31,7 @@ model = load_onnx_model(onnx_checkpoint_path)
 NUM_IDLE_FRAMES = 10
 MIN_SIGN_FRAMES = 15
 MAX_SIGN_FRAMES = SEQ_LEN
+CONFIDENCE_THRESHOLD = 0.7
 EXT_FRAME = ".jpg"
 
 detection_buffers = defaultdict(list)
@@ -71,18 +73,14 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
 
         while True:
             if producer_task.done():
-                # If producer finished (connection closed), we stop too
                 break
 
-            # Wait for frames if we are ahead
             if buffer.latest_idx < current_proc_idx:
                 await asyncio.sleep(0.001)
                 continue
 
-            # If we fell behind, jump to the oldest available frame
             oldest_avail = buffer.oldest_idx
             if current_proc_idx < oldest_avail:
-                # print(f"Lagged behind! Jumping from {current_proc_idx} to {oldest_avail}")
                 current_proc_idx = oldest_avail
 
             frame = buffer.get_frame(current_proc_idx)
@@ -92,24 +90,7 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
                 continue
 
             prev_gray = gray
-            gray, motion_frame, motion_thresh, has_motion = await asyncio.to_thread(
-                process_motion, frame, prev_gray
-            )
-
-            if motion_frame is not None:
-                ok, img_buffer = await asyncio.to_thread(
-                    cv2.imencode,
-                    EXT_FRAME,  # type: ignore
-                    motion_frame,  # type: ignore
-                )
-                if not ok:
-                    continue
-
-                # Only send if socket is open. Producer handles receive errors, we handle send errors.
-                try:
-                    await websocket.send_bytes(img_buffer.tobytes())
-                except Exception:
-                    break
+            gray, has_motion = await asyncio.to_thread(process_motion, frame, prev_gray)
 
             if not has_motion:
                 client_state["idle_frames_num"] += 1
@@ -119,6 +100,7 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
                 ):
                     client_state["is_idle"] = True
                     client_buffer.clear()
+                    await websocket.send_json({"status": "idle"})
                 continue
 
             client_state["is_idle"] = False
@@ -138,18 +120,27 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
                 del client_buffer[:-MAX_SIGN_FRAMES]
 
             try:
-                # Run inference in a separate thread, this will BLOCK the consumer loop until inference is done
-                sid = await asyncio.to_thread(
+                raw_outputs = await asyncio.to_thread(
                     onnx_inference, model, list(client_buffer)
                 )
 
-                # TODO: check when a sign is repeatedly detected, skip it
-                sign_repeated = False
-                if sign_repeated:
-                    continue
+                if raw_outputs is not None:
+                    raw_outputs = raw_outputs.flatten()
 
-                if sid is not None:
-                    await websocket.send_json({"detected_word": AR_WORDS[sid]})
+                    probs = nn.functional.softmax(raw_outputs)
+                    pred_idx = np.argmax(probs)
+                    confidence = probs[pred_idx]
+
+                    if confidence > CONFIDENCE_THRESHOLD:
+                        await websocket.send_json(
+                            {
+                                "detected_word": {
+                                    "sign_ar": AR_WORDS[pred_idx],
+                                    "sign_en": EN_WORDS[pred_idx],
+                                },
+                                "confidence": confidence,
+                            }
+                        )
 
             except Exception as e:
                 print(f"Error detecting sign: {e}")

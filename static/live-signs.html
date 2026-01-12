@@ -7,20 +7,26 @@
     <style>
         .canvas-container {
             position: relative;
-            /* Establishes a positioning context for children */
             width: 640px;
-            /* Set desired width */
             height: 480px;
-            /* Set desired height */
+            background-color: #000;
         }
 
         .canvas-container canvas {
             position: absolute;
-            /* Positions canvases relative to the container */
             top: 0;
-            /* Aligns to the top of the container */
             left: 0;
-            /* Aligns to the left of the container */
+        }
+
+        #webcam {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #confidence-text {
+            font-size: .8em;
+            color: gray;
         }
     </style>
 </head>
@@ -30,14 +36,14 @@
 
     <div class="container">
         <div class="canvas-container">
-            <video id="webcam" autoplay playsinline width="640" height="480" style="display:none;"></video>
+            <video id="webcam" autoplay playsinline width="640" height="480"></video>
             <canvas id="cam-canvas" width="640" height="480" style="display:none;"></canvas>
-            <canvas id="recieved-canvas" width="640" height="480"></canvas>
         </div>
     </div>
     <div class="prediction-box">
         <h2>Prediction:</h2>
         <p id="prediction-text">---</p>
+        <p id="confidence-text">---</p>
     </div>
     <script src="static/live-signs.js"></script>
 </body>
