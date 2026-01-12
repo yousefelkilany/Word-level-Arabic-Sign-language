@@ -1,20 +1,21 @@
 const video = document.getElementById('webcam');
 const cam_canvas = document.getElementById('cam-canvas');
 const cam_context = cam_canvas.getContext('2d');
+
 const predictionText = document.getElementById('prediction-text');
 const confidenceText = document.getElementById('confidence-text');
 
 const socket = new WebSocket(`ws://${location.host}/live-signs`); // localhost:8000
-const CANVAS_WIDTH = 640;
-const CANVAS_HEIGHT = 480;
+const CANVAS_WIDTH = 320;
+const CANVAS_HEIGHT = 240;
 
 let isSocketOpen = false;
 let isSending = false;
 let lastSentTimstamp = 0;
 
 const FPS = 30;
-const MS_FPS_INT = 1000 / FPS;
-const JPG_QUALITY = 0.8;
+const MS_FPS_INT = parseInt(1000 / FPS);
+const JPG_QUALITY = 0.7;
 
 // --- WebSocket Connection ---  
 socket.onopen = function (event) {
@@ -47,6 +48,12 @@ socket.onerror = function (error) {
 };
 
 async function setupWebcam() {
+    video.setAttribute('width', CANVAS_WIDTH);
+    video.setAttribute('height', CANVAS_HEIGHT);
+
+    cam_canvas.setAttribute('width', CANVAS_WIDTH);
+    cam_canvas.setAttribute('height', CANVAS_HEIGHT);
+
     return new Promise((resolve, reject) => {
         if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
             reject(new Error("getUserMedia not supported"));

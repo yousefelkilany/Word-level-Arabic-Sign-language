@@ -2,21 +2,17 @@ import asyncio
 import os
 from collections import defaultdict
 
-from torch import nn
 import fastapi
+import numpy as np
 import uvicorn
 from dotenv import dotenv_values
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-import numpy as np
+from torch import nn
 
-from live_frame_processing import (
-    FrameBuffer,
-    get_frame_kps,
-    process_motion,
-    producer_handler,
-)
+from cv2_utils import MotionDetector
+from live_frame_processing import FrameBuffer, get_frame_kps, producer_handler
 from model import load_onnx_model, onnx_inference
 from utils import AR_WORDS, EN_WORDS, MODELS_DIR, SEQ_LEN
 
@@ -63,8 +59,10 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
 
     producer_task = asyncio.create_task(producer_handler(websocket, buffer))
 
+    motion_detector = MotionDetector()
+
     try:
-        gray, prev_gray = None, None
+        gray, prev_gray = np.array([]), np.array([])
         # Retrieve client-specific state
         client_buffer = detection_buffers[client_id]
         client_state = detection_state[client_id]
@@ -89,8 +87,13 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
             if frame is None:
                 continue
 
+            if not prev_gray:
+                prev_gray = frame
+
+            has_motion, gray = await asyncio.to_thread(
+                motion_detector.detect, prev_gray, frame
+            )
             prev_gray = gray
-            gray, has_motion = await asyncio.to_thread(process_motion, frame, prev_gray)
 
             if not has_motion:
                 client_state["idle_frames_num"] += 1
