@@ -6,5 +6,6 @@ services:
     env_file:
       - .env
     volumes:
+      # TODO: move fastapi app src files into app or src directory instead of root
       - .:/app
     restart: unless-stopped

@@ -1,8 +1,13 @@
 const video = document.getElementById('webcam');
-const cam_canvas = document.getElementById('cam-canvas');
-const cam_context = cam_canvas.getContext('2d');
+const cam_canvas = document.createElement('canvas');
+const cam_context = cam_canvas.getContext('2d', { alpha: false });
 
-const predictionText = document.getElementById('prediction-text');
+const canvas_container = document.getElementById('canvas-container');
+
+const predictionTextAr = document.getElementById('prediction-text-ar');
+const predictionTextEn = document.getElementById('prediction-text-en');
+
+
 const confidenceText = document.getElementById('confidence-text');
 
 const socket = new WebSocket(`ws://${location.host}/live-signs`); // localhost:8000
@@ -13,7 +18,7 @@ let isSocketOpen = false;
 let isSending = false;
 let lastSentTimstamp = 0;
 
-const FPS = 30;
+const FPS = 10;
 const MS_FPS_INT = parseInt(1000 / FPS);
 const JPG_QUALITY = 0.7;
 
@@ -26,14 +31,13 @@ socket.onopen = function (event) {
 socket.onmessage = function (event) {
     const data = JSON.parse(event.data);
 
-    if (data.status == "idle") {
-        predictionText.textContent = "---";
+    if (data.status === "idle") {
+        predictionTextAr.textContent = "---";
+        predictionTextEn.textContent = "";
         confidenceText.textContent = "Idle...";
     } else if (data.detected_word) {
-        let ar_sign = data.detected_word.ar_sign;
-        let en_sign = data.detected_word.en_sign;
-        predictionText.textContent = `word: ${en_sign}<br>الكلمة: ${ar_sign}`;
-        // predictionText.textContent = `word: ${en_sign}\nالكلمة: ${ar_sign}`;
+        predictionTextAr.textContent = `الكلمة: ${data.detected_word.sign_ar}`;
+        predictionTextEn.textContent = `word: ${data.detected_word.sign_en}`;
         confidenceText.textContent = `confidence: ${(data.confidence * 100).toFixed(1)}%`;
     }
 };
@@ -48,29 +52,39 @@ socket.onerror = function (error) {
 };
 
 async function setupWebcam() {
-    video.setAttribute('width', CANVAS_WIDTH);
-    video.setAttribute('height', CANVAS_HEIGHT);
-
-    cam_canvas.setAttribute('width', CANVAS_WIDTH);
-    cam_canvas.setAttribute('height', CANVAS_HEIGHT);
-
     return new Promise((resolve, reject) => {
         if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
             reject(new Error("getUserMedia not supported"));
             return;
         }
 
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-                video.addEventListener('loadeddata', () => resolve(), false);
-            }).catch(err => {
-                reject(err);
-            });
+        navigator.mediaDevices.getUserMedia({
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            frameRate: { ideal: 30 },
+            video: true,
+            audio: false,
+        }).then(stream => {
+            video.srcObject = stream;
+            video.play();
+
+            video.onloadedmetadata = () => {
+                const ratio = video.videoWidth / video.videoHeight;
+                canvas_container.width = cam_canvas.width = CANVAS_HEIGHT * ratio;
+                canvas_container.height = cam_canvas.height = CANVAS_HEIGHT;
+
+                requestAnimationFrame(cameraLoop);
+                resolve();
+            };
+        }).catch(err => {
+            reject(err);
+        });
     });
 }
 
 async function cameraLoop(timestamp) {
+    requestAnimationFrame(cameraLoop);
+
     if (!lastSentTimstamp)
         lastSentTimstamp = timestamp;
     const elapsed = timestamp - lastSentTimstamp;
@@ -79,7 +93,7 @@ async function cameraLoop(timestamp) {
         lastSentTimstamp = timestamp - (elapsed % MS_FPS_INT);
 
         if (isSocketOpen && video.readyState === 4 && !isSending) {
-            cam_context.drawImage(video, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            cam_context.drawImage(video, 0, 0, cam_canvas.width, cam_canvas.height);
 
             isSending = true;
             cam_canvas.toBlob((blob) => {
@@ -92,7 +106,6 @@ async function cameraLoop(timestamp) {
 
 async function main() {
     await setupWebcam();
-    requestAnimationFrame(cameraLoop);
 }
 
 main();  

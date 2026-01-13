@@ -22,25 +22,19 @@ from mediapipe_utils import (
     mp_pose_shoulders_idx,
     pose_kps_idx,
 )
-from utils import DATA_DIR, KPS_DIR
+from utils import DATA_DIR, KPS_DIR, FEAT_NUM
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os_join = os.path.join
 
 
-def extract_frame_keypoints(frame_rgb, adjusted=False):
+def extract_frame_keypoints(frame_rgb, timestamp_ms=-1, adjusted=False):
     # do some preprocessing on frame if needed
     ...
 
     # define numpy views, pose=6 -> face=136 -> rh=21 -> lh=21
-    all_kps_num = (
-        len(KP2SLICE["pose"])
-        + len(KP2SLICE["face"])
-        + len(KP2SLICE["rh"])
-        + len(KP2SLICE["lh"])
-    )
-    all_kps = np.zeros((all_kps_num, 3))
+    all_kps = np.zeros((FEAT_NUM, 3))
     pose_kps = all_kps[KP2SLICE["pose"]]
     face_kps = all_kps[KP2SLICE["face"]]
     rh_kps = all_kps[KP2SLICE["rh"]]
@@ -54,14 +48,15 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
 
     def landmarks_distance(lms_list, lm_idx):
         p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
-        # return math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2 + (p1.z - p2.z) ** 2)
-        # EPS = 1e-10
-        # return (abs(p1.x - p2.x) + EPS, abs(p1.y - p2.y) + EPS, abs(p1.z - p2.z) + EPS)
         return (abs(p1.x - p2.x), abs(p1.y - p2.y), abs(p1.z - p2.z))
 
     def get_pose():
         nonlocal pose_kps
-        results = mp_utils.pose_model.detect(frame)
+        if timestamp_ms == -1:
+            results = mp_utils.pose_model.detect(frame)
+        else:
+            results = mp_utils.pose_model.detect_for_video(frame, timestamp_ms)
+
         if results.pose_landmarks is None or len(results.pose_landmarks) == 0:
             return
 
@@ -75,7 +70,10 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
 
     def get_face():
         nonlocal face_kps
-        results = mp_utils.face_model.detect(frame)
+        if timestamp_ms == -1:
+            results = mp_utils.face_model.detect(frame)
+        else:
+            results = mp_utils.face_model.detect_for_video(frame, timestamp_ms)
         if results.face_landmarks is None or len(results.face_landmarks) == 0:
             return
 
@@ -89,7 +87,10 @@ def extract_frame_keypoints(frame_rgb, adjusted=False):
 
     def get_hands():
         nonlocal rh_kps, lh_kps
-        results = mp_utils.hands_model.detect(frame)
+        if timestamp_ms == -1:
+            results = mp_utils.hands_model.detect(frame)
+        else:
+            results = mp_utils.hands_model.detect_for_video(frame, timestamp_ms)
         if results.hand_landmarks is None:
             return
 

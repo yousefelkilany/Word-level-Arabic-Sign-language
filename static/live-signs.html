@@ -5,23 +5,17 @@
     <title>Real-Time Sign Language Recognition</title>
 
     <style>
-        .canvas-container {
+        #canvas-container {
             position: relative;
             width: 640px;
             height: 480px;
             background-color: #000;
         }
 
-        .canvas-container canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
         #webcam {
             display: block;
-            width: 100%;
-            height: 100%;
+            width: 640px;
+            height: 480px;
         }
 
         #confidence-text {
@@ -34,15 +28,15 @@
 <body>
     <h1>Real-Time Sign Language Recognition</h1>
 
-    <div class="container">
-        <div class="canvas-container">
+    <div id="container">
+        <div id="canvas-container">
             <video id="webcam" autoplay playsinline></video>
-            <canvas id="cam-canvas" style="display:none;"></canvas>
         </div>
     </div>
-    <div class="prediction-box">
+    <div id="prediction-box">
         <h2>Prediction:</h2>
-        <p id="prediction-text">---</p>
+        <p id="prediction-text-ar">---</p>
+        <p id="prediction-text-en"></p>
         <p id="confidence-text">---</p>
     </div>
     <script src="static/live-signs.js"></script>

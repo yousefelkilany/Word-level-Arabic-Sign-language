@@ -4,7 +4,7 @@ import torch
 from onnxruntime.capi.onnxruntime_inference_collection import InferenceSession
 from torch import nn
 
-from utils import FEAT_NUM, extract_num_words_from_checkpoint
+from utils import FEAT_NUM, SEQ_LEN, extract_num_words_from_checkpoint
 
 
 class ResidualBiLSTMBlock(nn.Module):
@@ -126,11 +126,17 @@ def load_onnx_model(onnx_model_path, device="cpu") -> InferenceSession:
     return onnxruntime.InferenceSession(onnx_model_path, providers=providers)
 
 
-def onnx_inference(ort_session: InferenceSession, input_data) -> np.ndarray | None:
-    inputs = {
-        ort_input.name: input_tensor
-        for ort_input, input_tensor in zip(ort_session.get_inputs(), input_data)
-    }
+def onnx_inference(
+    ort_session: InferenceSession, input_data: list[np.ndarray]
+) -> np.ndarray | None:
+    inputs = {}
+    for ort_input, input_tensor in zip(ort_session.get_inputs(), input_data):
+        if (num_elements := (SEQ_LEN - input_tensor.shape[1])) > 0:
+            elements_to_add = np.repeat(input_tensor[:, -1:, :], num_elements, axis=1)
+            input_tensor = np.concatenate((input_tensor, elements_to_add), axis=1)
+
+        inputs[ort_input.name] = input_tensor
+
     output_name = ort_session.get_outputs()[0].name
     outputs = ort_session.run([output_name], inputs)[0]
     if isinstance(outputs, np.ndarray):
