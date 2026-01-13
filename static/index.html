@@ -11,9 +11,7 @@
 </head>
 
 <body>
-
     <main class="app-container">
-
         <header class="top-bar">
             <div class="header-left">
                 <!-- v1 ISLR: Isolated Sign Language Recognition -->
@@ -26,23 +24,72 @@
                 </div>
             </div>
 
-            <button id="btn-settings" class="icon-btn" aria-label="Open Settings">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0 -2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0 -1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <circle cx="12" cy="12" r="3" />
-                </svg>
-            </button>
+            <div style="display: flex; gap:.5em;">
+                <button id="btn-archive" class="icon-btn" aria-label="View Past Sessions">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 2H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+                    </svg>
+                </button>
 
+                <button id="btn-settings" class="icon-btn" aria-label="Open Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                        viewBox="2 2 20 20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0 -2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0 -1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                </button>
+            </div>
         </header>
+
+        <div id="archive-modal" class="modal-overlay hidden">
+            <div class="modal-card wide-modal">
+                <div class="modal-header">
+                    <h2>Past Sessions</h2>
+                    <button id="btn-close-archive" class="icon-btn-sm" aria-label="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <ul id="session-list" class="session-list">
+                    </ul>
+                    <div id="session-detail" class="session-detail hidden">
+                        <button id="btn-back-list" class="text-btn">← Back to List</button>
+
+                        <div class="detail-group">
+                            <label>Timestamp</label>
+                            <div id="detail-date" class="detail-value">---</div>
+                        </div>
+
+                        <div class="detail-group">
+                            <label>Final Sentence</label>
+                            <div id="detail-sentence" class="sentence-snapshot">---</div>
+                        </div>
+
+                        <div class="detail-group">
+                            <label>Word Log</label>
+                            <ul id="detail-log" class="history-list snapshot-list">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <aside id="history-sidebar" class="history-sidebar">
             <div class="history-header">
                 <h3>Session Log</h3>
-                <!-- <button id="clear-history" class="text-btn">Clear</button> -->
                 <button id="close-history" class="icon-btn-sm" aria-label="Close History">
                     <!-- X Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"

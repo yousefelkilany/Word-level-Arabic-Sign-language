@@ -24,6 +24,15 @@ const btnHistoryToggle = document.getElementById('history-toggle');
 const btnCloseHistory = document.getElementById('close-history');
 const btnClearHistory = document.getElementById('clear-history');
 
+const btnArchive = document.getElementById('btn-archive');
+const archiveModal = document.getElementById('archive-modal');
+const btnCloseArchive = document.getElementById('btn-close-archive');
+const sessionListEl = document.getElementById('session-list');
+const sessionDetailEl = document.getElementById('session-detail');
+const btnBackList = document.getElementById('btn-back-list');
+
+let currentSessionLog = [];
+
 const CONFIG = {
     wsUrl: `ws://${location.host}/live-signs`,
     fps: 30,
@@ -36,6 +45,7 @@ const CONFIG = {
 };
 
 let state = {
+    sessionId: new Date().toISOString(),
     isSocketOpen: false,
     isSending: false,
     lastFrameTime: 0,
@@ -103,11 +113,6 @@ btnCloseHistory.addEventListener('click', () => {
 historySidebar.addEventListener('click', (e) => {
     e.stopPropagation();
 });
-
-btnClearHistory.addEventListener('click', () => {
-    historyList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
-});
-
 
 function addToHistoryLog(word) {
     const emptyMsg = historyList.querySelector('.history-empty');
@@ -196,11 +201,11 @@ function updateUI(data) {
 
     if (state.stabilityCounter === CONFIG.STABILITY_THRESHOLD) {
         addWordToSentence(sign_ar);
+        speakText(sign_ar);
+        saveCurrentSession();
 
         elAr.style.transform = "scale(1.2)";
         setTimeout(() => elAr.style.transform = "scale(1)", 200);
-
-        speakText(sign_ar);
     }
 
     if (confidencePct > 80) elConfBar.style.backgroundColor = 'var(--success-color)';
@@ -213,13 +218,119 @@ function addWordToSentence(word) {
     if (lastWord !== word) {
         state.sentenceBuffer.push(word);
         renderSentence();
-        sentenceOutput.scrollLeft = sentenceOutput.scrollWidth;
         addToHistoryLog(word);
+        currentSessionLog.push({
+            word: word,
+            time: (new Date()).toLocaleTimeString()
+        });
     }
 }
 
+function saveCurrentSession(renew_id = false) {
+    if (state.sentenceBuffer.length === 0 && currentSessionLog.length === 0) return;
+
+    const sessionData = {
+        id: state.sessionId,
+        date: new Date().toLocaleString(),
+        sentence: state.sentenceBuffer.join(" "),
+        log: currentSessionLog
+    };
+    console.log(sessionData);
+    if (renew_id) state.sessionId = new Date().toISOString();
+
+    const savedSessions = JSON.parse(localStorage.getItem('slr_sessions') || '[]');
+    if (savedSessions.length > 0 && savedSessions[0].id == state.sessionId) {
+        savedSessions.shift();
+    }
+    savedSessions.unshift(sessionData);
+    if (savedSessions.length > 20) savedSessions.pop();
+
+    localStorage.setItem('slr_sessions', JSON.stringify(savedSessions));
+}
+
+function resetRecognizedWords() {
+    saveCurrentSession(true);
+    state.sentenceBuffer = [];
+    renderSentence();
+    historyList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
+}
+
+btnClearHistory.addEventListener('click', () => {
+    resetRecognizedWords();
+    currentSessionLog = [];
+});
+
+function renderSessions() {
+    const savedSessions = JSON.parse(localStorage.getItem('slr_sessions') || '[]');
+    sessionListEl.innerHTML = '';
+
+    if (savedSessions.length === 0) {
+        sessionListEl.innerHTML = '<li style="text-align:center; color:var(--text-sub); margin-top:2rem;">No saved sessions.</li>';
+        return;
+    }
+
+    savedSessions.forEach(session => {
+        const li = document.createElement('li');
+        li.className = 'session-item';
+        const preview = session.sentence || (session.log.length + " signs detected");
+
+        li.innerHTML = `
+            <div>
+                <span class="session-date">${session.date}</span>
+                <span class="session-preview">${preview}</span>
+            </div>
+            <div style="color:var(--text-sub)">›</div>
+        `;
+
+        li.addEventListener('click', () => showSessionDetail(session));
+        sessionListEl.appendChild(li);
+    });
+}
+
+function showSessionDetail(session) {
+    sessionListEl.style.display = 'none';
+    sessionDetailEl.classList.remove('hidden');
+
+    document.getElementById('detail-date').textContent = session.date;
+    document.getElementById('detail-sentence').textContent = session.sentence || "(No sentence formed)";
+
+    const logEl = document.getElementById('detail-log');
+    logEl.innerHTML = '';
+
+    session.log.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'history-item';
+        li.innerHTML = `
+            <span class="history-word">${item.word}</span>
+            <span class="history-time">${item.time}</span>
+        `;
+        logEl.appendChild(li);
+    });
+}
+
+btnArchive.addEventListener('click', () => {
+    renderSessions();
+    sessionListEl.style.display = 'block';
+    sessionDetailEl.classList.add('hidden');
+    archiveModal.classList.remove('hidden');
+});
+
+btnCloseArchive.addEventListener('click', () => {
+    archiveModal.classList.add('hidden');
+});
+
+btnBackList.addEventListener('click', () => {
+    sessionDetailEl.classList.add('hidden');
+    sessionListEl.style.display = 'block';
+});
+
+archiveModal.addEventListener('click', (e) => {
+    if (e.target === archiveModal) archiveModal.classList.add('hidden');
+});
+
 function renderSentence() {
     sentenceOutput.textContent = state.sentenceBuffer.join(" ");
+    sentenceOutput.scrollLeft = sentenceOutput.scrollWidth;
 }
 
 function speakText(text) {
@@ -239,8 +350,7 @@ btnSpeak.addEventListener('click', () => {
 });
 
 btnClear.addEventListener('click', () => {
-    state.sentenceBuffer = [];
-    renderSentence();
+    resetRecognizedWords();
 });
 
 async function setupWebcam() {
