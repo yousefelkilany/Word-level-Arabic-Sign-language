@@ -434,8 +434,130 @@ h1 {
     color: var(--text-sub);
     cursor: pointer;
     padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .icon-btn-sm:hover {
+    background: var(--pill-bg);
     color: var(--text-color);
+}
+
+.history-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+
+    height: 100vh;
+    background: var(--glass-bg);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-left: 1px solid var(--glass-border);
+    z-index: 40;
+
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -10px 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.history-sidebar.open {
+    transform: translateX(0);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.history-header h3 {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.history-list {
+    list-style: none;
+    overflow-y: auto;
+    flex: 1;
+    margin-bottom: 0.5rem;
+}
+
+.history-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon-btn.warning {
+    color: var(--text-sub);
+    border-color: var(--glass-border);
+    width: 42px;
+    height: 42px;
+}
+
+.icon-btn.warning:hover {
+    background-color: var(--error-color);
+    color: white;
+    border-color: transparent;
+    transform: scale(1.1);
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--glass-border);
+    animation: fadeIn 0.3s ease;
+}
+
+.history-word {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.history-time {
+    font-size: 0.75rem;
+    color: var(--text-sub);
+}
+
+.history-empty {
+    color: var(--text-sub);
+    font-style: italic;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

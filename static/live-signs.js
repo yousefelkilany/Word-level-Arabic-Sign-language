@@ -18,6 +18,12 @@ const btnSettings = document.getElementById('btn-settings');
 const btnCloseSettings = document.getElementById('btn-close-settings');
 const langSelect = document.getElementById('lang-select');
 
+const historySidebar = document.getElementById('history-sidebar');
+const historyList = document.getElementById('history-list');
+const btnHistoryToggle = document.getElementById('history-toggle');
+const btnCloseHistory = document.getElementById('close-history');
+const btnClearHistory = document.getElementById('clear-history');
+
 const CONFIG = {
     wsUrl: `ws://${location.host}/live-signs`,
     fps: 30,
@@ -84,6 +90,55 @@ window.setTheme = function (themeName) {
     document.getElementById('theme-btn-light').classList.toggle('active', themeName === 'light');
     document.getElementById('theme-btn-dark').classList.toggle('active', themeName === 'dark');
 };
+
+btnHistoryToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    historySidebar.classList.toggle('open');
+});
+
+btnCloseHistory.addEventListener('click', () => {
+    historySidebar.classList.remove('open');
+});
+
+historySidebar.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+btnClearHistory.addEventListener('click', () => {
+    historyList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
+});
+
+
+function addToHistoryLog(word) {
+    const emptyMsg = historyList.querySelector('.history-empty');
+    if (emptyMsg) emptyMsg.remove();
+
+    const li = document.createElement('li');
+    li.className = 'history-item';
+
+    const now = new Date();
+    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+    li.innerHTML = `
+        <span class="history-word">${word}</span>
+        <span class="history-time">${timeString}</span>
+    `;
+
+    historyList.prepend(li);
+    if (historyList.children.length > 50) {
+        historyList.lastElementChild.remove();
+    }
+}
+
+document.addEventListener('click', (e) => {
+    if (historySidebar.classList.contains('open')) {
+        const isClickInside = historySidebar.contains(e.target);
+        const isClickOnToggle = btnHistoryToggle.contains(e.target);
+        if (!isClickInside && !isClickOnToggle) {
+            historySidebar.classList.remove('open');
+        }
+    }
+});
 
 langSelect.addEventListener('change', (e) => {
     CONFIG.lang = e.target.value;
@@ -158,8 +213,8 @@ function addWordToSentence(word) {
     if (lastWord !== word) {
         state.sentenceBuffer.push(word);
         renderSentence();
-
         sentenceOutput.scrollLeft = sentenceOutput.scrollWidth;
+        addToHistoryLog(word);
     }
 }
 
