@@ -9,17 +9,33 @@ const elConfBar = document.getElementById('confidence-bar');
 const elStatus = document.getElementById('connection-status');
 const elStatusText = document.getElementById('status-text');
 
+const sentenceOutput = document.getElementById('sentence-output');
+const btnSpeak = document.getElementById('btn-speak');
+const btnClear = document.getElementById('btn-clear');
+
+const settingsOverlay = document.getElementById('settings-overlay');
+const btnSettings = document.getElementById('btn-settings');
+const btnCloseSettings = document.getElementById('btn-close-settings');
+const langSelect = document.getElementById('lang-select');
+
 const CONFIG = {
     wsUrl: `ws://${location.host}/live-signs`,
-    fps: 3,
+    fps: 30,
     jpgQuality: 0.7,
-    processWidth: 320
+    processWidth: 320,
+    STABILITY_THRESHOLD: 15,
+    CONFIDENCE_THRESHOLD: 0.4,
+    theme: 'light',
+    lang: 'ar-EG'
 };
 
 let state = {
     isSocketOpen: false,
     isSending: false,
-    lastFrameTime: 0
+    lastFrameTime: 0,
+    lastFrameWord: "",
+    sentenceBuffer: [],
+    stabilityCounter: 0
 };
 
 const socket = new WebSocket(CONFIG.wsUrl);
@@ -44,6 +60,51 @@ socket.onmessage = (event) => {
     updateUI(data);
 };
 
+function initConfig() {
+    const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        CONFIG.theme = savedTheme;
+    } else if (sysDark) {
+        CONFIG.theme = 'dark';
+    }
+    setTheme(CONFIG.theme);
+
+    const savedLang = localStorage.getItem('speechLang');
+    if (savedLang) {
+        CONFIG.lang = savedLang;
+        langSelect.value = savedLang;
+    }
+}
+
+window.setTheme = function (themeName) {
+    document.documentElement.setAttribute('data-theme', themeName);
+    CONFIG.theme = themeName;
+    localStorage.setItem('theme', themeName);
+    document.getElementById('theme-btn-light').classList.toggle('active', themeName === 'light');
+    document.getElementById('theme-btn-dark').classList.toggle('active', themeName === 'dark');
+};
+
+langSelect.addEventListener('change', (e) => {
+    CONFIG.lang = e.target.value;
+    localStorage.setItem('speechLang', CONFIG.lang);
+    speakText(CONFIG.lang.startsWith('ar') ? "مرحباً" : "Hello");
+});
+
+btnSettings.addEventListener('click', () => {
+    settingsOverlay.classList.remove('hidden');
+});
+
+btnCloseSettings.addEventListener('click', () => {
+    settingsOverlay.classList.add('hidden');
+});
+
+settingsOverlay.addEventListener('click', (e) => {
+    if (e.target === settingsOverlay) {
+        settingsOverlay.classList.add('hidden');
+    }
+});
+
 function updateStatus(status) {
     elStatus.className = `status-pill ${status}`;
     if (status === 'connected') elStatusText.textContent = "Live";
@@ -55,6 +116,9 @@ function updateUI(data) {
     if (data.status === "idle" || !data.detected_word) {
         // elAr.textContent = "...";
         // elEn.textContent = "...";
+        state.stabilityCounter = 0;
+        state.lastFrameWord = "";
+
         elConfVal.textContent = "0%";
         elConfBar.style.width = "0%";
         return;
@@ -68,10 +132,61 @@ function updateUI(data) {
     elConfVal.textContent = `${confidencePct}%`;
     elConfBar.style.width = `${confidencePct}%`;
 
+    if (sign_ar === state.lastFrameWord && data.confidence > CONFIG.CONFIDENCE_THRESHOLD) {
+        state.stabilityCounter++;
+    } else {
+        state.stabilityCounter = 0;
+        state.lastFrameWord = sign_ar;
+    }
+
+    if (state.stabilityCounter === CONFIG.STABILITY_THRESHOLD) {
+        addWordToSentence(sign_ar);
+
+        elAr.style.transform = "scale(1.2)";
+        setTimeout(() => elAr.style.transform = "scale(1)", 200);
+
+        speakText(sign_ar);
+    }
+
     if (confidencePct > 80) elConfBar.style.backgroundColor = 'var(--success-color)';
     else if (confidencePct > 50) elConfBar.style.backgroundColor = 'var(--accent-color)';
     else elConfBar.style.backgroundColor = 'var(--error-color)';
 }
+
+function addWordToSentence(word) {
+    const lastWord = state.sentenceBuffer[state.sentenceBuffer.length - 1];
+    if (lastWord !== word) {
+        state.sentenceBuffer.push(word);
+        renderSentence();
+
+        sentenceOutput.scrollLeft = sentenceOutput.scrollWidth;
+    }
+}
+
+function renderSentence() {
+    sentenceOutput.textContent = state.sentenceBuffer.join(" ");
+}
+
+function speakText(text) {
+    if (!text) return;
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.lang = CONFIG.lang;
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+}
+
+btnSpeak.addEventListener('click', () => {
+    const text = state.sentenceBuffer.join(" ");
+    speakText(text);
+});
+
+btnClear.addEventListener('click', () => {
+    state.sentenceBuffer = [];
+    renderSentence();
+});
 
 async function setupWebcam() {
     try {
@@ -126,28 +241,5 @@ function processFrame() {
     }, 'image/jpeg', CONFIG.jpgQuality);
 }
 
-function initTheme() {
-    const themeToggleBtn = document.getElementById('theme-toggle');
-    const htmlEl = document.documentElement;
-
-    const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-        htmlEl.setAttribute('data-theme', 'dark');
-    } else {
-        htmlEl.setAttribute('data-theme', 'light');
-    }
-
-    function toggleTheme() {
-        const currentTheme = htmlEl.getAttribute('data-theme');
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-        htmlEl.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    }
-    themeToggleBtn.addEventListener('click', toggleTheme);
-}
-
-initTheme();
+initConfig();
 setupWebcam();
