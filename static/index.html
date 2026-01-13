@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Language Recognition</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <main class="app-container">
+        <!-- Header / Status Bar -->
+        <header class="top-bar">
+            <div class="header-left">
+                <!-- v1 ISLR: Isolated Sign Language Recognition -->
+                <!-- v2 CSLR: Continuous SLR -->
+                <!-- v3 SLT: Sign Language Translation -->
+                <h1>ISLR <span class="badge">Live</span></h1>
+                <div id="connection-status" class="status-pill disconnected">
+                    <span class="dot"></span>
+                    <span id="status-text">Connecting...</span>
+                </div>
+            </div>
+
+            <button id="theme-toggle" class="icon-btn" aria-label="Toggle Dark Mode">
+                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+
+                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+
+        </header>
+
+        <!-- Video Area -->
+        <div class="viewport">
+            <video id="webcam" autoplay playsinline muted></video>
+
+            <!-- Canvas is hidden, used for processing only -->
+            <canvas id="process-canvas" hidden></canvas>
+
+            <!-- Prediction Overlay (HUD) -->
+            <div class="hud-layer">
+                <div class="prediction-card">
+                    <div class="pred-label">Detected Sign</div>
+                    <div class="pred-main">
+                        <span id="prediction-text-ar">...</span>
+                        <span id="prediction-text-en" class="sub-text">...</span>
+                    </div>
+
+                    <!-- Visual Confidence Bar -->
+                    <div class="confidence-wrapper">
+                        <div class="confidence-label">
+                            <span>Confidence</span>
+                            <span id="confidence-val">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="confidence-bar" class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="/static/live-signs.js"></script>
+</body>
+
+</html>

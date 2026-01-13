@@ -1,111 +1,153 @@
 const video = document.getElementById('webcam');
-const cam_canvas = document.createElement('canvas');
-const cam_context = cam_canvas.getContext('2d', { alpha: false });
+const canvas = document.getElementById('process-canvas');
+const ctx = canvas.getContext('2d', { alpha: false });
 
-const canvas_container = document.getElementById('canvas-container');
+const elAr = document.getElementById('prediction-text-ar');
+const elEn = document.getElementById('prediction-text-en');
+const elConfVal = document.getElementById('confidence-val');
+const elConfBar = document.getElementById('confidence-bar');
+const elStatus = document.getElementById('connection-status');
+const elStatusText = document.getElementById('status-text');
 
-const predictionTextAr = document.getElementById('prediction-text-ar');
-const predictionTextEn = document.getElementById('prediction-text-en');
-
-
-const confidenceText = document.getElementById('confidence-text');
-
-const socket = new WebSocket(`ws://${location.host}/live-signs`); // localhost:8000
-const CANVAS_WIDTH = 320;
-const CANVAS_HEIGHT = 240;
-
-let isSocketOpen = false;
-let isSending = false;
-let lastSentTimstamp = 0;
-
-const FPS = 10;
-const MS_FPS_INT = parseInt(1000 / FPS);
-const JPG_QUALITY = 0.7;
-
-// --- WebSocket Connection ---  
-socket.onopen = function (event) {
-    console.log("WebSocket connection established.");
-    isSocketOpen = true;
+const CONFIG = {
+    wsUrl: `ws://${location.host}/live-signs`,
+    fps: 3,
+    jpgQuality: 0.7,
+    processWidth: 320
 };
 
-socket.onmessage = function (event) {
+let state = {
+    isSocketOpen: false,
+    isSending: false,
+    lastFrameTime: 0
+};
+
+const socket = new WebSocket(CONFIG.wsUrl);
+
+socket.onopen = () => {
+    updateStatus('connected');
+    state.isSocketOpen = true;
+};
+
+socket.onclose = () => {
+    updateStatus('disconnected');
+    state.isSocketOpen = false;
+};
+
+socket.onerror = (err) => {
+    console.error("WS Error", err);
+    updateStatus('error');
+};
+
+socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    updateUI(data);
+};
 
-    if (data.status === "idle") {
-        predictionTextAr.textContent = "---";
-        predictionTextEn.textContent = "";
-        confidenceText.textContent = "Idle...";
-    } else if (data.detected_word) {
-        predictionTextAr.textContent = `الكلمة: ${data.detected_word.sign_ar}`;
-        predictionTextEn.textContent = `word: ${data.detected_word.sign_en}`;
-        confidenceText.textContent = `confidence: ${(data.confidence * 100).toFixed(1)}%`;
+function updateStatus(status) {
+    elStatus.className = `status-pill ${status}`;
+    if (status === 'connected') elStatusText.textContent = "Live";
+    else if (status === 'disconnected') elStatusText.textContent = "Offline";
+    else elStatusText.textContent = "Error";
+}
+
+function updateUI(data) {
+    if (data.status === "idle" || !data.detected_word) {
+        // elAr.textContent = "...";
+        // elEn.textContent = "...";
+        elConfVal.textContent = "0%";
+        elConfBar.style.width = "0%";
+        return;
     }
-};
 
-socket.onclose = function (event) {
-    console.log("WebSocket connection closed.");
-    isSocketOpen = false;
-};
+    const { sign_ar, sign_en } = data.detected_word;
+    const confidencePct = Math.round(data.confidence * 100);
 
-socket.onerror = function (error) {
-    console.error("WebSocket Error:", error);
-};
+    elAr.textContent = sign_ar;
+    elEn.textContent = sign_en;
+    elConfVal.textContent = `${confidencePct}%`;
+    elConfBar.style.width = `${confidencePct}%`;
+
+    if (confidencePct > 80) elConfBar.style.backgroundColor = 'var(--success-color)';
+    else if (confidencePct > 50) elConfBar.style.backgroundColor = 'var(--accent-color)';
+    else elConfBar.style.backgroundColor = 'var(--error-color)';
+}
 
 async function setupWebcam() {
-    return new Promise((resolve, reject) => {
-        if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
-            reject(new Error("getUserMedia not supported"));
-            return;
-        }
-
-        navigator.mediaDevices.getUserMedia({
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            frameRate: { ideal: 30 },
-            video: true,
-            audio: false,
-        }).then(stream => {
-            video.srcObject = stream;
-            video.play();
-
-            video.onloadedmetadata = () => {
-                const ratio = video.videoWidth / video.videoHeight;
-                canvas_container.width = cam_canvas.width = CANVAS_HEIGHT * ratio;
-                canvas_container.height = cam_canvas.height = CANVAS_HEIGHT;
-
-                requestAnimationFrame(cameraLoop);
-                resolve();
-            };
-        }).catch(err => {
-            reject(err);
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 },
+                facingMode: "user"
+            },
+            audio: false
         });
-    });
+
+        video.srcObject = stream;
+
+        video.onloadedmetadata = () => {
+            const ratio = video.videoWidth / video.videoHeight;
+            canvas.width = CONFIG.processWidth;
+            canvas.height = CONFIG.processWidth / ratio;
+            requestAnimationFrame(loop);
+        };
+    } catch (err) {
+        console.error("Camera access denied:", err);
+        alert("Please allow camera access to use this app.");
+    }
 }
 
-async function cameraLoop(timestamp) {
-    requestAnimationFrame(cameraLoop);
+function loop(timestamp) {
+    requestAnimationFrame(loop);
 
-    if (!lastSentTimstamp)
-        lastSentTimstamp = timestamp;
-    const elapsed = timestamp - lastSentTimstamp;
+    const interval = 1000 / CONFIG.fps;
+    const elapsed = timestamp - state.lastFrameTime;
 
-    if (elapsed > MS_FPS_INT) {
-        lastSentTimstamp = timestamp - (elapsed % MS_FPS_INT);
+    if (elapsed > interval) {
+        state.lastFrameTime = timestamp - (elapsed % interval);
 
-        if (isSocketOpen && video.readyState === 4 && !isSending) {
-            cam_context.drawImage(video, 0, 0, cam_canvas.width, cam_canvas.height);
-
-            isSending = true;
-            cam_canvas.toBlob((blob) => {
-                if (blob && isSocketOpen) socket.send(blob);
-                isSending = false;
-            }, 'image/jpeg', JPG_QUALITY);
+        if (state.isSocketOpen && !state.isSending && video.readyState === 4) {
+            processFrame();
         }
     }
 }
 
-async function main() {
-    await setupWebcam();
+function processFrame() {
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    state.isSending = true;
+
+    canvas.toBlob((blob) => {
+        if (blob && state.isSocketOpen) {
+            socket.send(blob);
+        }
+        state.isSending = false;
+    }, 'image/jpeg', CONFIG.jpgQuality);
 }
 
-main();  
+function initTheme() {
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const htmlEl = document.documentElement;
+
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        htmlEl.setAttribute('data-theme', 'dark');
+    } else {
+        htmlEl.setAttribute('data-theme', 'light');
+    }
+
+    function toggleTheme() {
+        const currentTheme = htmlEl.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+        htmlEl.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+    themeToggleBtn.addEventListener('click', toggleTheme);
+}
+
+initTheme();
+setupWebcam();

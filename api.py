@@ -187,7 +187,7 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
 @app.get("/")
 @app.get("/live-signs")
 async def live_signs_ui():
-    return FileResponse(os.path.join(static_assets_dir, "live-signs.html"))
+    return FileResponse(os.path.join(static_assets_dir, "index.html"))
 
 
 @app.get("/favicon.ico", include_in_schema=False)
