@@ -65,7 +65,7 @@ def get_default_logger():
 
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-    file_handler = logging.FileHandler("server_producer.log")
+    file_handler = logging.FileHandler("logs/server_producer.log")
     file_handler.setFormatter(formatter)
     default_logger.addHandler(file_handler)
     default_logger.setLevel(logging.DEBUG)

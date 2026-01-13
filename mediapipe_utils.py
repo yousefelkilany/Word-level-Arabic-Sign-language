@@ -2,8 +2,8 @@ import asyncio
 import os
 from concurrent.futures import ThreadPoolExecutor
 
-import numpy as np
 import mediapipe as mp
+import numpy as np
 from mediapipe.tasks.python import BaseOptions, vision
 
 from utils import FEAT_NUM, get_default_logger
@@ -23,9 +23,9 @@ hand_base_options = BaseOptions(
 # magic numbers to corresponding keypoints names from mediapipe class members definitions
 # https://www.kaggle.com/code/abd0kamel/mutemotion-wlasl-translation-model?scriptVersionId=154920607&cellId=17
 
-from mediapipe.python.solutions.pose import PoseLandmark as mp_pose_landmark
 from mediapipe.python.solutions import face_mesh_connections as mp_facemesh
 from mediapipe.python.solutions.hands import HandLandmark as mp_hand_landmark
+from mediapipe.python.solutions.pose import PoseLandmark as mp_pose_landmark
 
 POSE_KPS_CONNECTIONS = [
     (mp_pose_landmark.LEFT_SHOULDER, mp_pose_landmark.RIGHT_SHOULDER),
@@ -38,7 +38,9 @@ FACE_KPS_CONNECTIONS = [
     *mp_facemesh.FACEMESH_CONTOURS,
     *mp_facemesh.FACEMESH_IRISES,
 ]
-from mediapipe.python.solutions.hands import HAND_CONNECTIONS as HAND_KPS_CONNECTIONS  # noqa: F401
+from mediapipe.python.solutions.hands import (
+    HAND_CONNECTIONS as HAND_KPS_CONNECTIONS,  # noqa: F401
+)
 
 pose_kps_idx = tuple(
     (
@@ -83,9 +85,9 @@ KP2SLICE: dict[str, slice] = {
     "lh": slice(POSE_NUM + FACE_NUM + HAND_NUM, POSE_NUM + FACE_NUM + HAND_NUM * 2),
 }
 
-from mediapipe.tasks.python.vision.pose_landmarker import PoseLandmarker
 from mediapipe.tasks.python.vision.face_landmarker import FaceLandmarker
 from mediapipe.tasks.python.vision.hand_landmarker import HandLandmarker
+from mediapipe.tasks.python.vision.pose_landmarker import PoseLandmarker
 
 pose_model: PoseLandmarker
 face_model: FaceLandmarker

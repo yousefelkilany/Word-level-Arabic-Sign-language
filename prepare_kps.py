@@ -22,7 +22,7 @@ from mediapipe_utils import (
     mp_pose_shoulders_idx,
     pose_kps_idx,
 )
-from utils import DATA_DIR, KPS_DIR, FEAT_NUM
+from utils import DATA_DIR, FEAT_NUM, KPS_DIR
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"

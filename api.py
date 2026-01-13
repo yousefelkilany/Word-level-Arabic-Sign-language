@@ -14,7 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from torch import nn
 
 from cv2_utils import MotionDetector
-from live_frame_processing import FrameBuffer, producer_handler, get_frame_kps
+from live_frame_processing import FrameBuffer, get_frame_kps, producer_handler
 from mediapipe_utils import LandmarkerProcessor
 from model import load_onnx_model, onnx_inference
 from utils import AR_WORDS, EN_WORDS, MODELS_DIR, SEQ_LEN, get_default_logger

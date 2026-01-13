@@ -1,5 +1,5 @@
-import time
 import asyncio
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 import cv2

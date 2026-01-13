@@ -3,6 +3,7 @@ checkpoints/
 models/
 data/
 other-works/
+logs/
 *.pdf
 *.mp4
 *.task
