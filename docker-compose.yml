@@ -4,8 +4,22 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      - ./src/app/.env
     volumes:
-      # TODO: move fastapi app src files into app or src directory instead of root
-      - .:/app
+      - ./src:/app/src:ro
+      - ./data:/app/data:ro
+      - ./static:/app/static:ro
+      - ./models:/app/models:ro
+      - ./landmarkers:/app/landmarkers:ro
+      - ./logs:/app/logs:rw
+
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+
     restart: unless-stopped

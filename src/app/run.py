@@ -7,5 +7,6 @@ if __name__ == "__main__":
         port=8000,
         # workers=2, # FIXME: enable in production
         reload=True,  # FIXME: disable in production
-        reload_excludes=["/opt/venv", "/app/.venv/"],
+        reload_excludes=["/app"],
+        reload_includes=["/app/src"],
     )

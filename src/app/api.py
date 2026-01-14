@@ -2,19 +2,20 @@ import asyncio
 import gc
 import os
 import time
+from collections import Counter, deque
 
 import fastapi
 import numpy as np
 import torch
 import uvicorn
+from app.cv2_utils import MotionDetector
 from dotenv import dotenv_values
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from torch import nn
 
-from cv2_utils import MotionDetector
-from live_frame_processing import FrameBuffer, get_frame_kps, producer_handler
+from app.live_frame_processing import FrameBuffer, get_frame_kps, producer_handler
 from mediapipe_utils import LandmarkerProcessor
 from model import load_onnx_model, onnx_inference
 from utils import AR_WORDS, EN_WORDS, MODELS_DIR, SEQ_LEN, get_default_logger
@@ -30,12 +31,22 @@ model = load_onnx_model(onnx_checkpoint_path)
 
 
 NUM_IDLE_FRAMES = 15
+HISTORY_LEN = 5
+HISTORY_THRESHOLD = 4
 MIN_SIGN_FRAMES = 15
 MAX_SIGN_FRAMES = SEQ_LEN
 CONFIDENCE_THRESHOLD = 0.4
 EXT_FRAME = ".jpg"
 
-default_state = {"is_idle": False, "idle_frames_num": 0}
+
+def get_default_state():
+    return {
+        "is_idle": False,
+        "idle_frames_num": 0,
+        "sign_history": deque(maxlen=5),
+        "last_sent_sign": None,
+    }
+
 
 origins = [env.get("DOMAIN_NAME") or "DOMAIN_NAME"]
 app = fastapi.FastAPI()
@@ -58,7 +69,7 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
     logger.info(f"Connected client: {client_id}")
 
     client_buffer = []
-    client_state = default_state.copy()
+    client_state = get_default_state()
 
     frame_buffer = FrameBuffer(MAX_SIGN_FRAMES)
     producer_task = asyncio.create_task(producer_handler(websocket, frame_buffer))
@@ -106,6 +117,8 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
                 ):
                     client_state["is_idle"] = True
                     client_buffer.clear()
+                    client_state["sign_history"].clear()
+                    client_state["last_sent_sign"] = None
                     await websocket.send_json({"status": "idle"})
                 continue
 
@@ -133,35 +146,44 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
             try:
                 input_kps = np.array(client_buffer, dtype=np.float32)
                 input_kps = input_kps.reshape(1, input_kps.shape[0], -1)
-
                 raw_outputs = await asyncio.to_thread(
                     onnx_inference, model, [input_kps]
                 )
 
                 if raw_outputs is not None:
                     raw_outputs = raw_outputs.flatten()
-
                     probs = nn.functional.softmax(torch.Tensor(raw_outputs), dim=0)
                     pred_idx = int(torch.argmax(probs).item())
                     confidence = probs[pred_idx].item()
 
                     if confidence > CONFIDENCE_THRESHOLD:
-                        await websocket.send_json(
-                            {
-                                "detected_word": {
-                                    "sign_ar": AR_WORDS[pred_idx],
-                                    "sign_en": EN_WORDS[pred_idx],
-                                },
-                                "confidence": confidence,
-                            }
-                        )
+                        client_state["sign_history"].append(pred_idx)
+
+                    if len(client_state["sign_history"]) == HISTORY_LEN:
+                        most_common_sign, sign_count = Counter(
+                            client_state["sign_history"]
+                        ).most_common(1)[0]
+                        if (
+                            sign_count >= HISTORY_THRESHOLD
+                            and most_common_sign != client_state["last_sent_sign"]
+                        ):
+                            client_state["last_sent_sign"] = most_common_sign
+                            await websocket.send_json(
+                                {
+                                    "detected_sign": {
+                                        "sign_ar": AR_WORDS[pred_idx],
+                                        "sign_en": EN_WORDS[pred_idx],
+                                    },
+                                    "confidence": confidence,
+                                }
+                            )
 
             except Exception as e:
                 logger.error(f"Error detecting sign: {e}")
                 continue
 
     except fastapi.WebSocketDisconnect:
-        logger.error(f"Disconnected client (consumer): {client_id}")
+        logger.info(f"Disconnected client (consumer): {client_id}")
 
     except Exception as e:
         logger.error(f"Error (consumer): {e}")

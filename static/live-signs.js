@@ -1,6 +1,6 @@
-const video = document.getElementById('webcam');
-const canvas = document.getElementById('process-canvas');
-const ctx = canvas.getContext('2d', { alpha: false });
+const elVideo = document.getElementById('webcam');
+const elCanvas = document.getElementById('process-canvas');
+const elCtx = elCanvas.getContext('2d', { alpha: false });
 
 const elAr = document.getElementById('prediction-text-ar');
 const elEn = document.getElementById('prediction-text-en');
@@ -9,26 +9,26 @@ const elConfBar = document.getElementById('confidence-bar');
 const elStatus = document.getElementById('connection-status');
 const elStatusText = document.getElementById('status-text');
 
-const sentenceOutput = document.getElementById('sentence-output');
+const elSentenceOutput = document.getElementById('sentence-output');
 const btnSpeak = document.getElementById('btn-speak');
 const btnClear = document.getElementById('btn-clear');
 
-const settingsOverlay = document.getElementById('settings-overlay');
+const elSettingsOverlay = document.getElementById('settings-overlay');
 const btnSettings = document.getElementById('btn-settings');
 const btnCloseSettings = document.getElementById('btn-close-settings');
-const langSelect = document.getElementById('lang-select');
+const elLangSelect = document.getElementById('lang-select');
 
-const historySidebar = document.getElementById('history-sidebar');
-const historyList = document.getElementById('history-list');
+const elHistorySidebar = document.getElementById('history-sidebar');
+const elHistoryList = document.getElementById('history-list');
 const btnHistoryToggle = document.getElementById('history-toggle');
 const btnCloseHistory = document.getElementById('close-history');
 const btnClearHistory = document.getElementById('clear-history');
 
 const btnArchive = document.getElementById('btn-archive');
-const archiveModal = document.getElementById('archive-modal');
+const elArchiveModal = document.getElementById('archive-modal');
 const btnCloseArchive = document.getElementById('btn-close-archive');
-const sessionListEl = document.getElementById('session-list');
-const sessionDetailEl = document.getElementById('session-detail');
+const elSessionList = document.getElementById('session-list');
+const elSessionDetail = document.getElementById('session-detail');
 const btnBackList = document.getElementById('btn-back-list');
 
 let currentSessionLog = [];
@@ -39,7 +39,6 @@ const CONFIG = {
     jpgQuality: 0.7,
     processWidth: 320,
     STABILITY_THRESHOLD: 15,
-    CONFIDENCE_THRESHOLD: 0.4,
     theme: 'light',
     lang: 'ar-EG'
 };
@@ -89,7 +88,7 @@ function initConfig() {
     const savedLang = localStorage.getItem('speechLang');
     if (savedLang) {
         CONFIG.lang = savedLang;
-        langSelect.value = savedLang;
+        elLangSelect.value = savedLang;
     }
 }
 
@@ -103,19 +102,19 @@ window.setTheme = function (themeName) {
 
 btnHistoryToggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    historySidebar.classList.toggle('open');
+    elHistorySidebar.classList.toggle('open');
 });
 
 btnCloseHistory.addEventListener('click', () => {
-    historySidebar.classList.remove('open');
+    elHistorySidebar.classList.remove('open');
 });
 
-historySidebar.addEventListener('click', (e) => {
+elHistorySidebar.addEventListener('click', (e) => {
     e.stopPropagation();
 });
 
 function addToHistoryLog(word) {
-    const emptyMsg = historyList.querySelector('.history-empty');
+    const emptyMsg = elHistoryList.querySelector('.history-empty');
     if (emptyMsg) emptyMsg.remove();
 
     const li = document.createElement('li');
@@ -129,39 +128,39 @@ function addToHistoryLog(word) {
         <span class="history-time">${timeString}</span>
     `;
 
-    historyList.prepend(li);
-    if (historyList.children.length > 50) {
-        historyList.lastElementChild.remove();
+    elHistoryList.prepend(li);
+    if (elHistoryList.children.length > 50) {
+        elHistoryList.lastElementChild.remove();
     }
 }
 
 document.addEventListener('click', (e) => {
-    if (historySidebar.classList.contains('open')) {
-        const isClickInside = historySidebar.contains(e.target);
+    if (elHistorySidebar.classList.contains('open')) {
+        const isClickInside = elHistorySidebar.contains(e.target);
         const isClickOnToggle = btnHistoryToggle.contains(e.target);
         if (!isClickInside && !isClickOnToggle) {
-            historySidebar.classList.remove('open');
+            elHistorySidebar.classList.remove('open');
         }
     }
 });
 
-langSelect.addEventListener('change', (e) => {
+elLangSelect.addEventListener('change', (e) => {
     CONFIG.lang = e.target.value;
     localStorage.setItem('speechLang', CONFIG.lang);
     speakText(CONFIG.lang.startsWith('ar') ? "مرحباً" : "Hello");
 });
 
 btnSettings.addEventListener('click', () => {
-    settingsOverlay.classList.remove('hidden');
+    elSettingsOverlay.classList.remove('hidden');
 });
 
 btnCloseSettings.addEventListener('click', () => {
-    settingsOverlay.classList.add('hidden');
+    elSettingsOverlay.classList.add('hidden');
 });
 
-settingsOverlay.addEventListener('click', (e) => {
-    if (e.target === settingsOverlay) {
-        settingsOverlay.classList.add('hidden');
+elSettingsOverlay.addEventListener('click', (e) => {
+    if (e.target === elSettingsOverlay) {
+        elSettingsOverlay.classList.add('hidden');
     }
 });
 
@@ -173,18 +172,17 @@ function updateStatus(status) {
 }
 
 function updateUI(data) {
-    if (data.status === "idle" || !data.detected_word) {
-        // elAr.textContent = "...";
-        // elEn.textContent = "...";
+    if (data.status === "idle" || !data.detected_sign) {
+        elAr.textContent = "...";
+        elEn.textContent = "...";
         state.stabilityCounter = 0;
         state.lastFrameWord = "";
-
         elConfVal.textContent = "0%";
         elConfBar.style.width = "0%";
         return;
     }
 
-    const { sign_ar, sign_en } = data.detected_word;
+    const { sign_ar, sign_en } = data.detected_sign;
     const confidencePct = Math.round(data.confidence * 100);
 
     elAr.textContent = sign_ar;
@@ -192,13 +190,14 @@ function updateUI(data) {
     elConfVal.textContent = `${confidencePct}%`;
     elConfBar.style.width = `${confidencePct}%`;
 
-    if (sign_ar === state.lastFrameWord && data.confidence > CONFIG.CONFIDENCE_THRESHOLD) {
+    if (sign_ar === state.lastFrameWord) {
         state.stabilityCounter++;
     } else {
         state.stabilityCounter = 0;
         state.lastFrameWord = sign_ar;
     }
 
+    // TODO: there's now this guard for stability on client-side, and server-side
     if (state.stabilityCounter === CONFIG.STABILITY_THRESHOLD) {
         addWordToSentence(sign_ar);
         speakText(sign_ar);
@@ -252,7 +251,7 @@ function resetRecognizedWords() {
     saveCurrentSession(true);
     state.sentenceBuffer = [];
     renderSentence();
-    historyList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
+    elHistoryList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
 }
 
 btnClearHistory.addEventListener('click', () => {
@@ -262,10 +261,10 @@ btnClearHistory.addEventListener('click', () => {
 
 function renderSessions() {
     const savedSessions = JSON.parse(localStorage.getItem('slr_sessions') || '[]');
-    sessionListEl.innerHTML = '';
+    elSessionList.innerHTML = '';
 
     if (savedSessions.length === 0) {
-        sessionListEl.innerHTML = '<li style="text-align:center; color:var(--text-sub); margin-top:2rem;">No saved sessions.</li>';
+        elSessionList.innerHTML = '<li style="text-align:center; color:var(--text-sub); margin-top:2rem;">No saved sessions.</li>';
         return;
     }
 
@@ -283,20 +282,19 @@ function renderSessions() {
         `;
 
         li.addEventListener('click', () => showSessionDetail(session));
-        sessionListEl.appendChild(li);
+        elSessionList.appendChild(li);
     });
 }
 
 function showSessionDetail(session) {
-    sessionListEl.style.display = 'none';
-    sessionDetailEl.classList.remove('hidden');
+    elSessionList.style.display = 'none';
+    elSessionDetail.classList.remove('hidden');
 
     document.getElementById('detail-date').textContent = session.date;
     document.getElementById('detail-sentence').textContent = session.sentence || "(No sentence formed)";
 
-    const logEl = document.getElementById('detail-log');
-    logEl.innerHTML = '';
-
+    const elLog = document.getElementById('detail-log');
+    elLog.innerHTML = '';
     session.log.forEach(item => {
         const li = document.createElement('li');
         li.className = 'history-item';
@@ -304,33 +302,33 @@ function showSessionDetail(session) {
             <span class="history-word">${item.word}</span>
             <span class="history-time">${item.time}</span>
         `;
-        logEl.appendChild(li);
+        elLog.appendChild(li);
     });
 }
 
 btnArchive.addEventListener('click', () => {
     renderSessions();
-    sessionListEl.style.display = 'block';
-    sessionDetailEl.classList.add('hidden');
-    archiveModal.classList.remove('hidden');
+    elSessionList.style.display = 'block';
+    elSessionDetail.classList.add('hidden');
+    elArchiveModal.classList.remove('hidden');
 });
 
 btnCloseArchive.addEventListener('click', () => {
-    archiveModal.classList.add('hidden');
+    elArchiveModal.classList.add('hidden');
 });
 
 btnBackList.addEventListener('click', () => {
-    sessionDetailEl.classList.add('hidden');
-    sessionListEl.style.display = 'block';
+    elSessionDetail.classList.add('hidden');
+    elSessionList.style.display = 'block';
 });
 
-archiveModal.addEventListener('click', (e) => {
-    if (e.target === archiveModal) archiveModal.classList.add('hidden');
+elArchiveModal.addEventListener('click', (e) => {
+    if (e.target === elArchiveModal) elArchiveModal.classList.add('hidden');
 });
 
 function renderSentence() {
-    sentenceOutput.textContent = state.sentenceBuffer.join(" ");
-    sentenceOutput.scrollLeft = sentenceOutput.scrollWidth;
+    elSentenceOutput.textContent = state.sentenceBuffer.join(" ");
+    elSentenceOutput.scrollLeft = elSentenceOutput.scrollWidth;
 }
 
 function speakText(text) {
@@ -364,12 +362,12 @@ async function setupWebcam() {
             audio: false
         });
 
-        video.srcObject = stream;
+        elVideo.srcObject = stream;
 
-        video.onloadedmetadata = () => {
-            const ratio = video.videoWidth / video.videoHeight;
-            canvas.width = CONFIG.processWidth;
-            canvas.height = CONFIG.processWidth / ratio;
+        elVideo.onloadedmetadata = () => {
+            const ratio = elVideo.videoWidth / elVideo.videoHeight;
+            elCanvas.width = CONFIG.processWidth;
+            elCanvas.height = CONFIG.processWidth / ratio;
             requestAnimationFrame(loop);
         };
     } catch (err) {
@@ -380,30 +378,25 @@ async function setupWebcam() {
 
 function loop(timestamp) {
     requestAnimationFrame(loop);
-
     const interval = 1000 / CONFIG.fps;
     const elapsed = timestamp - state.lastFrameTime;
-
     if (elapsed > interval) {
         state.lastFrameTime = timestamp - (elapsed % interval);
-
-        if (state.isSocketOpen && !state.isSending && video.readyState === 4) {
+        if (state.isSocketOpen && !state.isSending && elVideo.readyState === 4) {
             processFrame();
         }
     }
 }
 
 function processFrame() {
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
     state.isSending = true;
-
-    canvas.toBlob((blob) => {
+    elCtx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
+    elCanvas.toBlob((blob) => {
         if (blob && state.isSocketOpen) {
             socket.send(blob);
         }
-        state.isSending = false;
     }, 'image/jpeg', CONFIG.jpgQuality);
+    state.isSending = false;
 }
 
 initConfig();
