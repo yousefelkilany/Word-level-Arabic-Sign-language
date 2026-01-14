@@ -38,7 +38,7 @@ const CONFIG = {
     fps: 30,
     jpgQuality: 0.7,
     processWidth: 320,
-    STABILITY_THRESHOLD: 15,
+    STABILITY_THRESHOLD: 0,
     theme: 'light',
     lang: 'ar-EG'
 };
@@ -185,11 +185,6 @@ function updateUI(data) {
     const { sign_ar, sign_en } = data.detected_sign;
     const confidencePct = Math.round(data.confidence * 100);
 
-    elAr.textContent = sign_ar;
-    elEn.textContent = sign_en;
-    elConfVal.textContent = `${confidencePct}%`;
-    elConfBar.style.width = `${confidencePct}%`;
-
     if (sign_ar === state.lastFrameWord) {
         state.stabilityCounter++;
     } else {
@@ -197,8 +192,14 @@ function updateUI(data) {
         state.lastFrameWord = sign_ar;
     }
 
-    // TODO: there's now this guard for stability on client-side, and server-side
+    // TODO: there's now this guard for stability on client-side
+    // this is suppressed in favor of server-side
     if (state.stabilityCounter === CONFIG.STABILITY_THRESHOLD) {
+        elAr.textContent = sign_ar;
+        elEn.textContent = sign_en;
+        elConfVal.textContent = `${confidencePct}%`;
+        elConfBar.style.width = `${confidencePct}%`;
+
         addWordToSentence(sign_ar);
         speakText(sign_ar);
         saveCurrentSession();
@@ -252,11 +253,11 @@ function resetRecognizedWords() {
     state.sentenceBuffer = [];
     renderSentence();
     elHistoryList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
+    currentSessionLog = [];
 }
 
 btnClearHistory.addEventListener('click', () => {
     resetRecognizedWords();
-    currentSessionLog = [];
 });
 
 function renderSessions() {
