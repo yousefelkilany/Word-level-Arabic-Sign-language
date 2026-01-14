@@ -1,11 +1,7 @@
 __pycache__/
 checkpoints/
-models/
 data/
 other-works/
 logs/
-*.pdf
-*.mp4
-*.task
-*.jpg
+outputs/
 .env
