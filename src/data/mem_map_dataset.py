@@ -3,7 +3,7 @@ from os.path import join as os_join
 import numpy as np
 from torch.utils.data import Dataset
 
-from utils import PREPROCESSED_DIR
+from core.constants import PREPROCESSED_DIR
 
 
 class KArSLDataset(Dataset):

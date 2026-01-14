@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from utils import get_default_logger
+from core.utils import get_default_logger
 
 
 class MotionDetector:

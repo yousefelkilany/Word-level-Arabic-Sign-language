@@ -4,7 +4,8 @@ import torch
 from onnxruntime.capi.onnxruntime_inference_collection import InferenceSession
 from torch import nn
 
-from utils import FEAT_NUM, SEQ_LEN, extract_num_words_from_checkpoint
+from core.constants import FEAT_NUM, SEQ_LEN
+from core.utils import extract_num_words_from_checkpoint
 
 
 class ResidualBiLSTMBlock(nn.Module):

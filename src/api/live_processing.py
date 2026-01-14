@@ -5,8 +5,9 @@ from concurrent.futures import ThreadPoolExecutor
 import cv2
 import numpy as np
 
-from mediapipe_utils import LandmarkerProcessor
-from utils import MAX_WORKERS, get_default_logger
+from core.constants import MAX_WORKERS
+from core.mediapipe_utils import LandmarkerProcessor
+from core.utils import get_default_logger
 
 
 class FrameBuffer:

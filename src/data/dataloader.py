@@ -1,6 +1,6 @@
 from torch.utils.data import DataLoader, random_split
 
-from lazy_dataset import KArSLDataset
+from data.lazy_dataset import KArSLDataset
 
 
 def prepare_dataloader(

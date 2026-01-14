@@ -6,9 +6,9 @@ from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
-from dataloader import prepare_dataloaders
-from model import get_model_instance, load_model, save_model
-from utils import DEVICE
+from core.constants import DEVICE
+from data.dataloader import prepare_dataloaders
+from modelling.model import get_model_instance, load_model, save_model
 
 
 def train(

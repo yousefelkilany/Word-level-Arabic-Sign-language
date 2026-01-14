@@ -6,7 +6,7 @@ from os.path import join as os_join
 import numpy as np
 from tqdm import tqdm
 
-from utils import FEAT_NUM, KPS_DIR, SEQ_LEN
+from core.constants import FEAT_NUM, KPS_DIR, SEQ_LEN
 
 
 def load_raw_kps(split, signers, selected_words):

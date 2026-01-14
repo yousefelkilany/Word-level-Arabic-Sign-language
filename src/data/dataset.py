@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
 
-from dataset_preprocessing import load_raw_kps, prepare_labels, prepare_raw_kps
+from data.dataset_preprocessing import load_raw_kps, prepare_labels, prepare_raw_kps
 
 
 class KArSLDataset(Dataset):

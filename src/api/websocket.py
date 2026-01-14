@@ -1,34 +1,21 @@
 import asyncio
 import gc
-import os
 import time
 from collections import Counter, deque
 
 import fastapi
 import numpy as np
 import torch
-import uvicorn
-from app.cv2_utils import MotionDetector
-from dotenv import dotenv_values
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
 from torch import nn
 
-from app.live_frame_processing import FrameBuffer, get_frame_kps, producer_handler
-from mediapipe_utils import LandmarkerProcessor
-from model import load_onnx_model, onnx_inference
-from utils import AR_WORDS, EN_WORDS, MODELS_DIR, SEQ_LEN, get_default_logger
+from api.cv2_utils import MotionDetector
+from api.live_processing import FrameBuffer, get_frame_kps, producer_handler
+from core.constants import SEQ_LEN
+from core.mediapipe_utils import LandmarkerProcessor
+from core.utils import AR_WORDS, EN_WORDS, get_default_logger
+from modelling.model import onnx_inference
 
 logger = get_default_logger()
-
-env = dotenv_values()
-ONNX_CHECKPOINT_FILENAME = (
-    env.get("ONNX_CHECKPOINT_FILENAME") or "ONNX_CHECKPOINT_FILENAME"
-)
-onnx_checkpoint_path = os.path.join(MODELS_DIR, ONNX_CHECKPOINT_FILENAME)
-model = load_onnx_model(onnx_checkpoint_path)
-
 
 NUM_IDLE_FRAMES = 15
 HISTORY_LEN = 5
@@ -37,6 +24,8 @@ MIN_SIGN_FRAMES = 15
 MAX_SIGN_FRAMES = SEQ_LEN
 CONFIDENCE_THRESHOLD = 0.4
 EXT_FRAME = ".jpg"
+
+websocket_router = fastapi.APIRouter()
 
 
 def get_default_state():
@@ -48,21 +37,7 @@ def get_default_state():
     }
 
 
-origins = [env.get("DOMAIN_NAME") or "DOMAIN_NAME"]
-app = fastapi.FastAPI()
-app.add_middleware(
-    CORSMiddleware,  # type: ignore
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-static_assets_dir = "./static"
-app.mount("/static", StaticFiles(directory=static_assets_dir, html=True), name="static")
-
-
-@app.websocket("/live-signs")
+@websocket_router.websocket("/live-signs")
 async def ws_live_signs(websocket: fastapi.WebSocket):
     await websocket.accept()
     client_id = websocket.client
@@ -147,7 +122,7 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
                 input_kps = np.array(client_buffer, dtype=np.float32)
                 input_kps = input_kps.reshape(1, input_kps.shape[0], -1)
                 raw_outputs = await asyncio.to_thread(
-                    onnx_inference, model, [input_kps]
+                    onnx_inference, websocket.app.state.onnx_model, [input_kps]
                 )
 
                 if raw_outputs is not None:
@@ -204,26 +179,3 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
         mp_processor.close()
 
         gc.collect()
-
-
-@app.get("/")
-@app.get("/live-signs")
-async def live_signs_ui():
-    return FileResponse(os.path.join(static_assets_dir, "index.html"))
-
-
-@app.get("/favicon.ico", include_in_schema=False)
-async def favicon():
-    return FileResponse(
-        path=os.path.join(static_assets_dir, "mediapipe-logo.ico"),
-        headers={"Content-Disposition": "attachment; filename=favicon.ico"},
-    )
-
-
-@app.get("/.well-known/appspecific/com.chrome.devtools.json", include_in_schema=False)
-async def chrome_devtools():
-    return JSONResponse({})
-
-
-if __name__ == "__main__":
-    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

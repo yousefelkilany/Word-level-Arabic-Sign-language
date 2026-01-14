@@ -6,7 +6,8 @@ import mediapipe as mp
 import numpy as np
 from mediapipe.tasks.python import BaseOptions, vision
 
-from utils import FEAT_NUM, get_default_logger
+from core.constants import FEAT_NUM
+from core.utils import get_default_logger
 
 delegate = BaseOptions.Delegate.CPU
 pose_base_options = BaseOptions(

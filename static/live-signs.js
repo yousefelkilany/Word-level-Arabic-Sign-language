@@ -177,6 +177,8 @@ function updateUI(data) {
         elEn.textContent = "...";
         state.stabilityCounter = 0;
         state.lastFrameWord = "";
+        state.sentenceBuffer = [];
+        renderSentence();
         elConfVal.textContent = "0%";
         elConfBar.style.width = "0%";
         return;
@@ -235,7 +237,7 @@ function saveCurrentSession(renew_id = false) {
         sentence: state.sentenceBuffer.join(" "),
         log: currentSessionLog
     };
-    console.log(sessionData);
+
     if (renew_id) state.sessionId = new Date().toISOString();
 
     const savedSessions = JSON.parse(localStorage.getItem('slr_sessions') || '[]');
@@ -250,10 +252,9 @@ function saveCurrentSession(renew_id = false) {
 
 function resetRecognizedWords() {
     saveCurrentSession(true);
-    state.sentenceBuffer = [];
-    renderSentence();
     elHistoryList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
     currentSessionLog = [];
+    updateUI({});
 }
 
 btnClearHistory.addEventListener('click', () => {

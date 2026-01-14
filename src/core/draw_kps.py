@@ -13,7 +13,8 @@ from mediapipe.python.solutions.drawing_styles import (
 )
 from mediapipe.python.solutions.drawing_utils import DrawingSpec, draw_landmarks
 
-from mediapipe_utils import (
+from core.constants import DATA_DIR, KPS_DIR
+from core.mediapipe_utils import (
     FACE_KPS_CONNECTIONS,
     HAND_KPS_CONNECTIONS,
     KP2SLICE,
@@ -23,7 +24,6 @@ from mediapipe_utils import (
     mp_pose_landmark,
     pose_kps_idx,
 )
-from utils import DATA_DIR, KPS_DIR
 
 landmark_styling_fallback = DrawingSpec(
     color=(224, 224, 224), thickness=1, circle_radius=1

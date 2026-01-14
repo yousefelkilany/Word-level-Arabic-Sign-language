@@ -9,8 +9,8 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_PROJECT_ENVIRONMENT=/opt/venv
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=src/uv.lock,target=uv.lock \
-    --mount=type=bind,source=src/pyproject.toml,target=pyproject.toml \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --frozen --no-install-project --no-dev
 
 FROM python:3.12-slim-bookworm AS runtime
@@ -37,4 +37,4 @@ RUN useradd -m -u 1000 appuser && \
 
 USER appuser
 
-CMD ["python", "src/app/run.py"]
+CMD ["python", "src/api/run.py"]

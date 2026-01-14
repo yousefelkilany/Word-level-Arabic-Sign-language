@@ -5,8 +5,8 @@ import numpy as np
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
-from utils import KPS_DIR
+from core.constants import KPS_DIR
+from data.dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 
 
 class KArSLDataset(Dataset):
