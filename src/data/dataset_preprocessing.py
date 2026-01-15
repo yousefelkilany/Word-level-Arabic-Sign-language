@@ -47,6 +47,7 @@ def prepare_raw_kps(X):
     def pad_split_seq(kps):
         # Pad sequences (with length < SEQ_LEN) to SEQ_LEN, no matter what is its length.
         kps_len = kps.shape[0]
+        print(f"before {kps_len = }")
         if SEQ_LEN > kps_len:
             kps = np.concatenate([kps, np.tile(kps[-1], (SEQ_LEN - kps_len, 1, 1))])
 
@@ -61,6 +62,7 @@ def prepare_raw_kps(X):
 
         # Collapse last two dimensions, 184x3 to 552
         kps = kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
+        print(f"after {kps.shape = }")
         return np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
 
     return np.array(
