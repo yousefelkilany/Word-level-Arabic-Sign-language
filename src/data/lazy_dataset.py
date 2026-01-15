@@ -9,7 +9,7 @@ from core.constants import KPS_DIR
 from data.dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 
 
-class KArSLDataset(Dataset):
+class LazyKArSLDataset(Dataset):
     def __init__(self, split, signers, selected_words):
         super().__init__()
         self.samples = []

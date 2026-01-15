@@ -6,7 +6,7 @@ from torch.utils.data import Dataset
 from core.constants import INPUT_PREPROCESSED_DIR
 
 
-class KArSLDataset(Dataset):
+class MmapKArSLDataset(Dataset):
     def __init__(self, split):
         super().__init__()
         data_path = os_join(INPUT_PREPROCESSED_DIR, f"{split}_X.mmap")

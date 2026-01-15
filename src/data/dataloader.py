@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader, random_split
 
-from data.lazy_dataset import KArSLDataset as LazyKArSLDataset
-from data.mem_map_dataset import KArSLDataset as MmapKArSLDataset
+from data.lazy_dataset import LazyKArSLDataset
+from data.mmap_dataset import MmapKArSLDataset
 
 
 def prepare_lazy_dataloader(

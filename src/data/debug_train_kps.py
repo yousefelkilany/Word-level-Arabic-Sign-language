@@ -1,19 +1,22 @@
 import cv2
-import numpy as np
 
-from core.constants import KAGGLE_PROCESSED_KPS_DIR
+from data.dataloader import prepare_mmap_dataloaders
 from data.debug_live_viz import visualize_debug_skeleton
 
 if __name__ == "__main__":
-    data = np.load(
-        f"{KAGGLE_PROCESSED_KPS_DIR}/train_X.mmap",
-        mmap_mode="r",
-        allow_pickle=True,
-    )
-    sample_frame = data[0][30].reshape(-1, 3)
-    print(f"{sample_frame.shape = }")
+    train_dl, val_dl, test_dl = prepare_mmap_dataloaders()
 
-    img, report = visualize_debug_skeleton(sample_frame)
-    print("--- TRAINING DATA STATS ---")
-    print(report)
-    cv2.imwrite("debug_training_sample.jpg", img)
+    for kps, labels in train_dl:
+        kps, labels = kps, labels
+        print(f"{kps.shape = }")
+        print(f"{labels.shape = }")
+
+        # sample_frame = kps[0][30].reshape(-1, 3)
+        # print(f"{sample_frame.shape = }")
+
+        # img, report = visualize_debug_skeleton(sample_frame)
+        # print("--- TRAINING DATA STATS ---")
+        # print(report)
+        # cv2.imwrite("debug_training_sample.jpg", img)
+
+        break
