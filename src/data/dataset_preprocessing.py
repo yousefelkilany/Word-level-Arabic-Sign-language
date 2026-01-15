@@ -40,6 +40,10 @@ def calculate_num_chunks(kps_len):
 
 
 def prepare_raw_kps(X):
+    # TODO: update pad_split_seq to interpolate instead of padding
+    # specifically, interpolate to neasert number divisble by SEQ_LEN, and interpolate the whole sequence instead of the last patch
+    # HOW TO INTERPOLATE? WELL YOU NEED TO FIGURE IT OUT
+    # then retrain, but only on like 5 words and test with live can and repeat
     def pad_split_seq(kps):
         # Pad sequences (with length < SEQ_LEN) to SEQ_LEN, no matter what is its length.
         kps_len = kps.shape[0]
@@ -76,7 +80,9 @@ def process_and_save_split(
     print(f"--- Processing split: {split} ---")
 
     X, y = load_raw_kps(split, signers, selected_words)
+    print(f"{X.shape = }, {y.shape = }")
     X_final = prepare_raw_kps(X)
+    print(f"{X_final.shape = }")
     y_final = prepare_labels(y, X)
     print(f"Final shape for {split} X: {X_final.shape}")
     print(f"Final total size: {X_final.nbytes / 1024**3:.2f} GB")
@@ -110,7 +116,7 @@ def cli_args():
 if __name__ == "__main__":
     splits = ["train", "test"]
     signers = ["01", "02", "03"]
-    num_words = 502
+    num_words = 1
 
     args = cli_args()
     signers = args.signers
