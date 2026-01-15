@@ -84,6 +84,8 @@ def process_and_save_split(
     X_final = prepare_raw_kps(X)
     print(f"{X_final.shape = }")
     y_final = prepare_labels(y, X)
+    print(f"{y_final.shape = }")
+    print(f"{y_final = }")
     print(f"Final shape for {split} X: {X_final.shape}")
     print(f"Final total size: {X_final.nbytes / 1024**3:.2f} GB")
     print(f"Final shape for {split} y: {y_final.shape}")
@@ -116,7 +118,7 @@ def cli_args():
 if __name__ == "__main__":
     splits = ["train", "test"]
     signers = ["01", "02", "03"]
-    num_words = 1
+    num_words = 2
 
     args = cli_args()
     signers = args.signers
