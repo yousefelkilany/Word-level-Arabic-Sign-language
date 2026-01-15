@@ -35,7 +35,7 @@ class LazyKArSLDataset(Dataset):
         path, vid, chunk_idx, label = self.samples[0]
         processed_chunks = self._load_and_process_file(path, vid)
         print(f"{processed_chunks.shape = }", flush=True)
-        return processed_chunks[chunk_idx], np.longlong(label)
+        print(f"{processed_chunks[chunk_idx].shape = }", flush=True)
 
     def __len__(self):
         return len(self.samples)
