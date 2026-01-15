@@ -28,6 +28,7 @@ class LazyKArSLDataset(Dataset):
 
                 for vid, kps in word_kps_data.items():
                     num_chunks = calculate_num_chunks(kps.shape[0])
+                    print(f"{signer = }, {vid = }, {num_chunks = }", flush=True)
                     self.samples.extend(
                         ((word_kps_path, vid, i, word - 1) for i in range(num_chunks))
                     )
