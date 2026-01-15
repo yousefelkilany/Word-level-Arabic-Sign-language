@@ -47,7 +47,6 @@ def prepare_raw_kps(X):
     def pad_split_seq(kps):
         # Pad sequences (with length < SEQ_LEN) to SEQ_LEN, no matter what is its length.
         kps_len = kps.shape[0]
-        print(f"before {kps_len = }")
         if SEQ_LEN > kps_len:
             kps = np.concatenate([kps, np.tile(kps[-1], (SEQ_LEN - kps_len, 1, 1))])
 
@@ -62,7 +61,6 @@ def prepare_raw_kps(X):
 
         # Collapse last two dimensions, 184x3 to 552
         kps = kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
-        print(f"after {kps.shape = }")
         return np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
 
     return np.array(
@@ -82,14 +80,17 @@ def process_and_save_split(
     print(f"--- Processing split: {split} ---")
 
     X, y = load_raw_kps(split, signers, selected_words)
-    print(f"{len(X) = }, {y.shape = }")
+    # print(f"{len(X) = }, {y.shape = }")
+    xshapes = np.array([x.shape[0] for x in X])
+    print(xshapes)
+    print(f"{xshapes.mean() = }, {xshapes.min() = }, {xshapes.max() = }")
     X_final = prepare_raw_kps(X)
-    print(f"{X_final.shape = }")
+    # print(f"{X_final.shape = }")
     X_final = np.concatenate(X_final)
-    print(f"{X_final.shape = }")
+    # print(f"{X_final.shape = }")
     y_final = prepare_labels(y, X)
-    print(f"{y_final.shape = }")
-    print(f"{y_final = }")
+    # print(f"{y_final.shape = }")
+    # print(f"{y_final = }")
     print(f"Final shape for {split} X: {X_final.shape}")
     print(f"Final total size: {X_final.nbytes / 1024**3:.2f} GB")
     print(f"Final shape for {split} y: {y_final.shape}")
@@ -122,7 +123,7 @@ def cli_args():
 if __name__ == "__main__":
     splits = ["train", "test"]
     signers = ["01", "02", "03"]
-    num_words = 2
+    num_words = 502
 
     args = cli_args()
     signers = args.signers
