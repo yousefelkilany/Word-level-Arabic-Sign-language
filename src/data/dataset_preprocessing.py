@@ -80,7 +80,7 @@ def process_and_save_split(
     print(f"--- Processing split: {split} ---")
 
     X, y = load_raw_kps(split, signers, selected_words)
-    print(f"{X.shape = }, {y.shape = }")
+    print(f"{len(X) = }, {y.shape = }")
     X_final = prepare_raw_kps(X)
     print(f"{X_final.shape = }")
     y_final = prepare_labels(y, X)
