@@ -8,6 +8,9 @@ use_gpu = os.environ.get("USE_CPU", "0") == "0" and cuda_is_available()
 DEVICE = ["cpu", "cuda"][int(use_gpu)]
 LOCAL_DEV = int(os.environ.get("LOCAL_DEV", 0))
 DATA_DIR = os_join(["/kaggle/input", "data"][LOCAL_DEV], "karsl-502")
+KAGGLE_PROCESSED_KPS_DIR = (
+    "/kaggle/input/word-level-arabic-sign-language-preprcsd-keypoints"
+)
 KAGGLE_KPS_DIR = "/kaggle/input"
 LABELS_PATH = os_join([KAGGLE_KPS_DIR, "data"][LOCAL_DEV], "KARSL-502_Labels.xlsx")
 KPS_DIR = os_join([KAGGLE_KPS_DIR, "data"][LOCAL_DEV], "karsl-kps")
