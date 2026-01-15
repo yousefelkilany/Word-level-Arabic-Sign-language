@@ -93,13 +93,15 @@ def process_and_save_split(
         print(f"{key = }")
         length_min = np.min(value)
         length_max = np.max(value)
-        print(f"{np.mean(value) = }, {length_min = }, {length_max = }")
+        length_mean = np.mean(value)
+        print(f"{length_mean = }, {length_min = }, {length_max = }")
         length_bracket_width = 5
         custom_bins = np.arange(
             length_min, length_max + length_bracket_width, length_bracket_width
         )
         sign_length_histogram = np.histogram(value, bins=custom_bins)[0]
         print(sign_length_histogram)
+        print(f"{(1.5 * length_mean) = }, {np.percentile(value, 75) = }")
 
     X_final = prepare_raw_kps(X)
     # print(f"{X_final.shape = }")
@@ -140,7 +142,7 @@ def cli_args():
 if __name__ == "__main__":
     splits = ["train", "test"]
     signers = ["01", "02", "03"]
-    num_words = 5
+    num_words = 502
 
     args = cli_args()
     signers = args.signers
