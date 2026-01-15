@@ -3,15 +3,15 @@ from os.path import join as os_join
 import numpy as np
 from torch.utils.data import Dataset
 
-from core.constants import PREPROCESSED_DIR
+from core.constants import INPUT_PREPROCESSED_DIR
 
 
 class KArSLDataset(Dataset):
     def __init__(self, split):
         super().__init__()
-        data_path = os_join(PREPROCESSED_DIR, f"{split}_X.mmap")
-        label_path = os_join(PREPROCESSED_DIR, f"{split}_y.npy")
-        data_shape_path = os_join(PREPROCESSED_DIR, f"{split}_X_shape.npy")
+        data_path = os_join(INPUT_PREPROCESSED_DIR, f"{split}_X.mmap")
+        label_path = os_join(INPUT_PREPROCESSED_DIR, f"{split}_y.npy")
+        data_shape_path = os_join(INPUT_PREPROCESSED_DIR, f"{split}_X_shape.npy")
 
         self.y = np.load(label_path)
         X_shape = np.load(data_shape_path)
