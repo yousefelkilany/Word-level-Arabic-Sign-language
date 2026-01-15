@@ -5,7 +5,11 @@ from core.constants import KAGGLE_PROCESSED_KPS_DIR
 from data.debug_live_viz import visualize_debug_skeleton
 
 if __name__ == "__main__":
-    data = np.load(f"{KAGGLE_PROCESSED_KPS_DIR}/train_X.mmap", mmap_mode="r")
+    data = np.load(
+        f"{KAGGLE_PROCESSED_KPS_DIR}/train_X.mmap",
+        mmap_mode="r",
+        allow_pickle=True,
+    )
     sample_frame = data[0][30].reshape(-1, 3)
     print(f"{sample_frame.shape = }")
 
