@@ -11,12 +11,12 @@ if __name__ == "__main__":
         print(f"{kps.shape = }")
         print(f"{labels.shape = }")
 
-        # sample_frame = kps[0][30].reshape(-1, 3)
-        # print(f"{sample_frame.shape = }")
+        sample_frame = kps[0][30].reshape(-1, 3)
+        print(f"{sample_frame.shape = }")
 
-        # img, report = visualize_debug_skeleton(sample_frame)
-        # print("--- TRAINING DATA STATS ---")
-        # print(report)
-        # cv2.imwrite("debug_training_sample.jpg", img)
+        img, report = visualize_debug_skeleton(sample_frame)
+        print("--- TRAINING DATA STATS ---")
+        print(report)
+        cv2.imwrite("debug_training_sample.jpg", img)
 
         break
