@@ -95,7 +95,9 @@ def process_and_save_split(
         length_max = np.max(value)
         print(f"{np.mean(value) = }, {length_min = }, {length_max = }")
         length_bracket_width = 5
-        custom_bins = np.arange(length_min, length_max + length_bracket_width)
+        custom_bins = np.arange(
+            length_min, length_max + length_bracket_width, length_bracket_width
+        )
         sign_length_histogram = np.histogram(value, bins=custom_bins)[0]
         print(sign_length_histogram)
 
