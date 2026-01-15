@@ -92,7 +92,7 @@ def process_and_save_split(
     for key, value in grouped_dict.items():
         print(f"{key = }")
         length_min = np.min(value)
-        length_max = np.min(value)
+        length_max = np.max(value)
         print(f"{np.mean(value) = }, {length_min = }, {length_max = }")
         length_bracket_width = 5
         custom_bins = np.arange(length_min, length_max + length_bracket_width)
