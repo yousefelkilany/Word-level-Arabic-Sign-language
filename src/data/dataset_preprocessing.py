@@ -1,3 +1,4 @@
+from collections import defaultdict
 import argparse
 import gc as garbage_collect
 import os
@@ -82,8 +83,22 @@ def process_and_save_split(
     X, y = load_raw_kps(split, signers, selected_words)
     # print(f"{len(X) = }, {y.shape = }")
     xshapes = np.array([x.shape[0] for x in X])
-    print(xshapes)
-    print(f"{xshapes.mean() = }, {xshapes.min() = }, {xshapes.max() = }")
+    # print(xshapes)
+
+    grouped_dict = defaultdict(list)
+    for key, value in zip(y, xshapes):
+        grouped_dict[key].append(value)
+
+    for key, value in grouped_dict.items():
+        print(f"{key = }")
+        length_min = np.min(value)
+        length_max = np.min(value)
+        print(f"{np.mean(value) = }, {length_min = }, {length_max = }")
+        length_bracket_width = 5
+        custom_bins = np.arange(length_min, length_max + length_bracket_width)
+        sign_length_histogram = np.histogram(value, bins=custom_bins)[0]
+        print(sign_length_histogram)
+
     X_final = prepare_raw_kps(X)
     # print(f"{X_final.shape = }")
     X_final = np.concatenate(X_final)
@@ -123,7 +138,7 @@ def cli_args():
 if __name__ == "__main__":
     splits = ["train", "test"]
     signers = ["01", "02", "03"]
-    num_words = 502
+    num_words = 5
 
     args = cli_args()
     signers = args.signers
