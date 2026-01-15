@@ -63,7 +63,7 @@ def prepare_raw_kps(X):
         kps = kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
         return np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
 
-    return np.concatenate(
+    return np.array(
         [pad_split_seq(kps) for kps in tqdm(X, desc="Raw KPS => Sequences")],
         dtype=np.float32,
     )
@@ -82,6 +82,8 @@ def process_and_save_split(
     X, y = load_raw_kps(split, signers, selected_words)
     print(f"{len(X) = }, {y.shape = }")
     X_final = prepare_raw_kps(X)
+    print(f"{X_final.shape = }")
+    X_final = np.concatenate(X_final)
     print(f"{X_final.shape = }")
     y_final = prepare_labels(y, X)
     print(f"{y_final.shape = }")
