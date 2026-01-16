@@ -9,7 +9,7 @@ from core.constants import KPS_DIR
 from data.dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 
 
-class KArSLDataset(Dataset):
+class LazyKArSLDataset(Dataset):
     def __init__(self, split, signers, selected_words):
         super().__init__()
         self.samples = []
@@ -42,7 +42,10 @@ class KArSLDataset(Dataset):
 
     def _load_and_process_file(self, path, vid):
         """Loads a single sequence from a file and processes it."""
-        return prepare_raw_kps([self._load_file(path)[vid]])[0]
+        outputs = prepare_raw_kps([self._load_file(path)[vid]])
+        print(f"{ outputs.shape = }")
+        print(f"{ outputs[0].shape = }")
+        return outputs[0]
 
     def __getitem__(self, index):
         path, vid, chunk_idx, label = self.samples[index]

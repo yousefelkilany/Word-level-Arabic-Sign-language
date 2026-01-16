@@ -1,3 +1,4 @@
+from core.mediapipe_utils import POSE_NUM, FACE_NUM, HAND_NUM
 import numpy as np
 import onnxruntime
 import torch
@@ -22,10 +23,60 @@ class ResidualBiLSTMBlock(nn.Module):
         return self.layer_norm(x + self.dropout(self.lstm(x)[0]))
 
 
+class SpatialGroupEmbedding(nn.Module):
+    def __init__(self, hidden_size):
+        super().__init__()
+
+        self.pose_num = POSE_NUM * 3  # type: ignore
+        self.face_num = FACE_NUM * 3  # type: ignore
+        self.rh_num = self.lh_num = HAND_NUM * 3  # type: ignore
+
+        self.pose_proj = nn.Linear(self.pose_num, hidden_size * 1 / 8)
+        self.face_proj = nn.Linear(self.face_num, hidden_size * 2 / 8)
+        self.rh_proj = nn.Linear(self.rh_num, hidden_size * 3 / 8)
+        self.lh_proj = nn.Linear(self.lh_num, hidden_size * 3 / 8)
+
+        self.activation = nn.GELU()
+        self.bn = nn.BatchNorm1d(hidden_size)
+
+    def forward(self, x):
+        pose = self.pose_proj(x[:, :, : self.pose_num])
+        face = self.face_proj(x[:, :, self.pose_num : self.pose_num + self.face_num])
+        rh = self.rh_proj(
+            x[
+                :,
+                :,
+                self.pose_num + self.face_num : self.pose_num
+                + self.face_num
+                + self.rh_num,
+            ]
+        )
+        lh = self.lh_proj(x[:, :, self.pose_num + self.face_num + self.rh_num :])
+
+        out = self.activation(torch.cat((pose, face, rh, lh), dim=1))
+        out = out.permute(0, 2, 1)
+        out = self.bn(out)
+        out = out.permute(0, 2, 1)
+        return out
+
+
+class AttentionPooling(nn.Module):
+    def __init__(self, hidden_size):
+        super().__init__()
+        self.attention_weights = nn.Sequential(
+            nn.Linear(hidden_size, hidden_size // 2),
+            nn.Tanh(),
+            nn.Linear(hidden_size // 2, 1),
+            nn.Softmax(dim=1),
+        )
+
+    def forward(self, x):
+        return torch.sum(x * self.attention_weights(x), dim=1)
+
+
 class AttentionBiLSTM(nn.Module):
     def __init__(
         self,
-        input_size,
         hidden_size,
         num_lstm_blocks,
         num_classes,
@@ -37,7 +88,8 @@ class AttentionBiLSTM(nn.Module):
 
         self.num_classes = num_classes
 
-        self.lstm_proj_layer = nn.Linear(input_size, hidden_size)
+        self.embedding = SpatialGroupEmbedding(hidden_size)
+
         self.lstms = nn.Sequential(
             *[
                 ResidualBiLSTMBlock(hidden_size, lstm_dropout_prob)
@@ -54,32 +106,31 @@ class AttentionBiLSTM(nn.Module):
 
         self.attn_layer_norm = nn.LayerNorm(hidden_size)
 
+        self.pool = AttentionPooling(hidden_size)
+
         self.dropout = nn.Dropout(network_dropout_prob)
 
         self.fc = nn.Linear(hidden_size, num_classes)
 
     def forward(self, x):
-        x = self.lstm_proj_layer(x)
+        x = self.embedding(x)
 
         for lstm_block in self.lstms:
             x = lstm_block(x)
 
         x = self.attn_layer_norm(x + self.attention(x, x, x)[0])
 
-        x = x.mean(dim=1)
+        x = self.pool(x)
 
         x = self.dropout(x)
-
         logits = self.fc(x)
         return logits
 
 
 def get_model_instance(num_words, device="cpu"):
-    input_size = FEAT_NUM * 3
     hidden_size = 384
     num_lstm_blocks = 4
     model = AttentionBiLSTM(
-        input_size,
         hidden_size,
         num_lstm_blocks,
         num_words,

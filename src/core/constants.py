@@ -11,13 +11,14 @@ DATA_DIR = os_join(["/kaggle/input", "data"][LOCAL_DEV], "karsl-502")
 KAGGLE_KPS_DIR = "/kaggle/input"
 LABELS_PATH = os_join([KAGGLE_KPS_DIR, "data"][LOCAL_DEV], "KARSL-502_Labels.xlsx")
 KPS_DIR = os_join([KAGGLE_KPS_DIR, "data"][LOCAL_DEV], "karsl-kps")
+
 INPUT_PREPROCESSED_DIR = (
     "/kaggle/input/word-level-arabic-sign-language-preprcsd-keypoints"
 )
 MODELS_DIR = os_join(["/kaggle/working", ""][LOCAL_DEV], "models")
 MS_30FPS = 1000 / 30
 MS_30FPS_INT = 1000 // 30
-SEQ_LEN = 60
+SEQ_LEN = 50
 FEAT_NUM = 184
 
 MAX_WORKERS = 4

@@ -3,7 +3,9 @@ import gc as garbage_collect
 import os
 from os.path import join as os_join
 
+import cv2
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 
 from core.constants import FEAT_NUM, KPS_DIR, SEQ_LEN
@@ -32,35 +34,52 @@ def load_raw_kps(split, signers, selected_words):
 
 def calculate_num_chunks(kps_len):
     """Calculates how many samples a sequence of a given length will produce."""
-    if SEQ_LEN > kps_len:
+    if kps_len <= 1.15 * SEQ_LEN:
         return 1
-    if kps_len % SEQ_LEN >= (SEQ_LEN * 2 // 3):
-        return kps_len // SEQ_LEN + 1
-    return kps_len // SEQ_LEN
+    if kps_len <= 1.85 * SEQ_LEN:
+        return 2
+    return 3
+
+
+def fix_missing_kps(kps):
+    df = pd.DataFrame(kps)
+    df = df.replace(0.0, np.nan)  # treat exact 0.0 as missing
+    df = df.interpolate(method="linear", limit_direction="both", axis=0)
+    df = df.fillna(0.0)
+    return df.values.astype(np.float32)
 
 
 def prepare_raw_kps(X):
-    def pad_split_seq(kps):
-        # Pad sequences (with length < SEQ_LEN) to SEQ_LEN, no matter what is its length.
+    def prepare_seq(kps):
         kps_len = kps.shape[0]
-        if SEQ_LEN > kps_len:
-            kps = np.concatenate([kps, np.tile(kps[-1], (SEQ_LEN - kps_len, 1, 1))])
+        flat_kps = kps.reshape(kps_len, FEAT_NUM * 3)
+        flat_kps = fix_missing_kps(flat_kps)
+        if kps_len <= 1.15 * SEQ_LEN:
+            kps = cv2.resize(
+                flat_kps,
+                (SEQ_LEN, FEAT_NUM * 3)[::-1],
+                interpolation=cv2.INTER_LINEAR,
+            )
 
-        # If sequence is longer, slice it into x sequences with the last slice filled if
-        # it's 2/3 of SEQ_LEN, otherwise it's too short to be padded and is dropped.
-        elif kps_len % SEQ_LEN >= (SEQ_LEN * 2 // 3):
-            tile_cnt = (kps_len // SEQ_LEN + 1) * SEQ_LEN - kps_len
-            kps = np.concatenate([kps, np.tile(kps[-1], (tile_cnt, 1, 1))])
+        elif kps_len <= 1.85 * SEQ_LEN:
+            kps = np.array([kps[:SEQ_LEN, :], kps[-SEQ_LEN:, :]])
 
         else:
-            kps = kps[: (kps_len // SEQ_LEN) * SEQ_LEN]
+            step = (kps_len - SEQ_LEN) // 2
+            kps = np.array(
+                [
+                    kps[:SEQ_LEN, :],
+                    kps[int(step) : int(step) + SEQ_LEN, :],
+                    kps[-SEQ_LEN:, :],
+                ]
+            )
 
-        # Collapse last two dimensions, 184x3 to 552
-        kps = kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
-        return np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
+        # kps = kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
+        # return np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
+        return kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
 
     return np.array(
-        [pad_split_seq(kps) for kps in tqdm(X, desc="Raw KPS => Sequences")],
+        [prepare_seq(kps) for kps in tqdm(X, desc="Raw KPS => Sequences")],
         dtype=np.float32,
     )
 
