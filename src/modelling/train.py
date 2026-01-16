@@ -7,7 +7,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
 from core.constants import DEVICE
-from data.dataloader import prepare_dataloaders
+from data.dataloader import prepare_lazy_dataloaders
 from modelling.model import get_model_instance, load_model, save_model
 
 
@@ -94,7 +94,7 @@ def visualize_metrics(best_checkpoint):
 
 if __name__ == "__main__":
     num_words = 502
-    train_dl, val_dl, test_dl = prepare_dataloaders(
+    train_dl, val_dl, test_dl = prepare_lazy_dataloaders(
         range(1, num_words + 1), num_workers=4
     )
 

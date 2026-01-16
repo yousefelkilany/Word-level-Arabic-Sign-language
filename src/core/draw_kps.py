@@ -91,8 +91,19 @@ def draw_hand_kps_on_image(rgb_image, hand_kps):
     )
 
 
-def draw_all_kps_on_image(rgb_image, frame_kps):
+def draw_all_kps_on_image(rgb_image, frame_kps, return_separate_images=False):
+    pose_image, face_image, rh_image, lh_image = (None,) * 4
     annotated_image = np.copy(rgb_image)
+    if return_separate_images:
+        pose_image = draw_pose_kps_on_image(
+            annotated_image, frame_kps[KP2SLICE["pose"]]
+        )
+        face_image = draw_face_kps_on_image(
+            annotated_image, frame_kps[KP2SLICE["face"]]
+        )
+        rh_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["rh"]])
+        lh_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["lh"]])
+
     annotated_image = draw_pose_kps_on_image(
         annotated_image, frame_kps[KP2SLICE["pose"]]
     )
@@ -101,7 +112,7 @@ def draw_all_kps_on_image(rgb_image, frame_kps):
     )
     annotated_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["rh"]])
     annotated_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["lh"]])
-    return annotated_image
+    return annotated_image, pose_image, face_image, rh_image, lh_image
 
 
 if __name__ == "__main__":

@@ -59,7 +59,7 @@ def prepare_raw_kps(X):
         kps = kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
         return np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
 
-    return np.concatenate(
+    return np.array(
         [pad_split_seq(kps) for kps in tqdm(X, desc="Raw KPS => Sequences")],
         dtype=np.float32,
     )

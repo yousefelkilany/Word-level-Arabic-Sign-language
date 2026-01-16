@@ -9,8 +9,8 @@ import mediapipe as mp
 import numpy as np
 from tqdm import tqdm
 
-import mediapipe_utils as mp_utils
-from mediapipe_utils import (
+import core.mediapipe_utils as mp_utils
+from core.mediapipe_utils import (
     KP2SLICE,
     face_kps_idx,
     init_mediapipe_worker,
@@ -22,7 +22,7 @@ from mediapipe_utils import (
     mp_pose_shoulders_idx,
     pose_kps_idx,
 )
-from utils import DATA_DIR, FEAT_NUM, KPS_DIR
+from core.constants import DATA_DIR, FEAT_NUM, KPS_DIR
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"

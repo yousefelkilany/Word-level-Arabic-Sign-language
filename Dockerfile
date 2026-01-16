@@ -32,8 +32,7 @@ ENV PATH="/opt/venv/bin:$PATH" \
     NUMEXPR_NUM_THREADS=1 \
     PYTHONPATH="/app/src:$PYTHONPATH"
 
-RUN useradd -m -u 1000 appuser && \
-    chown -R appuser:appuser /app
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 
 USER appuser
 

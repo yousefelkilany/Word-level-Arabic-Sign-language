@@ -11,7 +11,6 @@ DATA_DIR = os_join(["/kaggle/input", "data"][LOCAL_DEV], "karsl-502")
 KAGGLE_KPS_DIR = "/kaggle/input"
 LABELS_PATH = os_join([KAGGLE_KPS_DIR, "data"][LOCAL_DEV], "KARSL-502_Labels.xlsx")
 KPS_DIR = os_join([KAGGLE_KPS_DIR, "data"][LOCAL_DEV], "karsl-kps")
-PREPROCESSED_DIR = "/kaggle/working/preprocessed"
 INPUT_PREPROCESSED_DIR = (
     "/kaggle/input/word-level-arabic-sign-language-preprcsd-keypoints"
 )

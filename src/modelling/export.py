@@ -3,8 +3,8 @@ import argparse
 import onnx
 import torch
 
-from model import load_model, load_onnx_model, onnx_inference
-from utils import DEVICE, FEAT_NUM, SEQ_LEN
+from modelling.model import load_model, load_onnx_model, onnx_inference
+from core.constants import DEVICE, FEAT_NUM, SEQ_LEN
 
 
 def cli():

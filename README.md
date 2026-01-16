@@ -164,7 +164,3 @@ KArSL: Arabic Sign Language Database
     publisher={ACM New York, NY, USA}
 }
 ```
-
-## License
-
-[MIT License](LICENSE)
