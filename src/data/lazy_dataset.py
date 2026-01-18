@@ -6,7 +6,7 @@ import numpy as np
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from core.constants import KPS_DIR
+from core.constants import NPZ_KPS_DIR
 from data.data_augmentation import AlbumentationsWrapper
 from data.dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 
@@ -32,7 +32,7 @@ class LazyKArSLDataset(Dataset):
         for word in tqdm(selected_words, desc=f"Words - {split}"):
             for signer in signers:
                 word_kps_path = os_join(
-                    KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
+                    NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
                 )
 
                 try:

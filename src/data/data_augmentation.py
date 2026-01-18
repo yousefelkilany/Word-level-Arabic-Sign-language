@@ -75,10 +75,7 @@ class AlbumentationsWrapper:
                     border_mode=0,
                 ),
             ],
-            keypoint_params=A.KeypointParams(
-                format="xyz",
-                label_fields=["keypoint_labels"],  # test with and without
-            ),
+            keypoint_params=A.KeypointParams(format="xyz"),
         )
 
     def __call__(self, sequence: np.ndarray) -> np.ndarray:
@@ -88,18 +85,19 @@ class AlbumentationsWrapper:
         print(f"{length_mean = }, {length_min = }, {length_max = }")
         print(f"{(1.5 * length_mean) = }, {np.percentile(sequence, 75) = }")
 
-        length_bracket_width = 1
-        custom_bins = np.arange(
-            length_min, length_max + length_bracket_width, length_bracket_width
-        )
-        sign_length_histogram = np.histogram(sequence, bins=custom_bins)[0]
-        print(f"{sign_length_histogram = }")
+        # length_bracket_width = 1
+        # custom_bins = np.arange(
+        #     length_min, length_max + length_bracket_width, length_bracket_width
+        # )
+        # sign_length_histogram = np.histogram(sequence, bins=custom_bins)[0]
+        # print(f"{sign_length_histogram = }")
 
         seq_len = sequence.shape[0]
         flat_seq = sequence.reshape(seq_len, -1)
         dummy_img = np.zeros((1, 1, 3), dtype=np.uint8)
 
-        transformed = self.transform(image=dummy_img, keypoints=flat_seq[:, :2])
+        transformed = self.transform(image=dummy_img, keypoints=flat_seq)  # [:, :2])
         transformed_xy = np.array(transformed["keypoints"], dtype=np.float32)
 
-        return np.column_stack((transformed_xy, flat_seq[:, :2])).reshape(seq_len, -1)
+        # return np.column_stack((transformed_xy, flat_seq[:, 2:])).reshape(seq_len, -1)
+        return np.column_stack((transformed_xy, flat_seq)).reshape(seq_len, -1)

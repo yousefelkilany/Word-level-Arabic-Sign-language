@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import DATA_OUTPUT_DIR, FEAT_NUM, KPS_DIR, SEQ_LEN
+from core.constants import DATA_OUTPUT_DIR, FEAT_NUM, NPZ_KPS_DIR, SEQ_LEN
 
 
 def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.ndarray]:
@@ -16,7 +16,7 @@ def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.n
         vids_cnt = 0
         for signer in signers:
             word_kps_path = os_join(
-                KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
+                NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
             )
             try:
                 word_kps = np.load(word_kps_path, allow_pickle=True)

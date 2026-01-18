@@ -14,7 +14,9 @@ KAGGLE_INPUT_DATA_DIR = "/kaggle/input"
 KAGGLE_OUTPUT_DATA_DIR = "/kaggle/working"
 DATA_INPUT_DIR = [KAGGLE_INPUT_DATA_DIR, LOCAL_INPUT_DATA_DIR][LOCAL_DEV]
 DATA_OUTPUT_DIR = [KAGGLE_OUTPUT_DATA_DIR, LOCAL_OUTPUT_DATA_DIR][LOCAL_DEV]
-KPS_DIR = os_join(DATA_INPUT_DIR, "karsl-kps")
+NPZ_KPS_DIR = os_join(
+    DATA_INPUT_DIR, "word-level-arabic-sign-language-extrcted-keypoints/karsl-kps"
+)
 LABELS_PATH = os_join(DATA_INPUT_DIR, "KARSL-502_Labels.xlsx")
 LABELS_JSON_PATH = os_join(DATA_INPUT_DIR, "KARSL-502_Labels.json")
 KARSL_DATA_DIR = os_join(DATA_INPUT_DIR, "karsl-502")
@@ -23,7 +25,7 @@ INPUT_PREPROCESSED_DIR = os_join(
     DATA_INPUT_DIR, "word-level-arabic-sign-language-preprcsd-keypoints"
 )
 MODELS_DIR = os_join(DATA_OUTPUT_DIR, "models")
-MS_30FPS = 1000 / 30
+MS_30FPS: float = 1000 / 30
 MS_30FPS_INT = 1000 // 30
 SEQ_LEN = 50
 FEAT_NUM = 184
