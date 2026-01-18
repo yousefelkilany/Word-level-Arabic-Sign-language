@@ -5,10 +5,10 @@ selected_words_to_arg = --selected_words_to $(selected_words_to)
 work_dir = cd src/
 ifeq ($(OS), Windows_NT)
 	local_setup = export LOCAL_DEV=1 && $(work_dir)
-	cpu_setup = export USE_CPU=1
+	cpu_setup = export USE_CPU=1 && $(work_dir)
 else
 	local_setup = set LOCAL_DEV=1 && $(work_dir)
-	cpu_setup = set USE_CPU=1
+	cpu_setup = set USE_CPU=1 && $(work_dir)
 endif
 
 
