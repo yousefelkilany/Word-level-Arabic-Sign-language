@@ -22,8 +22,8 @@ def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.n
                 word_kps = np.load(word_kps_path, allow_pickle=True)
                 X.extend([kps.astype(np.float16) for kps in word_kps.values()])
                 vids_cnt += len(word_kps)
-            except FileNotFoundError:
-                continue
+            except FileNotFoundError as e:
+                print(f"[ERROR] NO NPZ FOUND. error: {e}")
         y.extend([word] * vids_cnt)
 
     return X, np.array(y)
