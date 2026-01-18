@@ -13,13 +13,18 @@ dependencies = [
     "onnxruntime>=1.23.2",
     "onnxscript==0.2.7",
     "opencv-python-headless>=4.11.0.86",
-    "openpyxl>=3.1.5",
-    "pandas>=2.3.3",
-    "scikit-learn>=1.8.0",
     "torch==2.7.1",
     "torchvision>=0.22.1",
-    "tqdm>=4.67.1",
     "uvicorn[standard]>=0.40.0",
+]
+
+[dependency-groups]
+dev = [
+    "tqdm>=4.67.1",
+    "pandas>=2.3.3",
+    "openpyxl>=3.1.5",
+    "scikit-learn>=1.8.0",
+    "albumentations>=2.0.8",
 ]
 
 [tool.uv.sources]

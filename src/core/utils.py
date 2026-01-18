@@ -1,18 +1,16 @@
-import pandas as pd
+import json
+import logging
 
-from core.constants import LABELS_PATH
-
-
-def init_words():
-    global AR_WORDS, EN_WORDS
-    if len(AR_WORDS) == 0 or len(EN_WORDS) == 0:
-        words = pd.read_excel(LABELS_PATH, usecols=["Sign-Arabic", "Sign-English"])
-        AR_WORDS, EN_WORDS = words.to_dict(orient="list").items()
-        AR_WORDS, EN_WORDS = AR_WORDS[1], EN_WORDS[1]
+from core.constants import LABELS_JSON_PATH
 
 
-AR_WORDS, EN_WORDS = [], []
-init_words()
+def init_words() -> tuple[list[str], list[str]]:
+    with open(LABELS_JSON_PATH, "r", encoding="utf-8") as f:
+        words = json.load(f)
+    return words["AR_WORDS"], words["EN_WORDS"]
+
+
+AR_WORDS, EN_WORDS = init_words()
 
 
 def extract_num_words_from_checkpoint(checkpoint_path) -> int | None:
@@ -32,9 +30,8 @@ def extract_num_words_from_checkpoint(checkpoint_path) -> int | None:
 default_logger = None
 
 
-def get_default_logger():
+def get_default_logger() -> logging.Logger:
     global default_logger
-    import logging
 
     if default_logger:
         return default_logger

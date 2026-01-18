@@ -1,11 +1,11 @@
-from core.mediapipe_utils import POSE_NUM, FACE_NUM, HAND_NUM
 import numpy as np
 import onnxruntime
 import torch
 from onnxruntime.capi.onnxruntime_inference_collection import InferenceSession
 from torch import nn
 
-from core.constants import FEAT_NUM, SEQ_LEN
+from core.constants import SEQ_LEN
+from core.mediapipe_utils import FACE_NUM, HAND_NUM, POSE_NUM
 from core.utils import extract_num_words_from_checkpoint
 
 
@@ -31,33 +31,28 @@ class SpatialGroupEmbedding(nn.Module):
         self.face_num = FACE_NUM * 3  # type: ignore
         self.rh_num = self.lh_num = HAND_NUM * 3  # type: ignore
 
-        self.pose_proj = nn.Linear(self.pose_num, hidden_size * 1 / 8)
-        self.face_proj = nn.Linear(self.face_num, hidden_size * 2 / 8)
-        self.rh_proj = nn.Linear(self.rh_num, hidden_size * 3 / 8)
-        self.lh_proj = nn.Linear(self.lh_num, hidden_size * 3 / 8)
+        # hs = 384, hs/48 = 8
+        self.pose_proj = nn.Linear(self.pose_num, hidden_size * 5 // 48)  # 40
+        self.face_proj = nn.Linear(self.face_num, hidden_size * 11 // 48)  # 88
+        self.rh_proj = nn.Linear(self.rh_num, int(hidden_size * 16 // 48))  # 128
+        self.lh_proj = nn.Linear(self.lh_num, int(hidden_size * 16 // 48))  # 128
 
         self.activation = nn.GELU()
         self.bn = nn.BatchNorm1d(hidden_size)
 
     def forward(self, x):
-        pose = self.pose_proj(x[:, :, : self.pose_num])
-        face = self.face_proj(x[:, :, self.pose_num : self.pose_num + self.face_num])
-        rh = self.rh_proj(
-            x[
-                :,
-                :,
-                self.pose_num + self.face_num : self.pose_num
-                + self.face_num
-                + self.rh_num,
-            ]
-        )
-        lh = self.lh_proj(x[:, :, self.pose_num + self.face_num + self.rh_num :])
+        offset = self.pose_num + self.face_num
 
-        out = self.activation(torch.cat((pose, face, rh, lh), dim=1))
-        out = out.permute(0, 2, 1)
-        out = self.bn(out)
-        out = out.permute(0, 2, 1)
-        return out
+        pose = self.pose_proj(x[:, :, : self.pose_num])
+        face = self.face_proj(x[:, :, self.pose_num : offset])
+        rh = self.rh_proj(x[:, :, offset : (offset + self.rh_num)])
+        lh = self.lh_proj(x[:, :, offset + self.rh_num :])
+
+        x = self.activation(torch.cat((pose, face, rh, lh), dim=2))
+        x = x.permute(0, 2, 1)
+        x = self.bn(x)
+        x = x.permute(0, 2, 1)
+        return x
 
 
 class AttentionPooling(nn.Module):

@@ -5,13 +5,12 @@ from os.path import join as os_join
 
 import cv2
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 
 from core.constants import FEAT_NUM, KPS_DIR, SEQ_LEN
 
 
-def load_raw_kps(split, signers, selected_words):
+def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.ndarray]:
     X, y = [], []
     for word in tqdm(selected_words, desc=f"Loading Raw KPS - {split}"):
         vids_cnt = 0
@@ -32,7 +31,7 @@ def load_raw_kps(split, signers, selected_words):
     return X, np.array(y)
 
 
-def calculate_num_chunks(kps_len):
+def calculate_num_chunks(kps_len: int):
     """Calculates how many samples a sequence of a given length will produce."""
     if kps_len <= 1.15 * SEQ_LEN:
         return 1
@@ -41,16 +40,17 @@ def calculate_num_chunks(kps_len):
     return 3
 
 
-def fix_missing_kps(kps):
-    df = pd.DataFrame(kps)
-    df = df.replace(0.0, np.nan)  # treat exact 0.0 as missing
-    df = df.interpolate(method="linear", limit_direction="both", axis=0)
-    df = df.fillna(0.0)
-    return df.values.astype(np.float32)
+def prepare_raw_kps(X: list[np.ndarray]) -> np.ndarray:
+    import pandas as pd
 
+    def fix_missing_kps(kps: np.ndarray) -> np.ndarray:
+        df = pd.DataFrame(kps)
+        df = df.replace(0.0, np.nan)  # treat exact 0.0 as missing
+        df = df.interpolate(method="linear", limit_direction="both", axis=0)
+        df = df.fillna(0.0)
+        return df.values.astype(np.float32)
 
-def prepare_raw_kps(X):
-    def prepare_seq(kps):
+    def prepare_seq(kps: np.ndarray) -> np.ndarray:
         kps_len = kps.shape[0]
         flat_kps = kps.reshape(kps_len, FEAT_NUM * 3)
         flat_kps = fix_missing_kps(flat_kps)
@@ -67,26 +67,23 @@ def prepare_raw_kps(X):
         else:
             step = (kps_len - SEQ_LEN) // 2
             kps = np.array(
-                [
-                    kps[:SEQ_LEN, :],
-                    kps[int(step) : int(step) + SEQ_LEN, :],
-                    kps[-SEQ_LEN:, :],
-                ]
+                [kps[:SEQ_LEN, :], kps[step : step + SEQ_LEN, :], kps[-SEQ_LEN:, :]]
             )
 
-        # kps = kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
-        # return np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
         return kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
 
     return np.array(
-        [prepare_seq(kps) for kps in tqdm(X, desc="Raw KPS => Sequences")],
+        # [prepare_seq(kps) for kps in tqdm(X, desc="Raw KPS => Sequences")],
+        [prepare_seq(kps) for kps in X],
         dtype=np.float32,
     )
 
 
-def prepare_labels(y, X):
-    y = [y_ for y_, x in zip(y, X) for _ in range(calculate_num_chunks(x.shape[0]))]
-    return np.array(y, dtype=np.longlong) - 1
+def prepare_labels(y: np.ndarray, X: list[np.ndarray]) -> np.ndarray:
+    labels = [
+        y_ for y_, x in zip(y, X) for _ in range(calculate_num_chunks(x.shape[0]))
+    ]
+    return np.array(labels, dtype=np.longlong) - 1
 
 
 def process_and_save_split(

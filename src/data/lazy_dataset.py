@@ -43,8 +43,6 @@ class LazyKArSLDataset(Dataset):
     def _load_and_process_file(self, path, vid):
         """Loads a single sequence from a file and processes it."""
         outputs = prepare_raw_kps([self._load_file(path)[vid]])
-        print(f"{ outputs.shape = }")
-        print(f"{ outputs[0].shape = }")
         return outputs[0]
 
     def __getitem__(self, index):

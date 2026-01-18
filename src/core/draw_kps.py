@@ -13,7 +13,7 @@ from mediapipe.python.solutions.drawing_styles import (
 )
 from mediapipe.python.solutions.drawing_utils import DrawingSpec, draw_landmarks
 
-from core.constants import DATA_DIR, KPS_DIR
+from core.constants import KARSL_DATA_DIR, KPS_DIR
 from core.mediapipe_utils import (
     FACE_KPS_CONNECTIONS,
     HAND_KPS_CONNECTIONS,
@@ -129,7 +129,9 @@ if __name__ == "__main__":
         video_npz = np.load(kps_path, allow_pickle=True)
         video_idx = 0
         video_name, video_kps = list(video_npz.items())[video_idx]
-        video_dir = os.path.join(DATA_DIR, signer, signer, split, word, video_name)
+        video_dir = os.path.join(
+            KARSL_DATA_DIR, signer, signer, split, word, video_name
+        )
         video_frames = sorted(os.listdir(video_dir))
 
         assert video_kps.min() != 0 and video_kps.max() != 0, (

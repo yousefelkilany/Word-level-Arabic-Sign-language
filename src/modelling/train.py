@@ -6,7 +6,7 @@ from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 
-from core.constants import DEVICE
+from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR
 from data.dataloader import prepare_lazy_dataloaders
 from modelling.model import get_model_instance, load_model, save_model
 
@@ -17,7 +17,9 @@ def train(
     best_val_loss = float("inf")
     best_checkpoint = ""
     timestamp = datetime.now().strftime("%b%d_%H-%M-%S")
-    checkpoint_root = f"checkpoints/checkpoint_{timestamp}-words_{model.num_classes}"
+    checkpoint_root = (
+        f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{model.num_classes}"
+    )
     os.makedirs(checkpoint_root)
 
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
@@ -67,7 +69,7 @@ def train(
     return best_checkpoint
 
 
-def visualize_metrics(best_checkpoint):
+def visualize_metrics(checkpoint_path):
     import matplotlib.pyplot as plt
     from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
@@ -84,21 +86,20 @@ def visualize_metrics(best_checkpoint):
                 test_predicted.extend(predicted)
         return confusion_matrix(test_labels, test_predicted)
 
-    model = load_model(best_checkpoint, device=DEVICE)
+    model = load_model(checkpoint_path, device=DEVICE)
     conf_mat = test_confusion_matrix(model, test_dl, DEVICE)
     disp = ConfusionMatrixDisplay(conf_mat)
     disp.plot(cmap=plt.cm.Blues)  # type: ignore
+    checkpoint_dir = os.path.dirname(checkpoint_path)
     plt.title("KArSL Confusion Matrix")
-    plt.savefig("KArSL Confusion Matrix.jpg")
+    plt.savefig(os.path.join(checkpoint_dir, "KArSL Confusion Matrix.jpg"))
 
 
 if __name__ == "__main__":
-    num_words = 502
-    train_dl, val_dl, test_dl = prepare_lazy_dataloaders(
-        range(1, num_words + 1), num_workers=4
-    )
+    num_words = 10
+    train_dl, val_dl, test_dl = prepare_lazy_dataloaders(range(1, num_words + 1))
 
-    num_epochs = 20
+    num_epochs = 1
     lr = 1e-3
     weight_decay = 1e-4
     model = get_model_instance(num_words, DEVICE)
@@ -112,4 +113,4 @@ if __name__ == "__main__":
 
     print(f"Best model checkpoint: {best_checkpoint}")
 
-    # visualize_metrics(best_checkpoint)
+    visualize_metrics(best_checkpoint)

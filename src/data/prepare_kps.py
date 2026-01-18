@@ -1,118 +1,18 @@
 import argparse
 import os
 from collections import defaultdict
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from itertools import product
 
 import cv2
-import mediapipe as mp
 import numpy as np
 from tqdm import tqdm
 
-import core.mediapipe_utils as mp_utils
-from core.mediapipe_utils import (
-    KP2SLICE,
-    face_kps_idx,
-    init_mediapipe_worker,
-    mp_face_eyes_idx,
-    mp_face_nose_idx,
-    mp_hand_wrist_idx,
-    mp_hands_palm_idx,
-    mp_pose_nose_idx,
-    mp_pose_shoulders_idx,
-    pose_kps_idx,
-)
-from core.constants import DATA_DIR, FEAT_NUM, KPS_DIR
+from core.constants import KARSL_DATA_DIR, KPS_DIR
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os_join = os.path.join
-
-
-def extract_frame_keypoints(frame_rgb, timestamp_ms=-1, adjusted=False):
-    # do some preprocessing on frame if needed
-    ...
-
-    # define numpy views, pose=6 -> face=136 -> rh=21 -> lh=21
-    all_kps = np.zeros((FEAT_NUM, 3))
-    pose_kps = all_kps[KP2SLICE["pose"]]
-    face_kps = all_kps[KP2SLICE["face"]]
-    rh_kps = all_kps[KP2SLICE["rh"]]
-    lh_kps = all_kps[KP2SLICE["lh"]]
-    np_xyz = np.dtype((float, 3))
-
-    def lm_xyz(lm):
-        return (lm.x, lm.y, lm.z)
-
-    frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
-
-    def landmarks_distance(lms_list, lm_idx):
-        p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
-        return (abs(p1.x - p2.x), abs(p1.y - p2.y), abs(p1.z - p2.z))
-
-    def get_pose():
-        nonlocal pose_kps
-        if timestamp_ms == -1:
-            results = mp_utils.pose_model.detect(frame)
-        else:
-            results = mp_utils.pose_model.detect_for_video(frame, timestamp_ms)
-
-        if results.pose_landmarks is None or len(results.pose_landmarks) == 0:
-            return
-
-        lms = results.pose_landmarks[0]
-        pose_kps[:] = np.fromiter(
-            (lm_xyz(lms[idx]) for idx in pose_kps_idx), dtype=np_xyz
-        )
-        if adjusted:
-            pose_kps -= pose_kps[mp_pose_nose_idx]
-            pose_kps /= landmarks_distance(lms, mp_pose_shoulders_idx)
-
-    def get_face():
-        nonlocal face_kps
-        if timestamp_ms == -1:
-            results = mp_utils.face_model.detect(frame)
-        else:
-            results = mp_utils.face_model.detect_for_video(frame, timestamp_ms)
-        if results.face_landmarks is None or len(results.face_landmarks) == 0:
-            return
-
-        lms = results.face_landmarks[0]
-        face_kps[:] = np.fromiter(
-            (lm_xyz(lms[idx]) for idx in face_kps_idx), dtype=np_xyz
-        )
-        if adjusted:
-            face_kps -= face_kps[mp_face_nose_idx]
-            face_kps /= landmarks_distance(lms, mp_face_eyes_idx)
-
-    def get_hands():
-        nonlocal rh_kps, lh_kps
-        if timestamp_ms == -1:
-            results = mp_utils.hands_model.detect(frame)
-        else:
-            results = mp_utils.hands_model.detect_for_video(frame, timestamp_ms)
-        if results.hand_landmarks is None:
-            return
-
-        for handedness, hand_lms in zip(results.handedness, results.hand_landmarks):
-            target_hand = lh_kps if handedness[0].category_name == "Left" else rh_kps
-            target_hand[:] = np.fromiter((lm_xyz(lm) for lm in hand_lms), dtype=np_xyz)
-            if adjusted:
-                target_hand -= target_hand[mp_hand_wrist_idx]
-                target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)
-
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        _pose_res = executor.submit(get_pose)
-        _face_res = executor.submit(get_face)
-        _hand_res = executor.submit(get_hands)
-        _pose_res.result()
-        _face_res.result()
-        _hand_res.result()
-
-    # do some preprocessing on kps if needed
-    ...
-
-    return all_kps
 
 
 def process_video(video_dir, adjusted):
@@ -125,7 +25,8 @@ def process_video(video_dir, adjusted):
             continue
 
         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-        video_kps.append(extract_frame_keypoints(frame_rgb, adjusted))
+        # FIXME: use LandmarkerProcessor instead, AND save visibility alongside x,y,z coords
+        # video_kps.append(extract_frame_keypoints(frame_rgb, adjusted))
 
     return np.array(video_kps) if video_kps else None
 
@@ -175,7 +76,7 @@ def extract_keypoints_from_frames(
             break
         word = f"{word:04}"
         for signer, split in product(signers, splits):
-            word_dir = os_join(DATA_DIR, signer, signer, split, word)
+            word_dir = os_join(KARSL_DATA_DIR, signer, signer, split, word)
             for video_name in os.listdir(word_dir)[:max_videos]:
                 videos_tasks.append(
                     (word_dir, video_name, signer, split, word, adjusted)
@@ -190,8 +91,7 @@ def extract_keypoints_from_frames(
     num_workers = os.cpu_count()
     print(f"\nStage 2: Executing tasks with {num_workers} workers...")
 
-    # chunksize = int(len(videos_tasks) / num_workers + 0.5)  # ceiling
-    # print(f"Using {num_workers} workers with chunksize={chunksize}")
+    # FiXME: use LandmarkerProcessor.create instead of init_mediapipe_worker function
     with ProcessPoolExecutor(
         max_workers=num_workers, initializer=init_mediapipe_worker
     ) as executor:

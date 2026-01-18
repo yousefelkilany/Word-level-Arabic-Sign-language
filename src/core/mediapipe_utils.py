@@ -95,29 +95,6 @@ face_model: FaceLandmarker
 hands_model: HandLandmarker
 
 
-def init_mediapipe_worker(inference_mode=False):
-    global pose_model, face_model, hands_model
-
-    running_mode = (
-        vision.RunningMode.VIDEO if inference_mode else vision.RunningMode.IMAGE
-    )
-    pose_options = vision.PoseLandmarkerOptions(
-        base_options=pose_base_options, running_mode=running_mode
-    )
-    face_options = vision.FaceLandmarkerOptions(
-        base_options=face_base_options, running_mode=running_mode, num_faces=1
-    )
-    hands_options = vision.HandLandmarkerOptions(
-        base_options=hand_base_options, running_mode=running_mode, num_hands=2
-    )
-
-    pose_model = vision.PoseLandmarker.create_from_options(pose_options)
-    face_model = vision.FaceLandmarker.create_from_options(face_options)
-    hands_model = vision.HandLandmarker.create_from_options(hands_options)
-
-    print(f"Worker process {os.getpid()} initialized.")
-
-
 class LandmarkerProcessor:
     def __init__(self):
         self.pose_model: PoseLandmarker

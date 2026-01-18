@@ -10,7 +10,7 @@ def prepare_lazy_dataloader(
     signers = signers or ["01", "02", "03"]
     ds = LazyKArSLDataset(split, signers, selected_words)
     if split == "test":
-        print(f"{split.capitalize()} dataset size: {len(ds)}")
+        print(f"Test dataset size: {len(ds)}")
         return DataLoader(ds, batch_size=batch_size)
 
     train_size = int(len(ds) * 0.8)
