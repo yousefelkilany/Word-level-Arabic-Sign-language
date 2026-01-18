@@ -18,7 +18,7 @@ NPZ_KPS_DIR = os_join(
     DATA_INPUT_DIR, "word-level-arabic-sign-language-extrcted-keypoints/karsl-kps"
 )
 LABELS_PATH = os_join(DATA_INPUT_DIR, "KARSL-502_Labels.xlsx")
-LABELS_JSON_PATH = os_join(DATA_INPUT_DIR, "KARSL-502_Labels.json")
+LABELS_JSON_PATH = os_join(ROOT_DIR, "data", "KARSL-502_Labels.json")
 KARSL_DATA_DIR = os_join(DATA_INPUT_DIR, "karsl-502")
 
 INPUT_PREPROCESSED_DIR = os_join(
