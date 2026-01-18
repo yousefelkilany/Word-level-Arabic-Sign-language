@@ -4,6 +4,7 @@ from datetime import datetime
 import torch
 from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.amp import autocast, GradScaler
 from tqdm import tqdm
 
 from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR
@@ -22,6 +23,7 @@ def train(
     )
     os.makedirs(checkpoint_root)
 
+    scaler = GradScaler()
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
         model.train()
         train_loss = 0.0
@@ -33,10 +35,13 @@ def train(
         ):
             kps, labels = kps.to(device), labels.to(device)
             optimizer.zero_grad()
-            predicted = model(kps)
-            loss_ = loss(predicted, labels)
-            loss_.backward()
-            optimizer.step()
+
+            with autocast(device_type=device, dtype=torch.bfloat16):
+                predicted = model(kps)
+                loss_ = loss(predicted, labels)
+            scaler.scale(loss_).backward()
+            scaler.step(optimizer)
+            scaler.update()
             train_loss += loss_.item()
 
         model.eval()
@@ -45,8 +50,10 @@ def train(
             val_dl, desc=f"Eval Epoch {epoch}", total=len(val_dl), leave=False
         ):
             kps, labels = kps.to(device), labels.to(device)
-            predicted = model(kps)
-            val_loss += loss(predicted, labels).item()
+            with torch.no_grad():
+                with autocast(device_type=device, dtype=torch.bfloat16):
+                    predicted = model(kps)
+                    val_loss += loss(predicted, labels).item()
 
         val_loss /= len(val_dl)
         train_loss /= len(train_dl)
@@ -99,7 +106,7 @@ if __name__ == "__main__":
     num_words = 10
     train_dl, val_dl, test_dl = prepare_lazy_dataloaders(range(1, num_words + 1))
 
-    num_epochs = 1
+    num_epochs = 50
     lr = 1e-3
     weight_decay = 1e-4
     model = get_model_instance(num_words, DEVICE)
