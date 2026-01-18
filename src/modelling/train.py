@@ -1,3 +1,4 @@
+import gc
 import os
 from datetime import datetime
 
@@ -22,6 +23,10 @@ def train(
         f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{model.num_classes}"
     )
     os.makedirs(checkpoint_root)
+
+    gc.collect()
+    torch.cuda.empty_cache()
+    torch.cuda.reset_max_memory_allocated()
 
     scaler = GradScaler()
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
