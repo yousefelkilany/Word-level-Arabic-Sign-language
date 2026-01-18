@@ -13,7 +13,7 @@ from mediapipe.python.solutions.drawing_styles import (
 )
 from mediapipe.python.solutions.drawing_utils import DrawingSpec, draw_landmarks
 
-from core.constants import KARSL_DATA_DIR, KPS_DIR
+from core.constants import KARSL_DATA_DIR, NPZ_KPS_DIR
 from core.mediapipe_utils import (
     FACE_KPS_CONNECTIONS,
     HAND_KPS_CONNECTIONS,
@@ -124,7 +124,9 @@ if __name__ == "__main__":
     signers = ["01", "02", "03"][-1:]
     words = [f"{502:04}"]
     for signer, split, word in product(signers, splits, words):
-        kps_path = os.path.join(KPS_DIR, "all_kps", f"{signer}-{split}", f"{word}.npz")
+        kps_path = os.path.join(
+            NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word}.npz"
+        )
 
         video_npz = np.load(kps_path, allow_pickle=True)
         video_idx = 0

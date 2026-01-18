@@ -133,9 +133,6 @@ def get_model_instance(num_words, device="cpu"):
         attn_dropout_prob=0.5,
         network_dropout_prob=0.5,
     )
-    if device == "cuda" and torch.cuda.device_count() > 1:
-        print(f"Using {torch.cuda.device_count()} GPUs!")
-        model = nn.DataParallel(model)
     return model.to(device)
 
 
@@ -151,7 +148,7 @@ def save_model(checkpoint_path, model, optimizer, scheduler):
         )
         return True
     except Exception as e:
-        print(e)
+        print(f"[Save model checkpoint - error]: {e = }")
 
 
 def load_model(checkpoint_path, model=None, num_words=None, device="cpu") -> nn.Module:

@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import KARSL_DATA_DIR, KPS_DIR
+from core.constants import KARSL_DATA_DIR, DATA_OUTPUT_DIR
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -49,7 +49,7 @@ def save_grouped_results(result):
     signer, split, word = video_group_key
 
     try:
-        word_kps_path = os_join(KPS_DIR, "all_kps", f"{signer}-{split}", word)
+        word_kps_path = os_join(DATA_OUTPUT_DIR, "all_kps", f"{signer}-{split}", word)
         os.makedirs(os.path.dirname(word_kps_path), exist_ok=True)
 
         final_keypoints = {video_name: kps for video_name, kps in videos_name_kps}

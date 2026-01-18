@@ -1,3 +1,4 @@
+from data.data_augmentation import AlbumentationsWrapper
 from torch.utils.data import DataLoader, random_split
 
 from data.lazy_dataset import LazyKArSLDataset
@@ -8,7 +9,12 @@ def prepare_lazy_dataloader(
     split, selected_words, signers=None, batch_size=64, shuffle=False, num_workers=0
 ):
     signers = signers or ["01", "02", "03"]
-    ds = LazyKArSLDataset(split, signers, selected_words)
+    ds = LazyKArSLDataset(
+        split,
+        signers,
+        selected_words,
+        train_transforms=None,  # AlbumentationsWrapper(),
+    )
     if split == "test":
         print(f"Test dataset size: {len(ds)}")
         return DataLoader(ds, batch_size=batch_size)

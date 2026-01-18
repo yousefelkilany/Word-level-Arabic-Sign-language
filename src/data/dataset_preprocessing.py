@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import FEAT_NUM, KPS_DIR, SEQ_LEN
+from core.constants import DATA_OUTPUT_DIR, FEAT_NUM, NPZ_KPS_DIR, SEQ_LEN
 
 
 def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.ndarray]:
@@ -16,16 +16,14 @@ def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.n
         vids_cnt = 0
         for signer in signers:
             word_kps_path = os_join(
-                KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
+                NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
             )
             try:
                 word_kps = np.load(word_kps_path, allow_pickle=True)
-                # X.extend(list(word_kps.values()))
-                # lower float precision to save memory
                 X.extend([kps.astype(np.float16) for kps in word_kps.values()])
                 vids_cnt += len(word_kps)
-            except FileNotFoundError:
-                continue
+            except FileNotFoundError as e:
+                print(f"[ERROR] NO NPZ FOUND. error: {e}")
         y.extend([word] * vids_cnt)
 
     return X, np.array(y)
@@ -40,20 +38,24 @@ def calculate_num_chunks(kps_len: int):
     return 3
 
 
-def prepare_raw_kps(X: list[np.ndarray]) -> np.ndarray:
+def prepare_raw_kps(X: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
     import pandas as pd
 
     def fix_missing_kps(kps: np.ndarray) -> np.ndarray:
         df = pd.DataFrame(kps)
-        df = df.replace(0.0, np.nan)  # treat exact 0.0 as missing
+        df = df.replace([np.inf, -np.inf, 0.0], np.nan)  # treat exact 0.0 as missing
         df = df.interpolate(method="linear", limit_direction="both", axis=0)
         df = df.fillna(0.0)
+
+        if not np.isfinite(df.values).all():
+            print("[fix_missing_kps - WEEWAAWEEWAA] some bad values in df")
         return df.values.astype(np.float32)
 
     def prepare_seq(kps: np.ndarray) -> np.ndarray:
         kps_len = kps.shape[0]
         flat_kps = kps.reshape(kps_len, FEAT_NUM * 3)
         flat_kps = fix_missing_kps(flat_kps)
+
         if kps_len <= 1.15 * SEQ_LEN:
             kps = cv2.resize(
                 flat_kps,
@@ -72,11 +74,13 @@ def prepare_raw_kps(X: list[np.ndarray]) -> np.ndarray:
 
         return kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
 
-    return np.array(
-        # [prepare_seq(kps) for kps in tqdm(X, desc="Raw KPS => Sequences")],
-        [prepare_seq(kps) for kps in X],
-        dtype=np.float32,
-    )
+    arr = [
+        prepare_seq(kps)
+        for kps in tqdm(X, desc="Raw KPS => Sequences", disable=(len(X) < 10))
+    ]
+    arr_lens = np.array([arr_i.shape[0] for arr_i in arr])
+    arr = np.concatenate(arr, dtype=np.float32, axis=0)
+    return arr, arr_lens
 
 
 def prepare_labels(y: np.ndarray, X: list[np.ndarray]) -> np.ndarray:
@@ -87,12 +91,12 @@ def prepare_labels(y: np.ndarray, X: list[np.ndarray]) -> np.ndarray:
 
 
 def process_and_save_split(
-    split, signers, selected_words, output_dir="preprocessed_data"
+    split, signers, selected_words, output_dir=f"{DATA_OUTPUT_DIR}/preprocessed_data"
 ):
     print(f"--- Processing split: {split} ---")
 
     X, y = load_raw_kps(split, signers, selected_words)
-    X_final = prepare_raw_kps(X)
+    X_final, X_final_lens = prepare_raw_kps(X)
     y_final = prepare_labels(y, X)
     print(f"Final shape for {split} X: {X_final.shape}")
     print(f"Final total size: {X_final.nbytes / 1024**3:.2f} GB")
@@ -105,10 +109,11 @@ def process_and_save_split(
     fp.flush()
 
     np.save(os_join(output_dir, f"{split}_y.npy"), y_final)
-    np.save(os_join(output_dir, f"{split}_X_shape.npy"), np.array(X_final.shape))
+    np.save(os_join(output_dir, f"{split}_X_shape.npy"), X_final.shape)
+    np.save(os_join(output_dir, f"{split}_X_lens.npy"), X_final_lens)
     print(f"Successfully saved {split} data to {output_dir}")
 
-    del X, y, X_final, y_final
+    del X, y, X_final, X_final_lens, y_final
     garbage_collect.collect()
     print("Memory cleared.")
     print(f"--- Finished processing split: {split} ---\n")

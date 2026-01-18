@@ -1,24 +1,38 @@
 from functools import lru_cache
 from os.path import join as os_join
+from typing import Optional
 
 import numpy as np
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from core.constants import KPS_DIR
+from core.constants import NPZ_KPS_DIR
+from data.data_augmentation import AlbumentationsWrapper
 from data.dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 
 
 class LazyKArSLDataset(Dataset):
-    def __init__(self, split, signers, selected_words):
+    def __init__(
+        self,
+        split,
+        signers,
+        selected_words,
+        train_transforms: Optional[AlbumentationsWrapper] = None,
+        val_transforms: Optional[AlbumentationsWrapper] = None,
+        test_transforms: Optional[AlbumentationsWrapper] = None,
+    ):
         super().__init__()
         self.samples = []
+        self.train_transforms = train_transforms
+        self.val_transforms = val_transforms
+        self.test_transforms = test_transforms
+        self.split = split
 
         print(f"Building index map for {split} split...")
         for word in tqdm(selected_words, desc=f"Words - {split}"):
             for signer in signers:
                 word_kps_path = os_join(
-                    KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
+                    NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
                 )
 
                 try:
@@ -48,4 +62,20 @@ class LazyKArSLDataset(Dataset):
     def __getitem__(self, index):
         path, vid, chunk_idx, label = self.samples[index]
         processed_chunks = self._load_and_process_file(path, vid)
-        return processed_chunks[chunk_idx], np.longlong(label)
+        kps = processed_chunks[chunk_idx]
+        if not np.isfinite(kps).all():
+            print("[LazyKArSLDataset - WEEWAAWEEWAA - before] some bad values")
+            kps = np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
+
+        match self.split:
+            case "train":
+                kps = self.train_transforms(kps) if self.train_transforms else kps
+            case "val":
+                kps = self.val_transforms(kps) if self.val_transforms else kps
+            case "test":
+                kps = self.test_transforms(kps) if self.test_transforms else kps
+
+        if not np.isfinite(kps).all():
+            print("[LazyKArSLDataset - WEEWAAWEEWAA - after] some bad values")
+
+        return kps, np.longlong(label)
