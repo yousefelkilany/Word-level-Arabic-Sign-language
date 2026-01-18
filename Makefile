@@ -5,10 +5,10 @@ run_python_module = $(work_dir) && python -m
 
 work_dir = cd src/
 ifeq ($(OS), Windows_NT)
-	local_setup = export LOCAL_DEV=1 && $(work_dir)
+	local_setup = export LOCAL_DEV=1
 	cpu_setup = export USE_CPU=1
 else
-	local_setup = set LOCAL_DEV=1 && $(work_dir)
+	local_setup = set LOCAL_DEV=1
 	cpu_setup = set USE_CPU=1
 endif
 
