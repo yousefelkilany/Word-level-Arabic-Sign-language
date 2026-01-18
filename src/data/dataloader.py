@@ -10,7 +10,12 @@ def prepare_lazy_dataloader(
 ):
     albumentations_wrapper = AlbumentationsWrapper()
     signers = signers or ["01", "02", "03"]
-    ds = LazyKArSLDataset(split, signers, selected_words)
+    ds = LazyKArSLDataset(
+        split,
+        signers,
+        selected_words,
+        train_transforms=albumentations_wrapper,
+    )
     if split == "test":
         print(f"Test dataset size: {len(ds)}")
         return DataLoader(ds, batch_size=batch_size)

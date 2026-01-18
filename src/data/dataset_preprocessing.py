@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import DATA_DIR, FEAT_NUM, KPS_DIR, SEQ_LEN
+from core.constants import DATA_OUTPUT_DIR, FEAT_NUM, KPS_DIR, SEQ_LEN
 
 
 def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.ndarray]:
@@ -87,7 +87,7 @@ def prepare_labels(y: np.ndarray, X: list[np.ndarray]) -> np.ndarray:
 
 
 def process_and_save_split(
-    split, signers, selected_words, output_dir=f"{DATA_DIR}/preprocessed_data"
+    split, signers, selected_words, output_dir=f"{DATA_OUTPUT_DIR}/preprocessed_data"
 ):
     print(f"--- Processing split: {split} ---")
 
