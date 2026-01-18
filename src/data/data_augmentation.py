@@ -79,11 +79,11 @@ class AlbumentationsWrapper:
         )
 
     def __call__(self, sequence: np.ndarray) -> np.ndarray:
-        length_min = np.min(sequence)
-        length_max = np.max(sequence)
-        length_mean = np.mean(sequence)
-        print(f"{length_mean = }, {length_min = }, {length_max = }")
-        print(f"{(1.5 * length_mean) = }, {np.percentile(sequence, 75) = }")
+        # length_min = np.min(sequence)
+        # length_max = np.max(sequence)
+        # length_mean = np.mean(sequence)
+        # print(f"{length_mean = }, {length_min = }, {length_max = }")
+        # print(f"{(1.5 * length_mean) = }, {np.percentile(sequence, 75) = }")
 
         # length_bracket_width = 1
         # custom_bins = np.arange(
@@ -97,7 +97,8 @@ class AlbumentationsWrapper:
         dummy_img = np.zeros((1, 1, 3), dtype=np.uint8)
 
         transformed = self.transform(image=dummy_img, keypoints=flat_seq)  # [:, :2])
-        transformed_xy = np.array(transformed["keypoints"], dtype=np.float32)
+        transformed_xyz = np.array(transformed["keypoints"], dtype=np.float32)
 
         # return np.column_stack((transformed_xy, flat_seq[:, 2:])).reshape(seq_len, -1)
-        return np.column_stack((transformed_xy, flat_seq)).reshape(seq_len, -1)
+        # return np.column_stack((transformed_xy, flat_seq)).reshape(seq_len, -1)
+        return transformed_xyz.reshape(seq_len, -1)

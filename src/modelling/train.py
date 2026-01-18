@@ -106,7 +106,7 @@ if __name__ == "__main__":
     num_words = 10
     train_dl, val_dl, test_dl = prepare_lazy_dataloaders(range(1, num_words + 1))
 
-    num_epochs = 50
+    num_epochs = 1
     lr = 1e-3
     weight_decay = 1e-4
     model = get_model_instance(num_words, DEVICE)
