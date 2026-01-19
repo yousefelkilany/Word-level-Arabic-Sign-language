@@ -87,6 +87,8 @@ def train(
             with torch.no_grad():
                 with autocast_ctx:
                     predicted = model(kps)
+                    print(f"{predicted = }")
+                    print(f"{labels = }")
                     metrics_tensor[0] += loss(predicted, labels).item()
                     metrics_tensor[1] += 1
 
