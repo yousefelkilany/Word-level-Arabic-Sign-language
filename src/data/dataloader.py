@@ -8,13 +8,12 @@ from data.mmap_dataset import MmapKArSLDataset
 def prepare_lazy_dataloader(
     split, selected_words, signers=None, batch_size=64, shuffle=False, num_workers=0
 ):
-    albumentations_wrapper = AlbumentationsWrapper()
     signers = signers or ["01", "02", "03"]
     ds = LazyKArSLDataset(
         split,
         signers,
         selected_words,
-        train_transforms=albumentations_wrapper,
+        train_transforms=None,  # AlbumentationsWrapper(),
     )
     if split == "test":
         print(f"Test dataset size: {len(ds)}")

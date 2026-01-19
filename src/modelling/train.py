@@ -4,11 +4,11 @@ from datetime import datetime
 
 import torch
 from torch import nn, optim
+from torch.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.amp import autocast, GradScaler
 from tqdm import tqdm
 
-from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR
+from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, use_gpu
 from data.dataloader import prepare_lazy_dataloaders
 from modelling.model import get_model_instance, load_model, save_model
 
@@ -28,7 +28,7 @@ def train(
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
 
-    scaler = GradScaler()
+    scaler = GradScaler(device=DEVICE, enabled=use_gpu)
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
         model.train()
         train_loss = 0.0
@@ -41,7 +41,7 @@ def train(
             kps, labels = kps.to(device), labels.to(device)
             optimizer.zero_grad()
 
-            with autocast(device_type=device, dtype=torch.bfloat16):
+            with autocast(device_type=device, enabled=use_gpu, dtype=torch.bfloat16):
                 predicted = model(kps)
                 loss_ = loss(predicted, labels)
             scaler.scale(loss_).backward()
@@ -56,7 +56,9 @@ def train(
         ):
             kps, labels = kps.to(device), labels.to(device)
             with torch.no_grad():
-                with autocast(device_type=device, dtype=torch.bfloat16):
+                with autocast(
+                    device_type=device, enabled=use_gpu, dtype=torch.bfloat16
+                ):
                     predicted = model(kps)
                     val_loss += loss(predicted, labels).item()
 
