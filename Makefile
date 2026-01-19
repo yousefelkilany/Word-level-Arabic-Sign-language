@@ -14,6 +14,9 @@ endif
 
 
 
+parallel_train:
+	$(run_python_module) modelling.parallel_train
+
 train:
 	$(run_python_module) modelling.train
 
