@@ -33,7 +33,7 @@ def run_training(rank, world_size):
 
     torch.manual_seed(42)
 
-    num_words = 10
+    num_words = 50
     signers = ["01", "02", "03"]
     selected_words = range(1, num_words + 1)
     batch_size = 64
@@ -74,7 +74,7 @@ def run_training(rank, world_size):
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
     model = DDP(model, device_ids=[rank])
 
-    num_epochs = 5
+    num_epochs = 20
     lr = 1e-3 * torch.sqrt(torch.tensor(world_size)).item()
     weight_decay = 1e-4
     loss = nn.CrossEntropyLoss()
