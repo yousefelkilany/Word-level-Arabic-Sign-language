@@ -133,9 +133,6 @@ def get_model_instance(num_words, device="cpu"):
         attn_dropout_prob=0.5,
         network_dropout_prob=0.5,
     )
-    if device == "cuda" and torch.cuda.device_count() > 1:
-        print(f"Using {torch.cuda.device_count()} GPUs!")
-        model = nn.DataParallel(model)
     return model.to(device)
 
 

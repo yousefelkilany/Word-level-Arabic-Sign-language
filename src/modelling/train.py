@@ -1,11 +1,13 @@
 import gc
 import os
 from datetime import datetime
+from typing import Optional
 
 import torch
 from torch import nn, optim
 from torch.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.utils.data import DistributedSampler
 from tqdm import tqdm
 
 from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, use_gpu
@@ -14,13 +16,22 @@ from modelling.model import get_model_instance, load_model, save_model
 
 
 def train(
-    model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, device=DEVICE
+    model,
+    loss,
+    optimizer,
+    scheduler,
+    train_dl,
+    val_dl,
+    num_epochs,
+    device=DEVICE,
+    sampler: Optional[DistributedSampler] = None,
 ):
     best_val_loss = float("inf")
     best_checkpoint = ""
     timestamp = datetime.now().strftime("%b%d_%H-%M-%S")
+    num_words = model.module.num_classes if use_gpu else model.num_classes
     checkpoint_root = (
-        f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{model.num_classes}"
+        f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{num_words}"
     )
     os.makedirs(checkpoint_root)
 
@@ -32,6 +43,8 @@ def train(
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
         model.train()
         train_loss = 0.0
+        if sampler:
+            sampler.set_epoch(epoch)
         for kps, labels in tqdm(
             train_dl,
             desc=f"Training Epoch {epoch}",
@@ -83,7 +96,7 @@ def train(
     return best_checkpoint
 
 
-def visualize_metrics(checkpoint_path, device=DEVICE):
+def visualize_metrics(checkpoint_path, test_dl, device=DEVICE):
     import matplotlib.pyplot as plt
     from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
@@ -127,4 +140,4 @@ if __name__ == "__main__":
 
     print(f"Best model checkpoint: {best_checkpoint}")
 
-    visualize_metrics(best_checkpoint)
+    visualize_metrics(best_checkpoint, test_dl)

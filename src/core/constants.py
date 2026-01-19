@@ -8,12 +8,12 @@ use_gpu = os.environ.get("USE_CPU", "0") == "0" and cuda_is_available()
 DEVICE = ["cpu", "cuda"][int(use_gpu)]
 LOCAL_DEV = int(os.environ.get("LOCAL_DEV", 0))
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-TRAIN_CHECKPOINTS_DIR = os.path.join(ROOT_DIR, "checkpoints")
 LOCAL_INPUT_DATA_DIR = LOCAL_OUTPUT_DATA_DIR = os.path.join(ROOT_DIR, "data")
 KAGGLE_INPUT_DATA_DIR = "/kaggle/input"
 KAGGLE_OUTPUT_DATA_DIR = "/kaggle/working"
 DATA_INPUT_DIR = [KAGGLE_INPUT_DATA_DIR, LOCAL_INPUT_DATA_DIR][LOCAL_DEV]
 DATA_OUTPUT_DIR = [KAGGLE_OUTPUT_DATA_DIR, LOCAL_OUTPUT_DATA_DIR][LOCAL_DEV]
+TRAIN_CHECKPOINTS_DIR = os.path.join(DATA_OUTPUT_DIR, "checkpoints")
 NPZ_KPS_DIR = os_join(
     DATA_INPUT_DIR, "word-level-arabic-sign-language-extrcted-keypoints/karsl-kps"
 )
