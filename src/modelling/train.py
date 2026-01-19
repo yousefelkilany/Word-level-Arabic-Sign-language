@@ -33,7 +33,7 @@ def train(
     checkpoint_root = (
         f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{num_words}"
     )
-    os.makedirs(checkpoint_root)
+    os.makedirs(checkpoint_root, exist_ok=True)
 
     gc.collect()
     torch.cuda.empty_cache()
