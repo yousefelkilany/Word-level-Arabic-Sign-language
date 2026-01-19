@@ -89,7 +89,10 @@ def train(
                     predicted = model(kps)
                     print(f"{predicted = }")
                     print(f"{labels = }")
-                    metrics_tensor[0] += loss(predicted, labels).item()
+                    loss_value = loss(predicted, labels).item()
+                    print(f"{loss_value = }")
+                    metrics_tensor[0] += loss_value
+                    print(f"{metrics_tensor[0] = }")
                     metrics_tensor[1] += 1
 
         if rank > -1:
