@@ -41,10 +41,10 @@ def train(
     autocast_ctx = nullcontext()
     if rank <= 0:
         os.makedirs(checkpoint_root, exist_ok=True)
-        if rank == 0:
-            autocast_ctx = autocast(device_type="cude", dtype=torch.bfloat16)
-            torch.cuda.empty_cache()
-            torch.cuda.reset_max_memory_allocated(device=device)
+    if rank >= 0:
+        autocast_ctx = autocast(device_type="cuda", dtype=torch.bfloat16)
+        torch.cuda.empty_cache()
+        torch.cuda.reset_max_memory_allocated(device=device)
 
     scaler = GradScaler(device=device, enabled=use_gpu)
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training", disable=(rank > 0)):
