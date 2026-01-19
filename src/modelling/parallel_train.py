@@ -28,8 +28,6 @@ def cleanup():
 
 
 def run_training(rank, world_size):
-    setup(rank, world_size)
-
     # 1. Device Setup
     torch.cuda.set_device(rank)
     device = torch.device(f"cuda:{rank}")
@@ -100,10 +98,18 @@ def run_training(rank, world_size):
     #         optimizer.step()
     #     print(f"Rank {rank} finished epoch {epoch}")
 
-    cleanup()
+
+def training_wrapper(rank, world_size):
+    try:
+        setup(rank, world_size)
+        run_training(rank, world_size)
+    except Exception as e:
+        print(f"[Parallel training error]: { e = }")
+    finally:
+        cleanup()
 
 
 if __name__ == "__main__":
     world_size = torch.cuda.device_count()  # Number of T4 GPUs
     # Use spawn to launch processes for each GPU
-    mp.spawn(run_training, args=(world_size,), nprocs=world_size, join=True)
+    mp.spawn(training_wrapper, args=(world_size,), nprocs=world_size, join=True)
