@@ -36,8 +36,9 @@ def train(
     os.makedirs(checkpoint_root, exist_ok=True)
 
     gc.collect()
-    torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated(device=device)
+    if device[:4] == "cuda":
+        torch.cuda.empty_cache()
+        torch.cuda.reset_max_memory_allocated(device=device)
 
     scaler = GradScaler(device=device, enabled=use_gpu)
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
