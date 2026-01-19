@@ -74,7 +74,7 @@ def run_training(rank, world_size):
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
     model = DDP(model, device_ids=[rank])
 
-    num_epochs = 1
+    num_epochs = 20
     lr = 1e-3 * torch.sqrt(torch.tensor(world_size)).item()
     weight_decay = 1e-4
     loss = nn.CrossEntropyLoss()
