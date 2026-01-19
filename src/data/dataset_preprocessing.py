@@ -43,7 +43,7 @@ def prepare_raw_kps(X: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
 
     def fix_missing_kps(kps: np.ndarray) -> np.ndarray:
         df = pd.DataFrame(kps)
-        df = df.replace(0.0, np.nan)  # treat exact 0.0 as missing
+        df = df.replace([np.inf, -np.inf, 0.0], np.nan)  # treat exact 0.0 as missing
         df = df.interpolate(method="linear", limit_direction="both", axis=0)
         df = df.fillna(0.0)
 
