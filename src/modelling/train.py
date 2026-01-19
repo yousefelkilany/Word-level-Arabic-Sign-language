@@ -59,7 +59,7 @@ def train(
             desc=f"Training Epoch {epoch}",
             total=len(train_dl),
             leave=False,
-            disable=(rank > 0),
+            disable=(rank >= 0),
         ):
             kps, labels = kps.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -81,7 +81,7 @@ def train(
             desc=f"Validation Epoch {epoch}",
             total=len(val_dl),
             leave=False,
-            disable=(rank > 0),
+            disable=(rank >= 0),
         ):
             kps, labels = kps.to(device), labels.to(device)
             with torch.no_grad():
