@@ -1,7 +1,7 @@
 checkpoint_path_arg = --checkpoint_path $(checkpoint_path)
 splits_arg = --splits $(splits)
 selected_words_to_arg = --selected_words_to $(selected_words_to)
-run_python_module = $(work_dir) && python -m
+run_python_module = $(work_dir) && uv run -m
 
 work_dir = cd src/
 ifeq ($(OS), Windows_NT)
