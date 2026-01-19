@@ -59,6 +59,7 @@ def train(
             desc=f"Training Epoch {epoch}",
             total=len(train_dl),
             leave=False,
+            disable=(rank > 0),
         ):
             kps, labels = kps.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -75,7 +76,13 @@ def train(
         model.eval()
         metrics_tensor = torch.zeros(2).to(device)
 
-        for kps, labels in val_dl:
+        for kps, labels in tqdm(
+            val_dl,
+            desc=f"Validation Epoch {epoch}",
+            total=len(val_dl),
+            leave=False,
+            disable=(rank > 0),
+        ):
             kps, labels = kps.to(device), labels.to(device)
             with torch.no_grad():
                 with autocast_ctx:
@@ -118,9 +125,9 @@ def visualize_metrics(checkpoint_path, test_dl, device=DEVICE):
         test_labels = []
         test_predicted = []
         with torch.no_grad():
-            for kps, labels in tqdm(test_dl, desc="Testing"):
+            for kps, labels in tqdm(test_dl, desc="Testing", total=len(test_dl)):
                 kps, labels = kps.to(device), labels.to(device)
-                test_labels.extend(labels)
+                test_labels.extend(labels.cpu())
                 outputs = model(kps)
                 _, predicted = torch.max(outputs.data, 1)
                 test_predicted.extend(predicted.cpu())
