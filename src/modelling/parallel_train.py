@@ -28,22 +28,16 @@ def cleanup():
 
 
 def run_training(rank, world_size):
-    # 1. Device Setup
     torch.cuda.set_device(rank)
     device = torch.device(f"cuda:{rank}")
 
-    print(f"Using {torch.cuda.device_count()} GPUs!")
+    torch.manual_seed(42)
 
     num_words = 10
     signers = ["01", "02", "03"]
     selected_words = range(1, num_words + 1)
     batch_size = 64
 
-    model = get_model_instance(num_words, device=device)
-    model = DDP(model, device_ids=[rank])
-
-    # 3. Dataset & Sampler
-    # Use DistributedSampler to partition data across GPUs
     dataset = LazyKArSLDataset(
         split="train",
         signers=signers,
@@ -57,16 +51,31 @@ def run_training(rank, world_size):
     train_sampler = DistributedSampler(
         train_ds, num_replicas=world_size, rank=rank, shuffle=True
     )
-    train_dl = DataLoader(train_ds, batch_size=batch_size, sampler=train_sampler)
+    train_dl = DataLoader(
+        train_ds,
+        batch_size=batch_size,
+        sampler=train_sampler,
+        pin_memory=True,
+        num_workers=4,
+    )
 
     val_sampler = DistributedSampler(
         val_ds, num_replicas=world_size, rank=rank, shuffle=False
     )
-    val_dl = DataLoader(val_ds, batch_size=batch_size, sampler=val_sampler)
+    val_dl = DataLoader(
+        val_ds,
+        batch_size=batch_size,
+        sampler=val_sampler,
+        pin_memory=True,
+        num_workers=4,
+    )
 
-    # 4. Training Loop
-    num_epochs = 1
-    lr = 1e-3
+    model = get_model_instance(num_words, device=device)
+    model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
+    model = DDP(model, device_ids=[rank])
+
+    num_epochs = 5
+    lr = 1e-3 * torch.sqrt(torch.tensor(world_size)).item()
     weight_decay = 1e-4
     loss = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(
@@ -83,6 +92,7 @@ def run_training(rank, world_size):
         val_dl,
         num_epochs,
         str(device),
+        rank=rank,
         train_sampler=train_sampler,
     )
 
@@ -91,20 +101,6 @@ def run_training(rank, world_size):
     if rank == 0:
         test_dl = prepare_lazy_dataloader("test", selected_words, signers, batch_size)
         visualize_metrics(best_checkpoint, test_dl)
-
-    # criterion = nn.MSELoss()
-    # optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
-
-    # for epoch in range(2):
-    #     sampler.set_epoch(epoch)  # Necessary for shuffling
-    #     for data in dataloader:
-    #         inputs = data.to(device)
-    #         optimizer.zero_grad()
-    #         outputs = model(inputs)
-    #         loss = criterion(outputs, inputs)
-    #         loss.backward()
-    #         optimizer.step()
-    #     print(f"Rank {rank} finished epoch {epoch}")
 
 
 def training_wrapper(rank, world_size):
@@ -118,6 +114,7 @@ def training_wrapper(rank, world_size):
 
 
 if __name__ == "__main__":
-    world_size = torch.cuda.device_count()  # Number of T4 GPUs
-    # Use spawn to launch processes for each GPU
+    world_size = torch.cuda.device_count()
+    print(f"Using {world_size} GPUs!")
+
     mp.spawn(training_wrapper, args=(world_size,), nprocs=world_size, join=True)

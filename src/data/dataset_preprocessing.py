@@ -70,10 +70,10 @@ def prepare_raw_kps(X: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
 
         return kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
 
-    if len(X) > 10:
-        arr = [prepare_seq(kps) for kps in tqdm(X, desc="Raw KPS => Sequences")]
-    else:
-        arr = [prepare_seq(kps) for kps in X]
+    arr = [
+        prepare_seq(kps)
+        for kps in tqdm(X, desc="Raw KPS => Sequences", disable=(len(X) < 10))
+    ]
     arr_lens = np.array([arr_i.shape[0] for arr_i in arr])
     arr = np.concatenate(arr, dtype=np.float32, axis=0)
     return arr, arr_lens

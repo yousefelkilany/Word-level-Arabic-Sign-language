@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional
 
 import torch
-from torch import nn, optim
+from torch import nn, optim, distributed as dist
 from torch.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DistributedSampler
@@ -24,6 +24,7 @@ def train(
     val_dl,
     num_epochs,
     device=DEVICE,
+    rank=-1,
     train_sampler: Optional[DistributedSampler] = None,
 ):
     best_val_loss = float("inf")
@@ -33,19 +34,22 @@ def train(
     checkpoint_root = (
         f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{num_words}"
     )
-    os.makedirs(checkpoint_root, exist_ok=True)
+    autocast_device = "cuda" if rank > 0 else "cpu"
 
     gc.collect()
-    if device[:4] == "cuda":
+    if rank == 0:
+        os.makedirs(checkpoint_root, exist_ok=True)
         torch.cuda.empty_cache()
         torch.cuda.reset_max_memory_allocated(device=device)
 
     scaler = GradScaler(device=device, enabled=use_gpu)
-    for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
+    for epoch in tqdm(range(1, num_epochs + 1), desc="Training", disable=(rank > 0)):
         model.train()
         train_loss = 0.0
+
         if train_sampler:
             train_sampler.set_epoch(epoch)
+
         for kps, labels in tqdm(
             train_dl,
             desc=f"Training Epoch {epoch}",
@@ -54,58 +58,49 @@ def train(
         ):
             kps, labels = kps.to(device), labels.to(device)
             optimizer.zero_grad()
-
-            with autocast(device_type=device, enabled=use_gpu, dtype=torch.bfloat16):
+            with autocast(device_type=autocast_device, dtype=torch.bfloat16):
                 predicted = model(kps)
-                loss_ = loss(predicted, labels)
-            scaler.scale(loss_).backward()
+                loss_value = loss(predicted, labels)
+
+            scaler.scale(loss_value).backward()
             scaler.step(optimizer)
             scaler.update()
-            train_loss += loss_.item()
+
+            train_loss += loss_value.item()
 
         model.eval()
-        val_loss = 0.0
-        for kps, labels in tqdm(
-            val_dl, desc=f"Eval Epoch {epoch}", total=len(val_dl), leave=False
-        ):
+        metrics_tensor = torch.zeros(2).to(device)
+
+        for kps, labels in val_dl:
             kps, labels = kps.to(device), labels.to(device)
             with torch.no_grad():
-                with autocast(
-                    device_type=device, enabled=use_gpu, dtype=torch.bfloat16
-                ):
+                with autocast(device_type=autocast_device, dtype=torch.bfloat16):
                     predicted = model(kps)
-                    val_loss += loss(predicted, labels).item()
+                    metrics_tensor[0] += loss(predicted, labels).item()
+                    metrics_tensor[1] += 1
 
-        val_loss /= len(val_dl)
+        if rank > -1:
+            dist.all_reduce(metrics_tensor, op=dist.ReduceOp.SUM)
+
+        val_loss = metrics_tensor[0] / metrics_tensor[1]
         train_loss /= len(train_dl)
 
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            best_checkpoint = f"{checkpoint_root}/{epoch}.pth"
-            if not train_sampler:
+        if rank <= 0:
+            if val_loss < best_val_loss:
+                best_val_loss = val_loss
+                best_checkpoint = f"{checkpoint_root}/{epoch}.pth"
                 save_model(
                     best_checkpoint,
-                    model,
-                    optimizer,
-                    scheduler,
-                )
-            elif device == "cuda:0":
-                save_model(
-                    best_checkpoint,
-                    model.module,
+                    model if rank == -1 else model.module,
                     optimizer,
                     scheduler,
                 )
 
-        last_lr = scheduler.get_last_lr()[0]
+            print(
+                f"[Epoch {epoch}/{num_epochs}]: Training Loss: {train_loss:.4f} |  Validation Loss: {val_loss:.4f}"
+            )
+
         scheduler.step(val_loss)
-        new_lr = scheduler.get_last_lr()[0]
-        if abs(new_lr - last_lr) > 1e-6:
-            print(f"new lr = {new_lr}")
-
-        print(f"Epoch {epoch}/{num_epochs}")
-        print(f"Training Loss: {train_loss:.4f}")
-        print(f"Validation Loss: {val_loss:.4f}")
 
     return best_checkpoint
 
@@ -148,9 +143,12 @@ if __name__ == "__main__":
     optimizer = optim.Adam(params=model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = ReduceLROnPlateau(optimizer, "min", factor=0.2, patience=3)
 
-    best_checkpoint = train(
-        model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, DEVICE
-    )
+    try:
+        best_checkpoint = train(
+            model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, DEVICE
+        )
+    except Exception as e:
+        print(f"[training error]: { e = }")
 
     print(f"Best model checkpoint: {best_checkpoint}")
 
