@@ -14,7 +14,7 @@ from modelling.model import get_model_instance, load_model, save_model
 
 
 def train(
-    model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, device="cpu"
+    model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, device=DEVICE
 ):
     best_val_loss = float("inf")
     best_checkpoint = ""
@@ -26,9 +26,9 @@ def train(
 
     gc.collect()
     torch.cuda.empty_cache()
-    torch.cuda.reset_max_memory_allocated()
+    torch.cuda.reset_max_memory_allocated(device=device)
 
-    scaler = GradScaler(device=DEVICE, enabled=use_gpu)
+    scaler = GradScaler(device=device, enabled=use_gpu)
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
         model.train()
         train_loss = 0.0
@@ -83,11 +83,11 @@ def train(
     return best_checkpoint
 
 
-def visualize_metrics(checkpoint_path):
+def visualize_metrics(checkpoint_path, device=DEVICE):
     import matplotlib.pyplot as plt
     from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
-    def test_confusion_matrix(model, test_dl, device="cpu"):
+    def test_confusion_matrix(model, test_dl, device=DEVICE):
         model.eval()
         test_labels = []
         test_predicted = []
@@ -100,8 +100,8 @@ def visualize_metrics(checkpoint_path):
                 test_predicted.extend(predicted)
         return confusion_matrix(test_labels, test_predicted)
 
-    model = load_model(checkpoint_path, device=DEVICE)
-    conf_mat = test_confusion_matrix(model, test_dl, DEVICE)
+    model = load_model(checkpoint_path, device=device)
+    conf_mat = test_confusion_matrix(model, test_dl, device=device)
     disp = ConfusionMatrixDisplay(conf_mat)
     disp.plot(cmap=plt.cm.Blues)  # type: ignore
     checkpoint_dir = os.path.dirname(checkpoint_path)
