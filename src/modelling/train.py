@@ -87,19 +87,13 @@ def train(
             with torch.no_grad():
                 with autocast_ctx:
                     predicted = model(kps)
-                    # print(f"{predicted = }")
-                    # print(f"{labels = }")
                     loss_value = loss(predicted, labels).item()
-                    print(f"{rank = } --- {loss_value = }")
                     metrics_tensor[0] += loss_value
                     metrics_tensor[1] += 1
-                    print(f"{rank = } --- {metrics_tensor[0] = }")
-                    print(f"{rank = } --- {metrics_tensor = }")
 
         if rank > -1:
             dist.all_reduce(metrics_tensor, op=dist.ReduceOp.SUM)
 
-        print(f"{ metrics_tensor = }")
         val_loss = metrics_tensor[0] / metrics_tensor[1]
         train_loss /= len(train_dl)
 

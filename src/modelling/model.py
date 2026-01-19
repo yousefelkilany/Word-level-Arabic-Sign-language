@@ -148,7 +148,7 @@ def save_model(checkpoint_path, model, optimizer, scheduler):
         )
         return True
     except Exception as e:
-        print(e)
+        print(f"[Save model checkpoint - error]: {e = }")
 
 
 def load_model(checkpoint_path, model=None, num_words=None, device="cpu") -> nn.Module:
