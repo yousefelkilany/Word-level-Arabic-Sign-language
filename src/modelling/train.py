@@ -124,7 +124,7 @@ def visualize_metrics(checkpoint_path, test_dl, device=DEVICE):
                 test_labels.extend(labels)
                 outputs = model(kps)
                 _, predicted = torch.max(outputs.data, 1)
-                test_predicted.extend(predicted)
+                test_predicted.extend(predicted.cpu())
         return confusion_matrix(test_labels, test_predicted)
 
     model = load_model(checkpoint_path, device=device)
