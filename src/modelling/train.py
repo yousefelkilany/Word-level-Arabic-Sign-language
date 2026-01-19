@@ -81,12 +81,20 @@ def train(
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             best_checkpoint = f"{checkpoint_root}/{epoch}.pth"
-            save_model(
-                best_checkpoint,
-                model.module if sampler else model,
-                optimizer,
-                scheduler,
-            )
+            if not sampler:
+                save_model(
+                    best_checkpoint,
+                    model,
+                    optimizer,
+                    scheduler,
+                )
+            elif device == "cuda:0":
+                save_model(
+                    best_checkpoint,
+                    model.module,
+                    optimizer,
+                    scheduler,
+                )
 
         last_lr = scheduler.get_last_lr()[0]
         scheduler.step(val_loss)
