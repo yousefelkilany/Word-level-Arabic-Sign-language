@@ -33,7 +33,7 @@ def run_training(rank, world_size):
 
     torch.manual_seed(42)
 
-    num_words = 5
+    num_words = 25
     signers = ["01", "02", "03"]
     selected_words = range(1, num_words + 1)
     batch_size = 64
