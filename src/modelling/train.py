@@ -24,7 +24,7 @@ def train(
     val_dl,
     num_epochs,
     device=DEVICE,
-    sampler: Optional[DistributedSampler] = None,
+    train_sampler: Optional[DistributedSampler] = None,
 ):
     best_val_loss = float("inf")
     best_checkpoint = ""
@@ -44,8 +44,8 @@ def train(
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training"):
         model.train()
         train_loss = 0.0
-        if sampler:
-            sampler.set_epoch(epoch)
+        if train_sampler:
+            train_sampler.set_epoch(epoch)
         for kps, labels in tqdm(
             train_dl,
             desc=f"Training Epoch {epoch}",
@@ -82,7 +82,7 @@ def train(
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             best_checkpoint = f"{checkpoint_root}/{epoch}.pth"
-            if not sampler:
+            if not train_sampler:
                 save_model(
                     best_checkpoint,
                     model,

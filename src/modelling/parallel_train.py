@@ -75,7 +75,15 @@ def run_training(rank, world_size):
     scheduler = ReduceLROnPlateau(optimizer, "min", factor=0.2, patience=3)
 
     best_checkpoint = train(
-        model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, str(device)
+        model,
+        loss,
+        optimizer,
+        scheduler,
+        train_dl,
+        val_dl,
+        num_epochs,
+        str(device),
+        train_sampler=train_sampler,
     )
 
     print(f"Best model checkpoint: {best_checkpoint}")
