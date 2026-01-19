@@ -46,12 +46,16 @@ def prepare_raw_kps(X: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
         df = df.replace(0.0, np.nan)  # treat exact 0.0 as missing
         df = df.interpolate(method="linear", limit_direction="both", axis=0)
         df = df.fillna(0.0)
+
+        if not np.isfinite(df.values).all():
+            print("[fix_missing_kps - WEEWAAWEEWAA] some bad values in df")
         return df.values.astype(np.float32)
 
     def prepare_seq(kps: np.ndarray) -> np.ndarray:
         kps_len = kps.shape[0]
         flat_kps = kps.reshape(kps_len, FEAT_NUM * 3)
         flat_kps = fix_missing_kps(flat_kps)
+
         if kps_len <= 1.15 * SEQ_LEN:
             kps = cv2.resize(
                 flat_kps,
@@ -67,9 +71,6 @@ def prepare_raw_kps(X: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
             kps = np.array(
                 [kps[:SEQ_LEN, :], kps[step : step + SEQ_LEN, :], kps[-SEQ_LEN:, :]]
             )
-
-        if not np.isfinite(kps).all():
-            print("[dataset_preprocessing - WEEWAAWEEWAA] some bad values")
 
         return kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
 
