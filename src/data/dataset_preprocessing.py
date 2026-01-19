@@ -68,6 +68,9 @@ def prepare_raw_kps(X: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
                 [kps[:SEQ_LEN, :], kps[step : step + SEQ_LEN, :], kps[-SEQ_LEN:, :]]
             )
 
+        if not np.isfinite(kps).all():
+            print("[dataset_preprocessing - WEEWAAWEEWAA] some bad values")
+
         return kps.reshape(-1, SEQ_LEN, FEAT_NUM * 3)
 
     arr = [

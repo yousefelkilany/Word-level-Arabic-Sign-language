@@ -62,7 +62,11 @@ class LazyKArSLDataset(Dataset):
     def __getitem__(self, index):
         path, vid, chunk_idx, label = self.samples[index]
         processed_chunks = self._load_and_process_file(path, vid)
-        kps, label = processed_chunks[chunk_idx], np.longlong(label)
+        kps = processed_chunks[chunk_idx]
+        if not np.isfinite(kps).all():
+            print("[LazyKArSLDataset - WEEWAAWEEWAA - before] some bad values")
+            kps = np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
+
         match self.split:
             case "train":
                 kps = self.train_transforms(kps) if self.train_transforms else kps
@@ -70,4 +74,8 @@ class LazyKArSLDataset(Dataset):
                 kps = self.val_transforms(kps) if self.val_transforms else kps
             case "test":
                 kps = self.test_transforms(kps) if self.test_transforms else kps
-        return kps, label
+
+        if not np.isfinite(kps).all():
+            print("[LazyKArSLDataset - WEEWAAWEEWAA - after] some bad values")
+
+        return kps, np.longlong(label)
