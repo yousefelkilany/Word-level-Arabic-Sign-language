@@ -81,7 +81,12 @@ def train(
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             best_checkpoint = f"{checkpoint_root}/{epoch}.pth"
-            save_model(best_checkpoint, model, optimizer, scheduler)
+            save_model(
+                best_checkpoint,
+                model.module if sampler else model,
+                optimizer,
+                scheduler,
+            )
 
         last_lr = scheduler.get_last_lr()[0]
         scheduler.step(val_loss)

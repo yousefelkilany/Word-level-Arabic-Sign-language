@@ -1,3 +1,4 @@
+from data.dataloader import prepare_lazy_dataloader
 import os
 
 import torch
@@ -38,6 +39,7 @@ def run_training(rank, world_size):
     num_words = 10
     signers = ["01", "02", "03"]
     selected_words = range(1, num_words + 1)
+    batch_size = 64
 
     model = get_model_instance(num_words, device=device)
     model = DDP(model, device_ids=[rank])
@@ -57,12 +59,12 @@ def run_training(rank, world_size):
     train_sampler = DistributedSampler(
         train_ds, num_replicas=world_size, rank=rank, shuffle=True
     )
-    train_dl = DataLoader(train_ds, batch_size=64, sampler=train_sampler)
+    train_dl = DataLoader(train_ds, batch_size=batch_size, sampler=train_sampler)
 
     val_sampler = DistributedSampler(
         val_ds, num_replicas=world_size, rank=rank, shuffle=False
     )
-    val_dl = DataLoader(val_ds, batch_size=64, sampler=val_sampler)
+    val_dl = DataLoader(val_ds, batch_size=batch_size, sampler=val_sampler)
 
     # 4. Training Loop
     num_epochs = 1
@@ -80,17 +82,9 @@ def run_training(rank, world_size):
 
     print(f"Best model checkpoint: {best_checkpoint}")
 
-    test_ds = LazyKArSLDataset(
-        split="test",
-        signers=signers,
-        selected_words=selected_words,
-        train_transforms=None,
-    )
-    test_sampler = DistributedSampler(
-        test_ds, num_replicas=world_size, rank=rank, shuffle=False
-    )
-    test_dl = DataLoader(test_ds, batch_size=64, sampler=test_sampler)
-    visualize_metrics(best_checkpoint, test_dl)
+    if rank == 0:
+        test_dl = prepare_lazy_dataloader("test", selected_words, signers, batch_size)
+        visualize_metrics(best_checkpoint, test_dl)
 
     # criterion = nn.MSELoss()
     # optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
