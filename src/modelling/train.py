@@ -44,7 +44,7 @@ def train(
     if rank >= 0:
         autocast_ctx = autocast(device_type="cuda", dtype=torch.bfloat16)
         torch.cuda.empty_cache()
-        torch.cuda.reset_max_memory_allocated(device=device)
+        torch.cuda.reset_peak_memory_stats(device=device)
 
     scaler = GradScaler(device=device, enabled=use_gpu)
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training", disable=(rank > 0)):
