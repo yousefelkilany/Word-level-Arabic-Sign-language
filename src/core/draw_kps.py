@@ -31,19 +31,26 @@ landmark_styling_fallback = DrawingSpec(
 connection_styling_fallback = landmark_styling_fallback
 
 
+def get_lms_list(kps, kps_idx, lms_num, return_as_lm=True):
+    if return_as_lm:
+        lms_list = [landmark_pb2.NormalizedLandmark() for _ in range(lms_num)]  # type: ignore
+        for idx, kp in zip(kps_idx, kps):
+            lms_list[idx] = landmark_pb2.NormalizedLandmark(x=kp[0], y=kp[1], z=kp[2])  # type: ignore
+        return lms_list
+
+    lms_list = [(0, 0, 0)] * lms_num
+    for idx, kp in zip(kps_idx, kps):
+        lms_list[idx] = kp
+    return np.array(lms_list)
+
+
 def draw_kps_on_image(
     annotated_image,
-    kps,
-    kps_idx,
-    lms_num,
+    lms_list,
     kp_connections,
     landmark_style=None,
     connection_style=None,
 ):
-    lms_list = [landmark_pb2.NormalizedLandmark() for _ in range(lms_num)]  # type: ignore
-    for idx, kp in zip(kps_idx, kps):
-        lms_list[idx] = landmark_pb2.NormalizedLandmark(x=kp[0], y=kp[1], z=kp[2])  # type: ignore
-
     landmarks_proto = landmark_pb2.NormalizedLandmarkList()  # type: ignore
     landmarks_proto.landmark.extend(lms_list)
 
@@ -57,34 +64,55 @@ def draw_kps_on_image(
     return annotated_image
 
 
-def draw_pose_kps_on_image(rgb_image, pose_kps):
-    return draw_kps_on_image(
-        rgb_image,
+def get_pose_lms_list(pose_kps, return_as_lm=True):
+    return get_lms_list(
         pose_kps,
         pose_kps_idx,
         len(mp_pose_landmark),
+        return_as_lm,
+    )
+
+
+def draw_pose_kps_on_image(rgb_image, pose_kps):
+    return draw_kps_on_image(
+        rgb_image,
+        get_pose_lms_list(pose_kps),
         POSE_KPS_CONNECTIONS,
         get_default_pose_landmarks_style(),
+    )
+
+
+def get_face_lms_list(face_kps, return_as_lm=True):
+    return get_lms_list(
+        face_kps,
+        face_kps_idx,
+        face_mesh.FACEMESH_NUM_LANDMARKS_WITH_IRISES,
+        return_as_lm,
     )
 
 
 def draw_face_kps_on_image(rgb_image, face_kps):
     return draw_kps_on_image(
         rgb_image,
-        face_kps,
-        face_kps_idx,
-        face_mesh.FACEMESH_NUM_LANDMARKS_WITH_IRISES,
+        get_face_lms_list(face_kps),
         FACE_KPS_CONNECTIONS,
         get_default_face_mesh_tesselation_style(),
+    )
+
+
+def get_hand_lms_list(hand_kps, return_as_lm=True):
+    return get_lms_list(
+        hand_kps,
+        hand_kps_idx,
+        len(hands.HandLandmark),
+        return_as_lm,
     )
 
 
 def draw_hand_kps_on_image(rgb_image, hand_kps):
     return draw_kps_on_image(
         rgb_image,
-        hand_kps,
-        hand_kps_idx,
-        len(hands.HandLandmark),
+        get_hand_lms_list(hand_kps),
         HAND_KPS_CONNECTIONS,
         get_default_hand_landmarks_style(),
         get_default_hand_connections_style(),
