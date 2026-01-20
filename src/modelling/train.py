@@ -14,7 +14,8 @@ from tqdm import tqdm
 
 from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, use_gpu
 from data.dataloader import prepare_lazy_dataloaders
-from modelling.model import get_model_instance, load_model, save_model
+from modelling.model import get_model_instance, save_model
+from modelling.visualize_model_performance import visualize_metrics
 
 
 def train(
@@ -92,7 +93,7 @@ def train(
                     metrics_tensor[1] += 1
 
         if rank > -1:
-            dist.all_reduce(metrics_tensor, op=dist.ReduceOp.SUM)
+            dist.all_reduce(metrics_tensor, op=dist.ReduceOp.SUM)  # ty:ignore[possibly-missing-attribute]
 
         val_loss = metrics_tensor[0] / metrics_tensor[1]
         train_loss /= len(train_dl)
@@ -115,32 +116,6 @@ def train(
         scheduler.step(val_loss)
 
     return best_checkpoint
-
-
-def visualize_metrics(checkpoint_path, test_dl, device=DEVICE):
-    import matplotlib.pyplot as plt
-    from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
-
-    def test_confusion_matrix(model, test_dl, device=DEVICE):
-        model.eval()
-        test_labels = []
-        test_predicted = []
-        with torch.no_grad():
-            for kps, labels in tqdm(test_dl, desc="Testing", total=len(test_dl)):
-                kps, labels = kps.to(device), labels.to(device)
-                test_labels.extend(labels.cpu())
-                outputs = model(kps)
-                _, predicted = torch.max(outputs.data, 1)
-                test_predicted.extend(predicted.cpu())
-        return confusion_matrix(test_labels, test_predicted)
-
-    model = load_model(checkpoint_path, device=device)
-    conf_mat = test_confusion_matrix(model, test_dl, device=device)
-    disp = ConfusionMatrixDisplay(conf_mat)
-    disp.plot(cmap=plt.cm.Blues)  # type: ignore
-    checkpoint_dir = os.path.dirname(checkpoint_path)
-    plt.title("KArSL Confusion Matrix")
-    plt.savefig(os.path.join(checkpoint_dir, "KArSL Confusion Matrix.jpg"))
 
 
 if __name__ == "__main__":
