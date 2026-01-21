@@ -1,6 +1,7 @@
 import asyncio
 import time
 from concurrent.futures import ThreadPoolExecutor
+from typing import Optional
 
 import cv2
 import numpy as np
@@ -25,7 +26,7 @@ class FrameBuffer:
             if oldest != -1 and oldest in self._frames:
                 del self._frames[oldest]
 
-    def get_frame(self, idx) -> np.ndarray | None:
+    def get_frame(self, idx) -> Optional[np.ndarray]:
         return self._frames.get(idx)
 
     @property

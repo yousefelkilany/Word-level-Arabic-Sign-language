@@ -2,7 +2,7 @@ import os
 
 import streamlit as st
 
-from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR
+from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, SplitType
 from modelling.dashboard.loader import (
     get_checkpoints_num_words,
     get_split_dataloader,
@@ -38,7 +38,7 @@ def main():
             num_words = get_checkpoints_num_words(selected_ckpt)
             model = load_cached_model(selected_ckpt, num_words)
 
-    split_select = st.sidebar.radio("Split", ["train", "val", "test"], index=0)
+    split_select: SplitType = st.sidebar.radio("Split", map(str, SplitType), index=0)
     dataloader = get_split_dataloader(num_words, split_select)
 
     if "current_view" not in st.session_state:

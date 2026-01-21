@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import onnxruntime
 import torch
@@ -172,7 +174,7 @@ def load_onnx_model(onnx_model_path, device="cpu") -> InferenceSession:
 
 def onnx_inference(
     ort_session: InferenceSession, input_data: list[np.ndarray]
-) -> np.ndarray | None:
+) -> Optional[np.ndarray]:
     inputs = {}
     for ort_input, input_tensor in zip(ort_session.get_inputs(), input_data):
         if (num_elements := (SEQ_LEN - input_tensor.shape[1])) > 0:

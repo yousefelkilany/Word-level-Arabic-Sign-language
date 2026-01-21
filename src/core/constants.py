@@ -1,6 +1,9 @@
 import os
+from enum import StrEnum, auto
 
 from torch.cuda import is_available as cuda_is_available
+
+from data import LazyKArSLDataset, MmapKArSLDataset
 
 os_join = os.path.join
 
@@ -31,3 +34,17 @@ SEQ_LEN = 50
 FEAT_NUM = 184
 
 MAX_WORKERS = 4
+
+
+class SplitType(StrEnum):
+    train = auto()
+    val = auto()
+    test = auto()
+
+
+class DatasetType(StrEnum):
+    lazy = auto()
+    mmap = auto()
+
+
+type KarslDatasetType = LazyKArSLDataset | MmapKArSLDataset
