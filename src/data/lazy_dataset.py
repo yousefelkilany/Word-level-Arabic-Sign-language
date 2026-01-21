@@ -6,7 +6,7 @@ import numpy as np
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from core.constants import NPZ_KPS_DIR
+from core.constants import NPZ_KPS_DIR, SplitType
 from data.data_augmentation import AlbumentationsWrapper
 from data.dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 
@@ -14,22 +14,28 @@ from data.dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 class LazyKArSLDataset(Dataset):
     def __init__(
         self,
-        split,
-        signers,
-        selected_words,
+        split: SplitType,
+        signers: list[str],
+        signs: range,
         train_transforms: Optional[AlbumentationsWrapper] = None,
         val_transforms: Optional[AlbumentationsWrapper] = None,
         test_transforms: Optional[AlbumentationsWrapper] = None,
     ):
         super().__init__()
-        self.samples = []
-        self.train_transforms = train_transforms
-        self.val_transforms = val_transforms
-        self.test_transforms = test_transforms
-        self.split = split
 
+        self.split = split
+        self.transform = AlbumentationsWrapper()
+        match split:
+            case SplitType.train:
+                self.transform = train_transforms or self.transform
+            case SplitType.val:
+                self.transform = val_transforms or self.transform
+            case SplitType.test:
+                self.transform = test_transforms or self.transform
+
+        self.samples = []
         print(f"Building index map for {split} split...")
-        for word in tqdm(selected_words, desc=f"Words - {split}"):
+        for word in tqdm(signs, desc=f"Words - {split}"):
             for signer in signers:
                 word_kps_path = os_join(
                     NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
@@ -54,28 +60,8 @@ class LazyKArSLDataset(Dataset):
         """Loads a single sequence from a file and processes it."""
         return np.load(path, allow_pickle=True)
 
-    def _load_and_process_file(self, path, vid):
-        """Loads a single sequence from a file and processes it."""
-        outputs = prepare_raw_kps([self._load_file(path)[vid]])
-        return outputs[0]
-
     def __getitem__(self, index):
         path, vid, chunk_idx, label = self.samples[index]
-        processed_chunks = self._load_and_process_file(path, vid)
-        kps = processed_chunks[chunk_idx]
-        if not np.isfinite(kps).all():
-            print("[LazyKArSLDataset - WEEWAAWEEWAA - before] some bad values")
-            kps = np.nan_to_num(kps, nan=0.0, posinf=0.0, neginf=0.0)
+        processed_chunks = prepare_raw_kps([self._load_file(path)[vid]])
 
-        match self.split:
-            case "train":
-                kps = self.train_transforms(kps) if self.train_transforms else kps
-            case "val":
-                kps = self.val_transforms(kps) if self.val_transforms else kps
-            case "test":
-                kps = self.test_transforms(kps) if self.test_transforms else kps
-
-        if not np.isfinite(kps).all():
-            print("[LazyKArSLDataset - WEEWAAWEEWAA - after] some bad values")
-
-        return kps, np.longlong(label)
+        return self.transform(processed_chunks[0][chunk_idx]), np.longlong(label)

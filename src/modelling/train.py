@@ -12,8 +12,8 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DistributedSampler
 from tqdm import tqdm
 
-from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, use_gpu
-from data.dataloader import prepare_lazy_dataloaders
+from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, DatasetType
+from data.dataloader import prepare_dataloaders
 from modelling.model import get_model_instance, save_model
 from modelling.visualize_model_performance import visualize_metrics
 
@@ -30,24 +30,23 @@ def train(
     rank=-1,
     train_sampler: Optional[DistributedSampler] = None,
 ):
-    best_val_loss = float("inf")
-    best_checkpoint = ""
-    timestamp = datetime.now().strftime("%b%d_%H-%M-%S")
-    num_words = model.module.num_classes if use_gpu else model.num_classes
-    checkpoint_root = (
-        f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{num_words}"
-    )
-
     gc.collect()
     autocast_ctx = nullcontext()
     if rank <= 0:
+        best_val_loss = float("inf")
+        best_checkpoint = ""
+        timestamp = datetime.now().strftime("%b%d_%H-%M-%S")
+        num_words = model.module.num_classes if rank >= 0 else model.num_classes
+        checkpoint_root = (
+            f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{num_words}"
+        )
         os.makedirs(checkpoint_root, exist_ok=True)
     if rank >= 0:
         autocast_ctx = autocast(device_type="cuda", dtype=torch.bfloat16)
         torch.cuda.empty_cache()
         torch.cuda.reset_peak_memory_stats(device=device)
 
-    scaler = GradScaler(device=device, enabled=use_gpu)
+    scaler = GradScaler(device=device, enabled=(rank >= 0))
     for epoch in tqdm(range(1, num_epochs + 1), desc="Training", disable=(rank > 0)):
         model.train()
         train_loss = 0.0
@@ -92,7 +91,7 @@ def train(
                     metrics_tensor[0] += loss_value
                     metrics_tensor[1] += 1
 
-        if rank > -1:
+        if rank >= 0:
             dist.all_reduce(metrics_tensor, op=dist.ReduceOp.SUM)  # ty:ignore[possibly-missing-attribute]
 
         val_loss = metrics_tensor[0] / metrics_tensor[1]
@@ -120,7 +119,9 @@ def train(
 
 if __name__ == "__main__":
     num_words = 10
-    train_dl, val_dl, test_dl = prepare_lazy_dataloaders(range(1, num_words + 1))
+    train_dl, val_dl, test_dl = prepare_dataloaders(
+        DatasetType.mmap, signs=range(1, num_words + 1)
+    )
 
     num_epochs = 1
     lr = 1e-3

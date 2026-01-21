@@ -150,8 +150,8 @@ if __name__ == "__main__":
     # it's not recommended and you should extract them with --adjusted
     splits = ["train", "test"][-1:]
     signers = ["01", "02", "03"][-1:]
-    words = [f"{502:04}"]
-    for signer, split, word in product(signers, splits, words):
+    signs = [f"{502:04}"]
+    for signer, split, word in product(signers, splits, signs):
         kps_path = os.path.join(
             NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word}.npz"
         )

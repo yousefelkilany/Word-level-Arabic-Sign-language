@@ -1,19 +1,20 @@
 import json
 import logging
+from typing import Optional
 
 from core.constants import LABELS_JSON_PATH
 
 
 def init_words() -> tuple[list[str], list[str]]:
     with open(LABELS_JSON_PATH, "r", encoding="utf-8") as f:
-        words = json.load(f)
-    return words["AR_WORDS"], words["EN_WORDS"]
+        signs = json.load(f)
+    return signs["AR_WORDS"], signs["EN_WORDS"]
 
 
 AR_WORDS, EN_WORDS = init_words()
 
 
-def extract_num_words_from_checkpoint(checkpoint_path) -> int | None:
+def extract_num_words_from_checkpoint(checkpoint_path) -> Optional[int]:
     import re
 
     matches = re.search(r".*?words_(\d+).*?", checkpoint_path)

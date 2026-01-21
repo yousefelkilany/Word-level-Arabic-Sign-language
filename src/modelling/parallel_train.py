@@ -1,4 +1,3 @@
-from data.dataloader import prepare_lazy_dataloader
 import os
 
 import torch
@@ -10,7 +9,9 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader, random_split
 from torch.utils.data.distributed import DistributedSampler
 
-from data.lazy_dataset import LazyKArSLDataset
+from core.constants import DatasetType, SplitType
+from data.dataloader import prepare_dataloader
+from data.mmap_dataset import MmapKArSLDataset
 from modelling.model import get_model_instance
 from modelling.train import train, visualize_metrics
 
@@ -35,13 +36,13 @@ def run_training(rank, world_size):
 
     num_words = 30
     signers = ["01", "02", "03"]
-    selected_words = range(1, num_words + 1)
+    signs = range(1, num_words + 1)
     batch_size = 64
 
-    dataset = LazyKArSLDataset(
-        split="train",
+    dataset = MmapKArSLDataset(
+        SplitType.train,
         signers=signers,
-        selected_words=selected_words,
+        signs=signs,
         train_transforms=None,  # AlbumentationsWrapper(),
     )
     train_size = int(len(dataset) * 0.8)
@@ -99,7 +100,9 @@ def run_training(rank, world_size):
     print(f"Best model checkpoint: {best_checkpoint}")
 
     if rank == 0:
-        test_dl = prepare_lazy_dataloader("test", selected_words, signers, batch_size)
+        test_dl = prepare_dataloader(
+            DatasetType.mmap, SplitType.test, signers, signs, batch_size
+        )
         visualize_metrics(best_checkpoint, test_dl)
 
 

@@ -1,10 +1,10 @@
-from typing import Any
+from typing import Any, Optional
 
 import albumentations as A
 import cv2
 import numpy as np
 
-from core.constants import FEAT_NUM
+from core.constants import FEAT_NUM, SplitType
 from core.mediapipe_utils import KP2SLICE
 from core.utils import get_default_logger
 
@@ -58,8 +58,14 @@ class FlipHorizontalKps(A.DualTransform):
 
 
 class AlbumentationsWrapper:
-    def __init__(self):
+    def __init__(self, split: Optional[SplitType] = None):
         super().__init__()
+
+        if split is None:
+            self.transform = lambda image, keypoints: dict(
+                image=image, keypoints=keypoints
+            )
+            return
 
         self.transform = A.Compose(
             [

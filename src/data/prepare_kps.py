@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import KARSL_DATA_DIR, DATA_OUTPUT_DIR
+from core.constants import DATA_OUTPUT_DIR, KARSL_DATA_DIR
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -61,17 +61,15 @@ def save_grouped_results(result):
 
 
 def extract_keypoints_from_frames(
-    splits=None, signers=None, selected_words=None, max_videos=None, adjusted=False
+    splits=None, signers=None, signs=None, max_videos=None, adjusted=False
 ):
     splits = splits or ["train", "test"][-1:]
     signers = signers or ["01", "02", "03"][-1:]
-    selected_words = list(selected_words or range(1, 2))
+    signs = signs or range(1, 2)
 
-    print(
-        f"Stage 1: Generating task list for words {selected_words[0]} to {selected_words[-1]}..."
-    )
+    print(f"Stage 1: Generating task list for signs {signs[0]} to {signs[-1]}...")
     videos_tasks = []
-    for word in tqdm(selected_words, desc="Words"):
+    for word in tqdm(signs, desc="Words"):
         if 1 > word or word > 502:
             break
         word = f"{word:04}"
@@ -91,7 +89,7 @@ def extract_keypoints_from_frames(
     num_workers = os.cpu_count()
     print(f"\nStage 2: Executing tasks with {num_workers} workers...")
 
-    # FiXME: use LandmarkerProcessor.create instead of init_mediapipe_worker function
+    # FIXME: use LandmarkerProcessor.create instead of init_mediapipe_worker function
     with ProcessPoolExecutor(
         max_workers=num_workers, initializer=init_mediapipe_worker
     ) as executor:
@@ -135,9 +133,7 @@ if __name__ == "__main__":
     extract_keypoints_from_frames(
         splits=cli_args.splits,
         signers=cli_args.signers,
-        selected_words=range(
-            cli_args.selected_words_from, cli_args.selected_words_to + 1
-        ),
+        signs=range(cli_args.selected_words_from, cli_args.selected_words_to + 1),
         max_videos=cli_args.max_videos,
         adjusted=cli_args.adjusted,
     )

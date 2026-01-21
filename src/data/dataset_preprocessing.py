@@ -1,18 +1,23 @@
 import argparse
 import gc as garbage_collect
 import os
+import pickle
+from collections import defaultdict
 from os.path import join as os_join
 
 import cv2
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import DATA_OUTPUT_DIR, FEAT_NUM, NPZ_KPS_DIR, SEQ_LEN
+from core.constants import DATA_OUTPUT_DIR, FEAT_NUM, NPZ_KPS_DIR, SEQ_LEN, SplitType
 
 
-def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.ndarray]:
+def load_raw_kps(
+    split: SplitType, signers: list[str], signs: range
+) -> tuple[list[np.ndarray], np.ndarray, dict[int, dict[int, int]]]:
     X, y = [], []
-    for word in tqdm(selected_words, desc=f"Loading Raw KPS - {split}"):
+    signer_word_samples = defaultdict(lambda: defaultdict(int))
+    for word in tqdm(signs, desc=f"Loading Raw KPS - {split}"):
         vids_cnt = 0
         for signer in signers:
             word_kps_path = os_join(
@@ -21,12 +26,13 @@ def load_raw_kps(split, signers, selected_words) -> tuple[list[np.ndarray], np.n
             try:
                 word_kps = np.load(word_kps_path, allow_pickle=True)
                 X.extend([kps.astype(np.float16) for kps in word_kps.values()])
+                signer_word_samples[int(signer)][word] = len(word_kps)
                 vids_cnt += len(word_kps)
             except FileNotFoundError as e:
                 print(f"[ERROR] NO NPZ FOUND. error: {e}")
         y.extend([word] * vids_cnt)
 
-    return X, np.array(y)
+    return X, np.array(y), signer_word_samples
 
 
 def calculate_num_chunks(kps_len: int):
@@ -48,7 +54,7 @@ def prepare_raw_kps(X: list[np.ndarray]) -> tuple[np.ndarray, np.ndarray]:
         df = df.fillna(0.0)
 
         if not np.isfinite(df.values).all():
-            print("[fix_missing_kps - WEEWAAWEEWAA] some bad values in df")
+            print("[ERROR - fix_missing_kps] some bad values in df")
         return df.values.astype(np.float32)
 
     def prepare_seq(kps: np.ndarray) -> np.ndarray:
@@ -91,11 +97,14 @@ def prepare_labels(y: np.ndarray, X: list[np.ndarray]) -> np.ndarray:
 
 
 def process_and_save_split(
-    split, signers, selected_words, output_dir=f"{DATA_OUTPUT_DIR}/preprocessed_data"
+    split: SplitType,
+    signers: list[str],
+    signs: range,
+    output_dir: str = f"{DATA_OUTPUT_DIR}/preprocessed_data",
 ):
     print(f"--- Processing split: {split} ---")
 
-    X, y = load_raw_kps(split, signers, selected_words)
+    X, y, signer_words_map = load_raw_kps(split, signers, signs)
     X_final, X_final_lens = prepare_raw_kps(X)
     y_final = prepare_labels(y, X)
     print(f"Final shape for {split} X: {X_final.shape}")
@@ -111,6 +120,9 @@ def process_and_save_split(
     np.save(os_join(output_dir, f"{split}_y.npy"), y_final)
     np.save(os_join(output_dir, f"{split}_X_shape.npy"), X_final.shape)
     np.save(os_join(output_dir, f"{split}_X_lens.npy"), X_final_lens)
+    with open(os_join(output_dir, f"{split}_X_signer_words_map.pkl"), "wb") as f:
+        pickle.dump(signer_words_map, f)
+
     print(f"Successfully saved {split} data to {output_dir}")
 
     del X, y, X_final, X_final_lens, y_final
@@ -135,7 +147,7 @@ if __name__ == "__main__":
 
     args = cli_args()
     signers = args.signers
-    selected_words = range(args.selected_words_from, args.selected_words_to + 1)
+    signs = range(args.selected_words_from, args.selected_words_to + 1)
 
     for split in args.splits:
-        process_and_save_split(split, signers, selected_words)
+        process_and_save_split(split, signers, signs)

@@ -1,16 +1,18 @@
-from core.utils import extract_num_words_from_checkpoint
-from data.dataloader import prepare_lazy_dataloader
 import argparse
-from core.constants import DEVICE
-from modelling.model import load_model
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
 import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 import torch
+from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
-from sklearn.metrics import confusion_matrix, classification_report
+
+from core.constants import DEVICE, DatasetType, SplitType
+from core.utils import extract_num_words_from_checkpoint
+from data.dataloader import prepare_dataloader
+from modelling.model import load_model
 
 
 def visualize_metrics(checkpoint_path, test_dl, device=DEVICE, top_k_errors=20):
@@ -124,5 +126,7 @@ if __name__ == "__main__":
     if not num_words:
         raise ValueError("Number of words not found in checkpoint path")
 
-    test_dl = prepare_lazy_dataloader("test", range(1, 1 + num_words))
+    test_dl = prepare_dataloader(
+        DatasetType.lazy, SplitType.test, signs=range(1, 1 + num_words)
+    )
     visualize_metrics(args.checkpoint_path, test_dl)
