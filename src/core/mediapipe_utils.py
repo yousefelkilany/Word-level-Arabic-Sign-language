@@ -1,23 +1,27 @@
 import asyncio
 import os
 from concurrent.futures import ThreadPoolExecutor
+from typing import Optional
 
 import mediapipe as mp
 import numpy as np
 from mediapipe.tasks.python import BaseOptions, vision
 
-from core.constants import FEAT_NUM
+from core.constants import FEAT_DIM, FEAT_NUM, LANDMARKERS_DIR, os_join
 from core.utils import get_default_logger
 
 delegate = BaseOptions.Delegate.CPU
 pose_base_options = BaseOptions(
-    model_asset_path="landmarkers/pose_landmarker.task", delegate=delegate
+    model_asset_path=os_join(LANDMARKERS_DIR, "pose_landmarker.task"),
+    delegate=delegate,
 )
 face_base_options = BaseOptions(
-    model_asset_path="landmarkers/face_landmarker.task", delegate=delegate
+    model_asset_path=os_join(LANDMARKERS_DIR, "face_landmarker.task"),
+    delegate=delegate,
 )
 hand_base_options = BaseOptions(
-    model_asset_path="landmarkers/hand_landmarker.task", delegate=delegate
+    model_asset_path=os_join(LANDMARKERS_DIR, "hand_landmarker.task"),
+    delegate=delegate,
 )
 
 # The idea of points selection is inspired from MuteMotion notebook, I then updated
@@ -54,13 +58,7 @@ pose_kps_idx = tuple(
     )
 )
 face_kps_idx = tuple(
-    sorted(
-        set(
-            point
-            for edge in [*mp_facemesh.FACEMESH_CONTOURS, *mp_facemesh.FACEMESH_IRISES]
-            for point in edge
-        )
-    )
+    sorted(set(point for edge in FACE_KPS_CONNECTIONS for point in edge))
 )
 hand_kps_idx = tuple(range(len(mp_hand_landmark)))
 
@@ -100,11 +98,15 @@ class LandmarkerProcessor:
         self.pose_model: PoseLandmarker
         self.face_model: FaceLandmarker
         self.hands_model: HandLandmarker
+        self.landmarkers: list[str]
         self.logger = get_default_logger()
 
     @classmethod
-    async def create(cls, inference_mode: bool = False):
+    async def create(
+        cls, landmarkers: Optional[list[str]] = None, inference_mode: bool = False
+    ):
         self = cls()
+        self.landmarkers = landmarkers or ["pose", "face", "hands"]
         await asyncio.to_thread(self.init_mediapipe_landmarkers, inference_mode)
         return self
 
@@ -113,29 +115,32 @@ class LandmarkerProcessor:
             vision.RunningMode.VIDEO if inference_mode else vision.RunningMode.IMAGE
         )
 
-        pose_options = vision.PoseLandmarkerOptions(
-            base_options=pose_base_options, running_mode=running_mode
-        )
-        self.pose_model = vision.PoseLandmarker.create_from_options(pose_options)
+        if "pose" in self.landmarkers:
+            pose_options = vision.PoseLandmarkerOptions(
+                base_options=pose_base_options, running_mode=running_mode
+            )
+            self.pose_model = vision.PoseLandmarker.create_from_options(pose_options)
 
-        face_options = vision.FaceLandmarkerOptions(
-            base_options=face_base_options, running_mode=running_mode, num_faces=1
-        )
-        self.face_model = vision.FaceLandmarker.create_from_options(face_options)
+        if "face" in self.landmarkers:
+            face_options = vision.FaceLandmarkerOptions(
+                base_options=face_base_options, running_mode=running_mode, num_faces=1
+            )
+            self.face_model = vision.FaceLandmarker.create_from_options(face_options)
 
-        hands_options = vision.HandLandmarkerOptions(
-            base_options=hand_base_options, running_mode=running_mode, num_hands=2
-        )
-        self.hands_model = vision.HandLandmarker.create_from_options(hands_options)
+        if "hands" in self.landmarkers:
+            hands_options = vision.HandLandmarkerOptions(
+                base_options=hand_base_options, running_mode=running_mode, num_hands=2
+            )
+            self.hands_model = vision.HandLandmarker.create_from_options(hands_options)
 
         self.logger.info(f"Models loaded successfully (PID: {os.getpid()})")
 
     def close(self):
-        if self.pose_model:
+        if "pose" in self.landmarkers and self.pose_model:
             self.pose_model.close()
-        if self.face_model:
+        if "face" in self.landmarkers and self.face_model:
             self.face_model.close()
-        if self.hands_model:
+        if "hands" in self.landmarkers and self.hands_model:
             self.hands_model.close()
 
     def extract_frame_keypoints(self, frame_rgb, timestamp_ms=-1, adjusted=False):
@@ -143,12 +148,13 @@ class LandmarkerProcessor:
         ...
 
         # define numpy views, pose=6 -> face=136 -> rh=21 -> lh=21
-        all_kps = np.zeros((FEAT_NUM, 3))
+        all_kps = np.zeros((FEAT_NUM, FEAT_DIM))
         pose_kps = all_kps[KP2SLICE["pose"]]
         face_kps = all_kps[KP2SLICE["face"]]
         rh_kps = all_kps[KP2SLICE["rh"]]
         lh_kps = all_kps[KP2SLICE["lh"]]
-        np_xyz = np.dtype((float, 3))
+        np_xyz = np.dtype((float, FEAT_DIM))
+        # TODO: save v (visibility) alongside x,y,z coords
 
         def lm_xyz(lm):
             return (lm.x, lm.y, lm.z)
@@ -217,12 +223,17 @@ class LandmarkerProcessor:
                     target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)
 
         with ThreadPoolExecutor(max_workers=3) as executor:
-            pose_res = executor.submit(get_pose)
-            face_res = executor.submit(get_face)
-            hand_res = executor.submit(get_hands)
-            pose_res.result()
-            face_res.result()
-            hand_res.result()
+            if "pose" in self.landmarkers and self.pose_model:
+                pose_res = executor.submit(get_pose)
+                pose_res.result()
+
+            if "face" in self.landmarkers and self.face_model:
+                face_res = executor.submit(get_face)
+                face_res.result()
+
+            if "hands" in self.landmarkers and self.hands_model:
+                hand_res = executor.submit(get_hands)
+                hand_res.result()
 
         # do some preprocessing on kps if needed
         ...

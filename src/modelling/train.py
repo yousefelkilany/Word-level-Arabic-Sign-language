@@ -103,7 +103,7 @@ def train(
                 best_checkpoint = f"{checkpoint_root}/{epoch}.pth"
                 save_model(
                     best_checkpoint,
-                    model if rank == -1 else model.module,
+                    model.module if rank == 0 else model,
                     optimizer,
                     scheduler,
                 )
@@ -135,9 +135,9 @@ if __name__ == "__main__":
         best_checkpoint = train(
             model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, DEVICE
         )
+        print(f"Best model checkpoint: {best_checkpoint}")
+
     except Exception as e:
         print(f"[training error]: { e = }")
-
-    print(f"Best model checkpoint: {best_checkpoint}")
 
     visualize_metrics(best_checkpoint, test_dl)
