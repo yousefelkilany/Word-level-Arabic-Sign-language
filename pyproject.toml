@@ -13,22 +13,24 @@ dependencies = [
     "onnxruntime>=1.23.2",
     "onnxscript==0.2.7",
     "opencv-python-headless>=4.11.0.86",
-    "torch==2.7.1",
-    "torchvision>=0.22.1",
     "uvicorn[standard]>=0.40.0",
 ]
 
 [project.optional-dependencies]
-cuda = []
+torch-cpu = ["torch==2.7.1", "torchvision>=0.22.1"]
+torch-cuda = ["torch==2.7.1", "torchvision>=0.22.1"]
+
+[tool.uv]
+conflicts = [[{ extra = "torch-cpu" }, { extra = "torch-cuda" }]]
 
 [tool.uv.sources]
 torch = [
-    { index = "pytorch-cpu", marker = "sys_platform != 'darwin' and extra != 'cuda'" },
-    { index = "pytorch-cu126", marker = "sys_platform != 'darwin' and extra == 'cuda'" },
+    { index = "pytorch-cpu", marker = "sys_platform != 'darwin' and extra == 'torch-cpu'" },
+    { index = "pytorch-cu126", marker = "sys_platform != 'darwin' and extra != 'torch-cpu' and extra == 'torch-cuda'" },
 ]
 torchvision = [
-    { index = "pytorch-cpu", marker = "sys_platform != 'darwin' and extra != 'cuda'" },
-    { index = "pytorch-cu126", marker = "sys_platform != 'darwin' and extra == 'cuda'" },
+    { index = "pytorch-cpu", marker = "sys_platform != 'darwin' and extra == 'torch-cpu'" },
+    { index = "pytorch-cu126", marker = "sys_platform != 'darwin' and extra != 'torch-cpu' and extra == 'torch-cuda'" },
 ]
 
 [[tool.uv.index]]

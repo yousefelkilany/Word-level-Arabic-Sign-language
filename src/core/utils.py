@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Optional
 
-from core.constants import LABELS_JSON_PATH
+from core.constants import LABELS_JSON_PATH, LOGS_DIR, os_join
 
 
 def init_words() -> tuple[list[str], list[str]]:
@@ -41,7 +41,7 @@ def get_default_logger() -> logging.Logger:
 
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-    file_handler = logging.FileHandler("logs/server_producer.log")
+    file_handler = logging.FileHandler(os_join(LOGS_DIR, "server_producer.log"))
     file_handler.setFormatter(formatter)
     default_logger.addHandler(file_handler)
     default_logger.setLevel(logging.DEBUG)

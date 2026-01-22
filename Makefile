@@ -4,7 +4,7 @@ RUN_CMD = cd $(SRC_DIR) && uv run -m
 ARGS_CHECKPOINT = --checkpoint_path $(checkpoint_path)
 ARGS_DATA       = --splits $(splits) --selected_words_to $(selected_words_to)
 
-.PHONY: train parallel_train export_model onnx_benchmark visualize_metrics preprocess_data visualization_dashboard
+.PHONY: train parallel_train export_model onnx_benchmark visualize_metrics preprocess_data visualization_dashboard generate_face_map
 
 train:
 	$(RUN_CMD) modelling.train
@@ -26,6 +26,9 @@ preprocess_data:
 
 visualization_dashboard:
 	$(RUN_CMD) streamlit run modelling/dashboard/app.py
+
+generate_face_map:
+	$(RUN_CMD) data.generate_mediapipe_face_symmetry_map
 
 cpu_%: export USE_CPU=1
 cpu_%: %
