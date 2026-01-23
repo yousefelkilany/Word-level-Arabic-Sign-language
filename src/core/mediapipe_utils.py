@@ -7,10 +7,10 @@ import mediapipe as mp
 import numpy as np
 from mediapipe.tasks.python import BaseOptions, vision
 
-from core.constants import FEAT_DIM, FEAT_NUM, LANDMARKERS_DIR, os_join
+from core.constants import FEAT_DIM, FEAT_NUM, LANDMARKERS_DIR, os_join, use_gpu
 from core.utils import get_default_logger
 
-delegate = BaseOptions.Delegate.CPU
+delegate = [BaseOptions.Delegate.CPU, BaseOptions.Delegate.GPU][int(use_gpu)]
 pose_base_options = BaseOptions(
     model_asset_path=os_join(LANDMARKERS_DIR, "pose_landmarker.task"),
     delegate=delegate,

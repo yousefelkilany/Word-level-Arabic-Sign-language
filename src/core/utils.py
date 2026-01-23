@@ -1,3 +1,4 @@
+import os
 import json
 import logging
 from typing import Optional
@@ -40,6 +41,9 @@ def get_default_logger() -> logging.Logger:
     default_logger = logging.getLogger("wl-ar-sl")
 
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+
+    if not os.path.exists(LOGS_DIR):
+        os.makedirs(LOGS_DIR)
 
     file_handler = logging.FileHandler(os_join(LOGS_DIR, "server_producer.log"))
     file_handler.setFormatter(formatter)

@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from core.constants import NPZ_KPS_DIR, SplitType
 from data.data_augmentation import DataAugmentor
-from data.mmap_dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
+# from data.mmap_dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 
 
 class LazyKArSLDataset(Dataset):
@@ -47,7 +47,7 @@ class LazyKArSLDataset(Dataset):
                     continue
 
                 for vid, kps in word_kps_data.items():
-                    num_chunks = calculate_num_chunks(kps.shape[0])
+                    num_chunks = 1  # calculate_num_chunks(kps.shape[0])
                     self.samples.extend(
                         ((word_kps_path, vid, i, word - 1) for i in range(num_chunks))
                     )
@@ -62,6 +62,7 @@ class LazyKArSLDataset(Dataset):
 
     def __getitem__(self, index):
         path, vid, chunk_idx, label = self.samples[index]
-        processed_chunks = prepare_raw_kps([self._load_file(path)[vid]])
+        # processed_chunks = prepare_raw_kps([self._load_file(path)[vid]])
 
-        return self.transform(processed_chunks[0][chunk_idx]), np.longlong(label)
+        # return self.transform(processed_chunks[0][chunk_idx]), np.longlong(label)
+        return None, -1
