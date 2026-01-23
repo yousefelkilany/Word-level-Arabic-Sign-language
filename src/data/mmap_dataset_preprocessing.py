@@ -96,7 +96,7 @@ def prepare_labels(y: np.ndarray, X: list[np.ndarray]) -> np.ndarray:
     return np.array(labels, dtype=np.longlong) - 1
 
 
-def process_and_save_split(
+def mmap_process_and_save_split(
     split: SplitType,
     signers: list[str],
     signs: range,
@@ -131,23 +131,26 @@ def process_and_save_split(
     print(f"--- Finished processing split: {split} ---\n")
 
 
-def cli_args():
+def cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--splits", nargs="+", default=splits)
-    parser.add_argument("--signers", nargs="+", default=signers)
-    parser.add_argument("--selected_words_from", type=int, default=1)
-    parser.add_argument("--selected_words_to", type=int, default=num_words)
+    parser.add_argument(
+        "--splits", nargs="+", required=False, default=["train", "test"]
+    )
+    parser.add_argument(
+        "--signers", nargs="+", required=False, default=["01", "02", "03"]
+    )
+    parser.add_argument("--selected_words_from", required=False, type=int, default=1)
+    parser.add_argument("--selected_words_to", required=False, type=int, default=1)
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    splits = ["train", "test"]
-    signers = ["01", "02", "03"]
-    num_words = 502
-
-    args = cli_args()
-    signers = args.signers
-    signs = range(args.selected_words_from, args.selected_words_to + 1)
-
-    for split in args.splits:
-        process_and_save_split(split, signers, signs)
+    cli_args = cli()
+    print("Extracting keypoints from frames...")
+    print("Arguments:", cli_args)
+    for split in cli_args.splits:
+        mmap_process_and_save_split(
+            split=split,
+            signers=cli_args.signers,
+            signs=range(cli_args.selected_words_from, cli_args.selected_words_to + 1),
+        )

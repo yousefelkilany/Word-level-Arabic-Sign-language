@@ -5,7 +5,7 @@ import numpy as np
 from torch.utils.data import Dataset
 
 from core.constants import INPUT_PREPROCESSED_DIR, SplitType
-from data.data_augmentation import AlbumentationsWrapper
+from data.data_augmentation import DataAugmentor
 
 
 class MmapKArSLDataset(Dataset):
@@ -14,14 +14,14 @@ class MmapKArSLDataset(Dataset):
         split: SplitType,
         signers: list[str],
         signs: range,
-        train_transforms: Optional[AlbumentationsWrapper] = None,
-        val_transforms: Optional[AlbumentationsWrapper] = None,
-        test_transforms: Optional[AlbumentationsWrapper] = None,
+        train_transforms: Optional[DataAugmentor] = None,
+        val_transforms: Optional[DataAugmentor] = None,
+        test_transforms: Optional[DataAugmentor] = None,
     ):
         super().__init__()
 
         self.split = split
-        self.transform = AlbumentationsWrapper()
+        self.transform = DataAugmentor()
         match split:
             case SplitType.train:
                 self.transform = train_transforms or self.transform
