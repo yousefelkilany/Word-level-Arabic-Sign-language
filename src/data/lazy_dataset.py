@@ -7,8 +7,8 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 
 from core.constants import NPZ_KPS_DIR, SplitType
-from data.data_augmentation import AlbumentationsWrapper
-from data.dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
+from data.data_augmentation import DataAugmentor
+from data.mmap_dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
 
 
 class LazyKArSLDataset(Dataset):
@@ -17,14 +17,14 @@ class LazyKArSLDataset(Dataset):
         split: SplitType,
         signers: list[str],
         signs: range,
-        train_transforms: Optional[AlbumentationsWrapper] = None,
-        val_transforms: Optional[AlbumentationsWrapper] = None,
-        test_transforms: Optional[AlbumentationsWrapper] = None,
+        train_transforms: Optional[DataAugmentor] = None,
+        val_transforms: Optional[DataAugmentor] = None,
+        test_transforms: Optional[DataAugmentor] = None,
     ):
         super().__init__()
 
         self.split = split
-        self.transform = AlbumentationsWrapper()
+        self.transform = DataAugmentor()
         match split:
             case SplitType.train:
                 self.transform = train_transforms or self.transform

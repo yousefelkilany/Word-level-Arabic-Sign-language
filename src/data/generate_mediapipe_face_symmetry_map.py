@@ -8,12 +8,12 @@ from mediapipe.tasks.python import BaseOptions, vision
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cdist
 
-from core.constants import FACE_SYMMETRY_MAP_PATH, LOCAL_INPUT_DATA_DIR, ROOT_DIR
+from core.constants import FACE_SYMMETRY_MAP_PATH, LOCAL_INPUT_DATA_DIR, LANDMARKERS_DIR
 
 
 def init_face_model():
     face_base_options = BaseOptions(
-        model_asset_path=os.path.join(ROOT_DIR, "landmarkers", "face_landmarker.task"),
+        model_asset_path=os.path.join(LANDMARKERS_DIR, "face_landmarker.task"),
         delegate=BaseOptions.Delegate.CPU,
     )
     face_options = vision.FaceLandmarkerOptions(

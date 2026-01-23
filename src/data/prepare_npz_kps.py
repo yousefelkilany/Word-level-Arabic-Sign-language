@@ -50,7 +50,7 @@ def process_video(video_dir, adjusted):
 
 
 def process_sign_wrapper(sign_processing_info):
-    (sign, signers, splits, max_videos, adjusted) = sign_processing_info
+    (sign, signers, splits, adjusted) = sign_processing_info
 
     if 1 > sign or sign > 502:
         return
@@ -68,7 +68,7 @@ def process_sign_wrapper(sign_processing_info):
             continue
 
         sign_keypoints = dict()
-        for video_name in os.listdir(sign_dir)[:max_videos]:
+        for video_name in os.listdir(sign_dir):
             video_dir = os_join(sign_dir, video_name)
             if os.path.isdir(video_dir):
                 video_kps = process_video(video_dir, adjusted)
@@ -88,7 +88,7 @@ def process_sign_wrapper(sign_processing_info):
 
 
 def extract_keypoints_from_frames(
-    splits=None, signers=None, signs=None, max_videos=None, adjusted=False
+    splits=None, signers=None, signs=None, adjusted=False
 ):
     splits = splits or ["train", "test"][-1:]
     signers = signers or ["01", "02", "03"][-1:]
@@ -97,7 +97,7 @@ def extract_keypoints_from_frames(
     num_workers = os.cpu_count() or 2
     print(f"Starting processing Signs tasks with {num_workers} workers...")
 
-    signs_tasks = [(s, signers, splits, max_videos, adjusted) for s in signs]
+    signs_tasks = [(s, signers, splits, adjusted) for s in signs]
     target_landmarkers = ["pose", "face", "hands"]
 
     with ProcessPoolExecutor(
@@ -114,23 +114,25 @@ def extract_keypoints_from_frames(
 
 def cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--splits", nargs="+", default=None)
-    parser.add_argument("--signers", nargs="+", default=None)
-    parser.add_argument("--selected_words_from", type=int, default=0)
-    parser.add_argument("--selected_words_to", type=int, default=0)
-    parser.add_argument("--max_videos", type=int, default=None)
-    parser.add_argument("--adjusted", action="store_true")
+    parser.add_argument(
+        "--splits", nargs="*", required=False, default=["train", "test"]
+    )
+    parser.add_argument(
+        "--signers", nargs="*", required=False, default=["01", "02", "03"]
+    )
+    parser.add_argument("--selected_words_from", required=False, default=1, type=int)
+    parser.add_argument("--selected_words_to", required=False, default=1, type=int)
+    parser.add_argument("--adjusted", required=False, action="store_true")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     cli_args = cli()
-    print("Extracting keypoints from frames...")
+    print("Extracting keypoints from frames, then storing as NPZ files...")
     print("Arguments:", cli_args)
     extract_keypoints_from_frames(
         splits=cli_args.splits,
         signers=cli_args.signers,
         signs=range(cli_args.selected_words_from, cli_args.selected_words_to + 1),
-        max_videos=cli_args.max_videos,
         adjusted=cli_args.adjusted,
     )
