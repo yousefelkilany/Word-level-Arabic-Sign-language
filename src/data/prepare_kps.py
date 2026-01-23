@@ -1,6 +1,6 @@
+from core.mediapipe_utils import LandmarkerProcessor
 import argparse
 import os
-from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from itertools import product
 
@@ -14,50 +14,77 @@ from core.constants import DATA_OUTPUT_DIR, KARSL_DATA_DIR
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os_join = os.path.join
 
+_worker_processor = None
+
+
+def init_worker(landmarkers=None):
+    """
+    This function runs once when each worker process starts.
+    It initializes the MediaPipe models globally for that process.
+    """
+    global _worker_processor
+    _worker_processor = LandmarkerProcessor.create(
+        landmarkers=landmarkers, inference_mode=False
+    )
+
 
 def process_video(video_dir, adjusted):
-    video_kps = []
-    for idx, frame in enumerate(sorted(os.listdir(video_dir))):
-        frame_path = os_join(video_dir, frame)
+    global _worker_processor
+    if _worker_processor is None:
+        raise RuntimeError(
+            "Worker processor not initialized. Check ProcessPoolExecutor."
+        )
 
+    video_kps = []
+    for frame in sorted(os.listdir(video_dir)):
+        frame_path = os_join(video_dir, frame)
         frame_bgr = cv2.imread(frame_path)
         if frame_bgr is None:
             continue
 
         frame_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-        # FIXME: use LandmarkerProcessor instead, AND save visibility alongside x,y,z coords
-        # video_kps.append(extract_frame_keypoints(frame_rgb, adjusted))
+        kps = _worker_processor.extract_frame_keypoints(frame_rgb, adjusted=adjusted)
+        video_kps.append(kps)
 
     return np.array(video_kps) if video_kps else None
 
 
-def process_video_wrapper(task_info):
-    """
-    A wrapper that calls the real worker and returns the result
-    along with the identifiers needed for grouping.
-    """
-    word_dir, video_name, signer, split, word, adjusted = task_info
+def process_sign_wrapper(sign_processing_info):
+    (sign, signers, splits, max_videos, adjusted) = sign_processing_info
 
-    video_dir = os_join(word_dir, video_name)
-    video_group_key = (signer, split, word)
-    video_kps = process_video(video_dir, adjusted)
-    return (video_group_key, video_name, video_kps)
+    if 1 > sign or sign > 502:
+        return
+    sign = f"{sign:04}"
+    print(f"Processing and Saving videos - sign {sign}")
 
+    for signer, split in tqdm(
+        product(signers, splits),
+        total=len(signers) * len(splits),
+        desc=f"Sign {sign} videos",
+    ):
+        sign_dir = os_join(KARSL_DATA_DIR, signer, signer, split, sign)
+        if not os.path.exists(sign_dir):
+            print(f"Skipping {sign_dir}, since it doesn't exist.")
+            continue
 
-def save_grouped_results(result):
-    video_group_key, videos_name_kps = result
-    signer, split, word = video_group_key
+        sign_keypoints = dict()
+        for video_name in os.listdir(sign_dir)[:max_videos]:
+            video_dir = os_join(sign_dir, video_name)
+            if os.path.isdir(video_dir):
+                video_kps = process_video(video_dir, adjusted)
+                if video_kps is not None:
+                    sign_keypoints[video_name] = video_kps
 
-    try:
-        word_kps_path = os_join(DATA_OUTPUT_DIR, "all_kps", f"{signer}-{split}", word)
-        os.makedirs(os.path.dirname(word_kps_path), exist_ok=True)
+        try:
+            kps_path = os_join(DATA_OUTPUT_DIR, "karsl-kps", f"{signer}-{split}", sign)
+            os.makedirs(os.path.dirname(kps_path), exist_ok=True)
+            np.savez_compressed(kps_path, **sign_keypoints)
 
-        final_keypoints = {video_name: kps for video_name, kps in videos_name_kps}
-        np.savez_compressed(word_kps_path, **final_keypoints)
-        return True
+        except Exception as e:
+            print(f"Error saving file for key {({signer}, {split}, {sign})}: {e}")
 
-    except Exception as e:
-        print(f"Error saving file for key {video_group_key}: {e}")
+    print(f"[DONE] sign {sign} - Processed and Saved videos")
+    return True
 
 
 def extract_keypoints_from_frames(
@@ -67,52 +94,22 @@ def extract_keypoints_from_frames(
     signers = signers or ["01", "02", "03"][-1:]
     signs = signs or range(1, 2)
 
-    print(f"Stage 1: Generating task list for signs {signs[0]} to {signs[-1]}...")
-    videos_tasks = []
-    for word in tqdm(signs, desc="Words"):
-        if 1 > word or word > 502:
-            break
-        word = f"{word:04}"
-        for signer, split in product(signers, splits):
-            word_dir = os_join(KARSL_DATA_DIR, signer, signer, split, word)
-            for video_name in os.listdir(word_dir)[:max_videos]:
-                videos_tasks.append(
-                    (word_dir, video_name, signer, split, word, adjusted)
-                )
+    num_workers = os.cpu_count() or 2
+    print(f"Starting processing Signs tasks with {num_workers} workers...")
 
-    if not videos_tasks:
-        print("No videos found to process. Exiting.")
-        return
+    signs_tasks = [(s, signers, splits, max_videos, adjusted) for s in signs]
+    target_landmarkers = ["pose", "face", "hands"]
 
-    print(f"Generated {len(videos_tasks)} video processing tasks.")
-
-    num_workers = os.cpu_count()
-    print(f"\nStage 2: Executing tasks with {num_workers} workers...")
-
-    # FIXME: use LandmarkerProcessor.create instead of init_mediapipe_worker function
     with ProcessPoolExecutor(
-        max_workers=num_workers, initializer=init_mediapipe_worker
+        max_workers=num_workers, initializer=init_worker, initargs=(target_landmarkers,)
     ) as executor:
-        # experiment with chunksize=chunksize
-        results_itr = executor.map(process_video_wrapper, videos_tasks)
-        videos_results = [
-            result
-            for result in tqdm(
-                results_itr, total=len(videos_tasks), desc="Processing Videos"
+        list(
+            tqdm(
+                executor.map(process_sign_wrapper, signs_tasks),
+                total=len(signs_tasks),
+                desc="Processing Tasks",
             )
-        ]
-
-    print("\nStage 3: Grouping results...")
-    grouped_results = defaultdict(list)
-    for video_group_key, video_name, video_kps in tqdm(videos_results, desc="Grouping"):
-        grouped_results[video_group_key].append((video_name, video_kps))
-
-    print(f"\nStage 4: Saving {len(grouped_results)} NPZ files...")
-    save_tasks = grouped_results.items()
-    with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        save_itr = executor.map(save_grouped_results, save_tasks)
-        for _ in tqdm(save_itr, total=len(grouped_results), desc="Saving NPZ files"):
-            ...
+        )
 
 
 def cli():
