@@ -102,7 +102,16 @@ class LandmarkerProcessor:
         self.logger = get_default_logger()
 
     @classmethod
-    async def create(
+    def create(
+        cls, landmarkers: Optional[list[str]] = None, inference_mode: bool = False
+    ):
+        self = cls()
+        self.landmarkers = landmarkers or ["pose", "face", "hands"]
+        self.init_mediapipe_landmarkers(inference_mode)
+        return self
+
+    @classmethod
+    async def create_async(
         cls, landmarkers: Optional[list[str]] = None, inference_mode: bool = False
     ):
         self = cls()
@@ -153,17 +162,16 @@ class LandmarkerProcessor:
         face_kps = all_kps[KP2SLICE["face"]]
         rh_kps = all_kps[KP2SLICE["rh"]]
         lh_kps = all_kps[KP2SLICE["lh"]]
-        np_xyz = np.dtype((float, FEAT_DIM))
-        # TODO: save v (visibility) alongside x,y,z coords
+        np_xyzv = np.dtype((float, FEAT_DIM))
 
-        def lm_xyz(lm):
-            return (lm.x, lm.y, lm.z)
+        def lm_xyzv(lm):
+            return (lm.x, lm.y, lm.z, getattr(lm, "visibility", 1.0))
 
         frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
 
         def landmarks_distance(lms_list, lm_idx):
             p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
-            return (abs(p1.x - p2.x), abs(p1.y - p2.y), abs(p1.z - p2.z))
+            return (abs(p1.x - p2.x), abs(p1.y - p2.y))
 
         def get_pose():
             nonlocal pose_kps
@@ -176,14 +184,12 @@ class LandmarkerProcessor:
                 return
 
             lms = results.pose_landmarks[0]
-            arr = np.fromiter(
-                (lm_xyz(lms[idx]) for idx in pose_kps_idx),
-                dtype=np_xyz,
+            pose_kps[:] = np.fromiter(
+                (lm_xyzv(lms[idx]) for idx in pose_kps_idx), dtype=np_xyzv
             )
-            pose_kps[:] = arr
             if adjusted:
-                pose_kps -= pose_kps[mp_pose_nose_idx]
-                pose_kps /= landmarks_distance(lms, mp_pose_shoulders_idx)
+                pose_kps[:, :2] -= pose_kps[mp_pose_nose_idx, :2]
+                pose_kps[:, :2] /= landmarks_distance(lms, mp_pose_shoulders_idx)
 
         def get_face():
             nonlocal face_kps
@@ -196,11 +202,11 @@ class LandmarkerProcessor:
 
             lms = results.face_landmarks[0]
             face_kps[:] = np.fromiter(
-                (lm_xyz(lms[idx]) for idx in face_kps_idx), dtype=np_xyz
+                (lm_xyzv(lms[idx]) for idx in face_kps_idx), dtype=np_xyzv
             )
             if adjusted:
-                face_kps -= face_kps[mp_face_nose_idx]
-                face_kps /= landmarks_distance(lms, mp_face_eyes_idx)
+                face_kps[:, :2] -= face_kps[mp_face_nose_idx, :2]
+                face_kps[:, :2] /= landmarks_distance(lms, mp_face_eyes_idx)
 
         def get_hands():
             nonlocal rh_kps, lh_kps
@@ -216,11 +222,14 @@ class LandmarkerProcessor:
                     lh_kps if handedness[0].category_name == "Left" else rh_kps
                 )
                 target_hand[:] = np.fromiter(
-                    (lm_xyz(lm) for lm in hand_lms), dtype=np_xyz
+                    (lm_xyzv(hand_lms[idx]) for idx in hand_kps_idx),
+                    dtype=np_xyzv,
                 )
                 if adjusted:
-                    target_hand -= target_hand[mp_hand_wrist_idx]
-                    target_hand /= landmarks_distance(hand_lms, mp_hands_palm_idx)
+                    target_hand[:, :2] -= target_hand[mp_hand_wrist_idx, :2]
+                    target_hand[:, :2] /= landmarks_distance(
+                        hand_lms, mp_hands_palm_idx
+                    )
 
         with ThreadPoolExecutor(max_workers=3) as executor:
             if "pose" in self.landmarkers and self.pose_model:

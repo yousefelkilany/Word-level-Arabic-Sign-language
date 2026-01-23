@@ -33,7 +33,7 @@ MS_30FPS = 1000 / 30
 MS_30FPS_INT = 1000 // 30
 SEQ_LEN = 50
 FEAT_NUM = 184
-FEAT_DIM = 3  # TODO: x, y, z, and later will add, v (visibility)
+FEAT_DIM = 4  # x, y, z, v (visibility)
 
 MAX_WORKERS = 4
 
