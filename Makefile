@@ -12,7 +12,7 @@ ARGS_DATA += $(if $(selected_words_from),--selected_words_from $(selected_words_
 ARGS_DATA += $(if $(selected_words_to),--selected_words_to $(selected_words_to))
 
 ARGS_NPZ := $(ARGS_DATA)
-ARGS_NPZ += $(if $(adjusted),--adjusted $(adjusted))
+ARGS_NPZ += $(if $(filter 1,$(adjusted)),--adjusted)
 
 
 .PHONY: train parallel_train export_model onnx_benchmark visualize_metrics preprocess_mmap_data visualization_dashboard generate_face_map prepare_npz_kps
