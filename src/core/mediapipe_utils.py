@@ -171,8 +171,16 @@ class LandmarkerProcessor:
 
         def landmarks_distance(lms_list, lm_idx):
             p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
-            distx, disty = (abs(p1.x - p2.x) + 1e-6, abs(p1.y - p2.y) + 1e-6)
-            return distx if distx > 1e-6 else 1.0, disty if disty > 1e-6 else 1.0
+            distx, disty, distz = (
+                abs(p1.x - p2.x) + 1e-9,
+                abs(p1.y - p2.y) + 1e-9,
+                abs(p1.z - p2.z) + 1e-9,
+            )
+            return (
+                distx if distx > 1e-9 else 1.0,
+                disty if disty > 1e-9 else 1.0,
+                distz if distz > 1e-9 else 1.0,
+            )
 
         def get_pose():
             nonlocal pose_kps
@@ -189,8 +197,8 @@ class LandmarkerProcessor:
                 (lm_xyzv(lms[idx]) for idx in pose_kps_idx), dtype=np_xyzv
             )
             if adjusted:
-                pose_kps[:, :2] -= pose_kps[mp_pose_nose_idx, :2]
-                pose_kps[:, :2] /= landmarks_distance(lms, mp_pose_shoulders_idx)
+                pose_kps[:, :3] -= pose_kps[mp_pose_nose_idx, :3]
+                pose_kps[:, :3] /= landmarks_distance(lms, mp_pose_shoulders_idx)
 
         def get_face():
             nonlocal face_kps
@@ -206,8 +214,8 @@ class LandmarkerProcessor:
                 (lm_xyzv(lms[idx]) for idx in face_kps_idx), dtype=np_xyzv
             )
             if adjusted:
-                face_kps[:, :2] -= face_kps[mp_face_nose_idx, :2]
-                face_kps[:, :2] /= landmarks_distance(lms, mp_face_eyes_idx)
+                face_kps[:, :3] -= face_kps[mp_face_nose_idx, :3]
+                face_kps[:, :3] /= landmarks_distance(lms, mp_face_eyes_idx)
 
         def get_hands():
             nonlocal rh_kps, lh_kps
@@ -227,8 +235,8 @@ class LandmarkerProcessor:
                     dtype=np_xyzv,
                 )
                 if adjusted:
-                    target_hand[:, :2] -= target_hand[mp_hand_wrist_idx, :2]
-                    target_hand[:, :2] /= landmarks_distance(
+                    target_hand[:, :3] -= target_hand[mp_hand_wrist_idx, :3]
+                    target_hand[:, :3] /= landmarks_distance(
                         hand_lms, mp_hands_palm_idx
                     )
 

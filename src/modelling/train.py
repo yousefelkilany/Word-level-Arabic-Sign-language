@@ -120,9 +120,9 @@ def train(
 
 
 if __name__ == "__main__":
-    num_words = 1
+    num_words = 2
     train_dl, val_dl, test_dl = prepare_dataloaders(
-        DatasetType.mmap, signs=range(1, num_words + 1)
+        DatasetType.lazy, signs=range(1, num_words + 1)
     )
 
     num_epochs = 1

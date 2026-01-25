@@ -1,7 +1,7 @@
 import numpy as np
 import plotly.graph_objects as go
 
-from core.constants import FEAT_NUM, SEQ_LEN
+from core.constants import FEAT_NUM, SEQ_LEN, FEAT_DIM
 from core.draw_kps import (
     get_face_lms_list,
     get_hand_lms_list,
@@ -123,7 +123,7 @@ def _generate_frame_traces(frame_data, active_slices_map, draw_lines, colors):
 
 def calculate_layout_ranges(sequence, active_slices_map):
     """Calculates global bounding box across the ENTIRE sequence to prevent jitter."""
-    seq_reshaped = sequence.reshape(SEQ_LEN, FEAT_NUM, 3)
+    seq_reshaped = sequence.reshape(SEQ_LEN, FEAT_NUM, FEAT_DIM)
     all_x, all_y, all_z = [], [], []
 
     for random_idx in [0, SEQ_LEN // 2, SEQ_LEN - 1]:
@@ -162,7 +162,7 @@ def plot_3d_animation(
     sequence, active_slices_map, draw_lines=True, title="3D Animation"
 ):
     """Generates a 3D animation Plotly Figure with Play/Pause and Slider."""
-    seq_reshaped = sequence.reshape(SEQ_LEN, FEAT_NUM, 3)
+    seq_reshaped = sequence.reshape(SEQ_LEN, FEAT_NUM, FEAT_DIM)
     colors = {
         "pose": "#ef4444",
         "face": "#3b82f6",
@@ -273,7 +273,7 @@ def plot_3d_skeleton(
     Visualizes a single frame or average of frames from the keypoints sequence.
     Input shape: (SEQ_LEN, FEAT_NUM * 3)
     """
-    seq_reshaped = sequence.reshape(SEQ_LEN, FEAT_NUM, 3)
+    seq_reshaped = sequence.reshape(SEQ_LEN, FEAT_NUM, FEAT_DIM)
     frame_data = seq_reshaped[frame_idx]  # (184, 3)
 
     fig = go.Figure()

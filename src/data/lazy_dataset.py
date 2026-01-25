@@ -6,7 +6,7 @@ import numpy as np
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from core.constants import NPZ_KPS_DIR, SplitType
+from core.constants import FEAT_DIM, NPZ_KPS_DIR, SplitType
 from data.data_preparation import DataAugmentor, TSNSampler
 
 
@@ -38,7 +38,7 @@ class LazyKArSLDataset(Dataset):
         for word in tqdm(signs, desc=f"Words - {split}"):
             for signer in signers:
                 word_kps_path = os_join(
-                    NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word:04}.npz"
+                    NPZ_KPS_DIR, f"{signer}-{split}", f"{word:04}.npz"
                 )
 
                 try:
@@ -46,11 +46,9 @@ class LazyKArSLDataset(Dataset):
                 except FileNotFoundError:
                     continue
 
-                for vid, kps in word_kps_data.items():
-                    num_chunks = 1  # calculate_num_chunks(kps.shape[0])
-                    self.samples.extend(
-                        ((word_kps_path, vid, i, word - 1) for i in range(num_chunks))
-                    )
+                self.samples.extend(
+                    [(signer, vid, word - 1) for vid in word_kps_data.keys()]
+                )
 
     def __len__(self):
         return len(self.samples)
@@ -61,8 +59,7 @@ class LazyKArSLDataset(Dataset):
         return np.load(path, allow_pickle=True)
 
     def __getitem__(self, index):
-        path, vid, chunk_idx, label = self.samples[index]
-        # processed_chunks = prepare_raw_kps([self._load_file(path)[vid]])
-
-        # return self.transform(processed_chunks[0][chunk_idx]), np.longlong(label)
-        return None, -1
+        signer, vid, label = self.samples[index]
+        path = os_join(NPZ_KPS_DIR, f"{signer}-{self.split}", f"{label + 1:04}.npz")
+        sample = self.tsn_sampler(self._load_file(path)[vid])
+        return self.transform(sample.reshape(-1, FEAT_DIM)), np.longlong(label)
