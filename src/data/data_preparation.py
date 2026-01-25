@@ -1,6 +1,5 @@
 import random
 
-import cv2
 import numpy as np
 
 from core.constants import FACE_SYMMETRY_MAP_PATH, SEQ_LEN, SplitType
@@ -53,20 +52,6 @@ class DataAugmentor:
         self.pose_perm = np.array([1, 0, 3, 2, 5, 4])
         self.face_perm = self._get_face_perm_subset(np.load(FACE_SYMMETRY_MAP_PATH))
         self.logger = get_default_logger()
-
-        self.affine_transform = A.Compose(
-            [
-                A.Affine(
-                    scale=0.15,
-                    translate_percent=0.1,
-                    rotate=15,
-                    interpolation=cv2.INTER_LINEAR,
-                    p=self.p_affine,
-                    border_mode=0,
-                ),
-            ],
-            keypoint_params=A.KeypointParams(format="xy", remove_invisible=False),
-        )
 
     def _get_face_perm_subset(self, face_perm) -> np.ndarray:
         face_kps_idx_arr = np.array(face_kps_idx)
