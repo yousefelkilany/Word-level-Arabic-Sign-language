@@ -40,7 +40,7 @@ def get_lms_list(kps, kps_idx, lms_num, return_as_lm=True):
 
     lms_list = [(0, 0, 0)] * lms_num
     for idx, kp in zip(kps_idx, kps):
-        lms_list[idx] = kp
+        lms_list[idx] = kp[:3]
     return np.array(lms_list)
 
 

@@ -3,7 +3,7 @@ from typing import Optional
 from torch.utils.data import DataLoader, random_split
 
 from core.constants import DatasetType, SplitType
-from data import AlbumentationsWrapper, LazyKArSLDataset, MmapKArSLDataset
+from data import DataAugmentor, LazyKArSLDataset, MmapKArSLDataset
 
 
 def prepare_dataloader(
@@ -14,7 +14,7 @@ def prepare_dataloader(
     batch_size: int = 64,
     shuffle: bool = False,
     num_workers: int = 0,
-    train_transforms: Optional[AlbumentationsWrapper] = None,
+    train_transforms: Optional[DataAugmentor] = None,
 ):
     signers = signers or ["01", "02", "03"]
     signs = signs or range(1, 503)
@@ -47,7 +47,7 @@ def prepare_dataloaders(
     dataset_type: DatasetType,
     signers: Optional[list[str]] = None,
     signs: Optional[range] = None,
-    train_transforms: Optional[AlbumentationsWrapper] = None,
+    train_transforms: Optional[DataAugmentor] = None,
     batch_size: int = 64,
     shuffle_train: bool = True,
     num_workers: int = 0,

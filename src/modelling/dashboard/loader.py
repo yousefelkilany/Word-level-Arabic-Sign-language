@@ -38,7 +38,7 @@ def load_cached_model(checkpoint_path: str, num_words: int):
 @st.cache_resource
 def get_cached_dataloaders(num_words: int):
     train_dl, val_dl, test_dl = prepare_dataloaders(
-        DatasetType.mmap, signs=range(1, num_words + 1)
+        DatasetType.lazy, signs=range(1, num_words + 1)
     )
     return {"train": train_dl, "val": val_dl, "test": test_dl}
 

@@ -1,11 +1,12 @@
+from itertools import product
 from os.path import join as os_join
 from typing import Optional
 
 import numpy as np
 from torch.utils.data import Dataset
 
-from core.constants import INPUT_PREPROCESSED_DIR, SplitType
-from data.data_augmentation import DataAugmentor
+from core.constants import FEAT_DIM, MMAP_PREPROCESSED_DIR, SplitType
+from data.data_preparation import DataAugmentor, TSNSampler
 
 
 class MmapKArSLDataset(Dataset):
@@ -21,6 +22,7 @@ class MmapKArSLDataset(Dataset):
         super().__init__()
 
         self.split = split
+        self.tsn_sampler = TSNSampler(mode=split)
         self.transform = DataAugmentor()
         match split:
             case SplitType.train:
@@ -30,19 +32,27 @@ class MmapKArSLDataset(Dataset):
             case SplitType.test:
                 self.transform = test_transforms or self.transform
 
-        data_path = os_join(INPUT_PREPROCESSED_DIR, f"{split}_X.mmap")
-        label_path = os_join(INPUT_PREPROCESSED_DIR, f"{split}_y.npy")
-        data_shape_path = os_join(INPUT_PREPROCESSED_DIR, f"{split}_X_shape.npy")
-        data_seq_lens_path = os_join(INPUT_PREPROCESSED_DIR, f"{split}_X_lens.npy")
+        data_path = os_join(MMAP_PREPROCESSED_DIR, f"{split}_X.mmap")
+        label_path = os_join(MMAP_PREPROCESSED_DIR, f"{split}_y.npz")
+        data_shape_path = os_join(MMAP_PREPROCESSED_DIR, f"{split}_X_shape.npy")
+        data_seq_lens_path = os_join(
+            MMAP_PREPROCESSED_DIR, f"{split}_X_map_samples_lens.npy"
+        )
 
-        self.y: np.ndarray = np.load(label_path)
-        X_shape: np.ndarray = np.load(data_shape_path)
+        self.y: np.ndarray = np.load(label_path)["arr_0"]
+        X_shape = tuple(int(dim) for dim in np.load(data_shape_path))
         self.X = np.memmap(data_path, dtype="float32", mode="r", shape=X_shape)
-        self.X_lens: np.ndarray = np.load(data_seq_lens_path)
+        X_map_samples_lens = np.load(data_seq_lens_path, allow_pickle=True).item()
+        self.X_lens: np.ndarray = np.concatenate(
+            [
+                X_map_samples_lens[int(sign)][int(signer)]
+                for sign, signer in product(signs, signers)
+            ]
+        )
         self.X_offsets = np.concatenate(([0], self.X_lens.cumsum()[:-1]))
 
         assert len(self.X_lens) == len(self.y), (
-            "mismatched length of X samples and y labels"
+            f"[ERROR] Mismatched length of X samples and y labels\n{self.X_lens.shape = }\n{self.y.shape = }"
         )
 
     def __len__(self):
@@ -50,9 +60,5 @@ class MmapKArSLDataset(Dataset):
 
     def __getitem__(self, index):
         chunk_idx, chunks_len = self.X_offsets[index], self.X_lens[index]
-        if chunks_len > 1:
-            # TODO: find a good way to selet which seq from fragemented sign sequence
-            chunk_idx = np.random.randint(
-                chunk_idx, chunk_idx + chunks_len
-            )  # uniformly select random seq
-        return self.transform(self.X[chunk_idx]), np.longlong(self.y[index])
+        sample = self.tsn_sampler(self.X[chunk_idx : chunk_idx + chunks_len])
+        return self.transform(sample.reshape(-1, FEAT_DIM)), np.longlong(self.y[index])

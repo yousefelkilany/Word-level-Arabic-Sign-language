@@ -171,7 +171,7 @@ class LandmarkerProcessor:
 
         def landmarks_distance(lms_list, lm_idx):
             p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
-            return (abs(p1.x - p2.x), abs(p1.y - p2.y))
+            return max(np.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2), 1e-6)
 
         def get_pose():
             nonlocal pose_kps
@@ -188,8 +188,8 @@ class LandmarkerProcessor:
                 (lm_xyzv(lms[idx]) for idx in pose_kps_idx), dtype=np_xyzv
             )
             if adjusted:
-                pose_kps[:, :2] -= pose_kps[mp_pose_nose_idx, :2]
-                pose_kps[:, :2] /= landmarks_distance(lms, mp_pose_shoulders_idx)
+                pose_kps[:, :3] -= pose_kps[mp_pose_nose_idx, :3]
+                pose_kps[:, :3] /= landmarks_distance(lms, mp_pose_shoulders_idx)
 
         def get_face():
             nonlocal face_kps
@@ -205,8 +205,8 @@ class LandmarkerProcessor:
                 (lm_xyzv(lms[idx]) for idx in face_kps_idx), dtype=np_xyzv
             )
             if adjusted:
-                face_kps[:, :2] -= face_kps[mp_face_nose_idx, :2]
-                face_kps[:, :2] /= landmarks_distance(lms, mp_face_eyes_idx)
+                face_kps[:, :3] -= face_kps[mp_face_nose_idx, :3]
+                face_kps[:, :3] /= landmarks_distance(lms, mp_face_eyes_idx)
 
         def get_hands():
             nonlocal rh_kps, lh_kps
@@ -226,8 +226,8 @@ class LandmarkerProcessor:
                     dtype=np_xyzv,
                 )
                 if adjusted:
-                    target_hand[:, :2] -= target_hand[mp_hand_wrist_idx, :2]
-                    target_hand[:, :2] /= landmarks_distance(
+                    target_hand[:, :3] -= target_hand[mp_hand_wrist_idx, :3]
+                    target_hand[:, :3] /= landmarks_distance(
                         hand_lms, mp_hands_palm_idx
                     )
 

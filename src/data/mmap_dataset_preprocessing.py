@@ -1,22 +1,20 @@
-from itertools import product
 import argparse
 import gc as garbage_collect
 import os
-import pickle
-from collections import defaultdict
+from itertools import product
 from os.path import join as os_join
 
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import DATA_OUTPUT_DIR, NPZ_KPS_DIR, SplitType
+from core.constants import MMAP_PREPROCESSED_DIR, NPZ_KPS_DIR, SplitType
 
 
 def load_raw_kps(
     split: SplitType, signers: list[str], signs: range
 ) -> tuple[np.ndarray, np.ndarray, dict[int, dict[int, list]]]:
     X, y = [], []
-    X_map_samples_lens = defaultdict(lambda: defaultdict(int))
+    X_map_samples_lens = dict()
 
     for sign, signer in tqdm(
         product(signs, signers), desc=f"Loading Raw KPS - {split}"
@@ -26,6 +24,8 @@ def load_raw_kps(
             word_kps = np.load(word_kps_path, allow_pickle=True)
             X.extend([kps.astype(np.float16) for kps in word_kps.values()])
             y.extend([sign] * len(word_kps))
+            if X_map_samples_lens.get(sign) is None:
+                X_map_samples_lens[sign] = dict()
             X_map_samples_lens[sign][int(signer)] = [
                 kps.shape[0] for kps in word_kps.values()
             ]
@@ -34,14 +34,13 @@ def load_raw_kps(
 
     X = np.concatenate(X, dtype=np.float32, axis=0)
 
-    return X, np.array(y), X_map_samples_lens
+    return X, np.array(y), dict(X_map_samples_lens)
 
 
 def mmap_process_and_save_split(
     split: SplitType,
     signers: list[str],
     signs: range,
-    output_dir: str = f"{DATA_OUTPUT_DIR}/preprocessed_data",
 ):
     print(f"--- Processing split: {split} ---")
 
@@ -51,17 +50,20 @@ def mmap_process_and_save_split(
     print(f"Final total size: {X.nbytes / 1024**3:.2f} GB")
     print(f"Final shape for {split} y: {y.shape}")
 
-    os.makedirs(output_dir, exist_ok=True)
-    mmap_path = os_join(output_dir, f"{split}_X.mmap")
+    os.makedirs(MMAP_PREPROCESSED_DIR, exist_ok=True)
+    mmap_path = os_join(MMAP_PREPROCESSED_DIR, f"{split}_X.mmap")
     fp = np.memmap(mmap_path, dtype="float32", mode="w+", shape=X.shape)
     fp[:] = X[:]
     fp.flush()
 
-    np.save(os_join(output_dir, f"{split}_y.npy"), y)
-    np.save(os_join(output_dir, f"{split}_X_shape.npy"), X.shape)
-    np.save(os_join(output_dir, f"{split}_X_map_samples_lens.npy"), X_map_samples_lens)  # ty:ignore[invalid-argument-type]
+    np.savez_compressed(os_join(MMAP_PREPROCESSED_DIR, f"{split}_y.npz"), y)
+    np.save(os_join(MMAP_PREPROCESSED_DIR, f"{split}_X_shape.npy"), X.shape)
+    np.save(
+        os_join(MMAP_PREPROCESSED_DIR, f"{split}_X_map_samples_lens.npy"),
+        X_map_samples_lens,  # ty:ignore[invalid-argument-type]
+    )
 
-    print(f"Successfully saved {split} data to {output_dir}")
+    print(f"Successfully saved {split} data to {MMAP_PREPROCESSED_DIR}")
 
     del X, y
     garbage_collect.collect()

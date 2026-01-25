@@ -6,7 +6,7 @@ import torch
 from onnxruntime.capi.onnxruntime_inference_collection import InferenceSession
 from torch import nn
 
-from core.constants import SEQ_LEN
+from core.constants import FEAT_DIM, SEQ_LEN
 from core.mediapipe_utils import FACE_NUM, HAND_NUM, POSE_NUM
 from core.utils import extract_num_words_from_checkpoint
 
@@ -29,9 +29,9 @@ class SpatialGroupEmbedding(nn.Module):
     def __init__(self, hidden_size):
         super().__init__()
 
-        self.pose_num = POSE_NUM * 3  # type: ignore
-        self.face_num = FACE_NUM * 3  # type: ignore
-        self.rh_num = self.lh_num = HAND_NUM * 3  # type: ignore
+        self.pose_num = POSE_NUM * FEAT_DIM  # type: ignore
+        self.face_num = FACE_NUM * FEAT_DIM  # type: ignore
+        self.rh_num = self.lh_num = HAND_NUM * FEAT_DIM  # type: ignore
 
         # hs = 384, hs/48 = 8
         self.pose_proj = nn.Linear(self.pose_num, hidden_size * 5 // 48)  # 40
@@ -47,13 +47,11 @@ class SpatialGroupEmbedding(nn.Module):
 
         pose = self.pose_proj(x[:, :, : self.pose_num])
         face = self.face_proj(x[:, :, self.pose_num : offset])
-        rh = self.rh_proj(x[:, :, offset : (offset + self.rh_num)])
+        rh = self.rh_proj(x[:, :, offset : offset + self.rh_num])
         lh = self.lh_proj(x[:, :, offset + self.rh_num :])
 
         x = self.activation(torch.cat((pose, face, rh, lh), dim=2))
-        x = x.permute(0, 2, 1)
-        x = self.bn(x)
-        x = x.permute(0, 2, 1)
+        x = self.bn(x.permute(0, 2, 1)).permute(0, 2, 1)
         return x
 
 

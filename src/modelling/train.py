@@ -68,6 +68,8 @@ def train(
                 loss_value = loss(predicted, labels)
 
             scaler.scale(loss_value).backward()
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             scaler.step(optimizer)
             scaler.update()
 
@@ -118,9 +120,9 @@ def train(
 
 
 if __name__ == "__main__":
-    num_words = 10
+    num_words = 2
     train_dl, val_dl, test_dl = prepare_dataloaders(
-        DatasetType.mmap, signs=range(1, num_words + 1)
+        DatasetType.lazy, signs=range(1, num_words + 1)
     )
 
     num_epochs = 1
