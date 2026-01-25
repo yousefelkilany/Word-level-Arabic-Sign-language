@@ -171,7 +171,8 @@ class LandmarkerProcessor:
 
         def landmarks_distance(lms_list, lm_idx):
             p1, p2 = lms_list[lm_idx[0]], lms_list[lm_idx[1]]
-            return (abs(p1.x - p2.x), abs(p1.y - p2.y))
+            distx, disty = (abs(p1.x - p2.x) + 1e-6, abs(p1.y - p2.y) + 1e-6)
+            return distx if distx > 1e-6 else 1.0, disty if disty > 1e-6 else 1.0
 
         def get_pose():
             nonlocal pose_kps

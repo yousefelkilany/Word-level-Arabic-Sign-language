@@ -24,9 +24,9 @@ TRAIN_CHECKPOINTS_DIR = os_join(DATA_OUTPUT_DIR, "checkpoints")
 MODELS_DIR = os_join(DATA_OUTPUT_DIR, "models")
 KARSL_DATA_DIR = os_join(DATA_INPUT_DIR, "karsl-502")
 NPZ_KPS_DIR = os_join(
-    DATA_INPUT_DIR, "word-level-arabic-sign-language-extrcted-keypoints/karsl-kps"
+    DATA_INPUT_DIR, "word-level-arabic-sign-language-extrcted-keypoints", "karsl-kps"
 )
-INPUT_PREPROCESSED_DIR = os_join(
+MMAP_PREPROCESSED_DIR = os_join(
     DATA_INPUT_DIR, "word-level-arabic-sign-language-preprcsd-keypoints"
 )
 

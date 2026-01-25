@@ -7,8 +7,7 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 
 from core.constants import NPZ_KPS_DIR, SplitType
-from data.data_augmentation import DataAugmentor
-# from data.mmap_dataset_preprocessing import calculate_num_chunks, prepare_raw_kps
+from data.data_preparation import DataAugmentor, TSNSampler
 
 
 class LazyKArSLDataset(Dataset):
@@ -24,6 +23,7 @@ class LazyKArSLDataset(Dataset):
         super().__init__()
 
         self.split = split
+        self.tsn_sampler = TSNSampler(mode=split)
         self.transform = DataAugmentor()
         match split:
             case SplitType.train:
