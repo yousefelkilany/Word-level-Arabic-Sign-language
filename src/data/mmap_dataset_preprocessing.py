@@ -59,8 +59,7 @@ def mmap_process_and_save_split(
 
     np.save(os_join(output_dir, f"{split}_y.npy"), y)
     np.save(os_join(output_dir, f"{split}_X_shape.npy"), X.shape)
-    with open(os_join(output_dir, f"{split}_X_map_samples_lens.pkl"), "wb") as f:
-        pickle.dump(X_map_samples_lens, f)
+    np.save(os_join(output_dir, f"{split}_X_map_samples_lens.npy"), X_map_samples_lens)  # ty:ignore[invalid-argument-type]
 
     print(f"Successfully saved {split} data to {output_dir}")
 
