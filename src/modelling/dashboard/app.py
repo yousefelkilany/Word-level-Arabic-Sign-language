@@ -1,4 +1,5 @@
 import os
+from uuid import uuid4
 
 import streamlit as st
 
@@ -11,12 +12,23 @@ from modelling.dashboard.loader import (
     run_inference,
 )
 from modelling.dashboard.views import (
+    render_augmentation_view,
     render_error_view,
     render_inspector_view,
     render_metrics_view,
 )
 
 st.set_page_config(layout="wide", page_title="KArSL Analytics")
+st.markdown(
+    """
+    <style>
+    section[data-testid="stSidebar"] {
+        width: 250px !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 def main():
@@ -52,8 +64,17 @@ def main():
             model, dataloader, DEVICE, selected_ckpt, split_select
         )
 
-    default_tabs_views = ["Global Metrics", "Error Analysis", "Sample Inspector"]
-    tabs_views = default_tabs_views[-1:]
+    if "inspector_rnd_key" not in st.session_state:
+        st.session_state.inspector_rnd_key = str(uuid4())[:4]
+        st.session_state.augmentation_rnd_key = str(uuid4())[:4]
+
+    default_tabs_views = [
+        "Global Metrics",
+        "Error Analysis",
+        "Sample Inspector",
+        "Augmentation Lab",
+    ]
+    tabs_views = default_tabs_views[-2:]
 
     y_true, y_pred, y_probs = (None,) * 3
     if st.session_state.results:
@@ -63,38 +84,19 @@ def main():
         st.info("Click 'Run Evaluation' in the sidebar to start.")
 
     tabs = st.tabs(tabs_views)
-    inspector_tab = tabs[-1]
+    inspector_tab, augmentation_tab = tabs[-2:]
     if y_true is not None and y_pred is not None and y_probs is not None:
-        metrics_tab, errors_tab, inspector_tab = tabs
+        metrics_tab, errors_tab = tabs[:2]
         with metrics_tab:
             render_metrics_view(y_true, y_pred, num_words)
         with errors_tab:
             render_error_view(y_true, y_pred, y_probs)
 
     with inspector_tab:
-        render_inspector_view(dataloader, model)
+        render_inspector_view(st.session_state.inspector_rnd_key, dataloader, model)
 
-    if "current_eye" not in st.session_state:
-        st.session_state.current_eye = None
-
-    # view = st.radio(
-    #     "View",
-    #     tabs_views,
-    #     horizontal=True,
-    #     label_visibility="collapsed",
-    # )
-    # st.divider()
-
-    # render_view = st.session_state.current_view or view
-    # if render_view == "Metrics":
-    #     st.session_state.current_view = render_view
-    #     render_metrics_view(y_true, y_pred, num_words)
-    # elif render_view == "Errors":
-    #     st.session_state.current_view = render_view
-    #     render_error_view(y_true, y_pred, y_probs)
-    # elif render_view == "Inspector":
-    #     st.session_state.current_view = render_view
-    #     render_inspector_view(dataloader, model)
+    with augmentation_tab:
+        render_augmentation_view(st.session_state.augmentation_rnd_key, dataloader)
 
 
 if __name__ == "__main__":

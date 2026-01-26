@@ -5,9 +5,10 @@ import streamlit as st
 import torch
 from sklearn.metrics import classification_report, confusion_matrix
 
-from core.constants import DEVICE
-from core.mediapipe_utils import KP2SLICE
+from core.constants import DEVICE, FEAT_DIM, FEAT_NUM, SEQ_LEN
 from core.utils import AR_WORDS, EN_WORDS
+from data.data_preparation import DataAugmentor
+from data.shared_elements import get_visual_controls
 from modelling.dashboard.visualization import plot_3d_animation
 
 
@@ -72,40 +73,17 @@ def render_error_view(y_true, y_pred, y_probs):
     st.plotly_chart(fig, width="stretch")
 
 
-def render_inspector_view(dataloader, model=None):
-    st.subheader("Deep Dive")
-    col_sel, col_checks = st.columns([1, 2])
+def render_inspector_view(rnd_key, dataloader, model=None):
+    st.subheader("Inference with model")
+
     total_samples = len(dataloader.dataset)
-
-    with col_sel:
-        idx = st.number_input(
-            f"Sample Index (0 - {total_samples - 1})",
-            min_value=0,
-            max_value=total_samples - 1,
-            value=0,
-            help=f"Select a sample from 0 to {total_samples - 1}",
-        )
-
-    with col_checks:
-        st.write("Visual Controls:")
-        c_m, c1, c2, c3, c4 = st.columns([1.5, 1, 1, 1, 1])
-        draw_edges = c_m.checkbox("Edges", True)
-        separate_view = c_m.checkbox("Separate Parts", True)
-
-        show_pose = c1.checkbox("Body", True)
-        show_face = c2.checkbox("Face", True)
-        show_rh = c3.checkbox("RH", False)
-        show_lh = c4.checkbox("LH", False)
-
-    active_slices = {}
-    if show_pose:
-        active_slices["pose"] = KP2SLICE["pose"]
-    if show_face:
-        active_slices["face"] = KP2SLICE["face"]
-    if show_rh:
-        active_slices["rh"] = KP2SLICE["rh"]
-    if show_lh:
-        active_slices["lh"] = KP2SLICE["lh"]
+    (
+        idx,
+        draw_lines,
+        draw_points,
+        separate_view,
+        active_slices,
+    ) = get_visual_controls(total_samples, rnd_key)
 
     kps, lbl = dataloader.dataset[idx]
 
@@ -170,12 +148,80 @@ def render_inspector_view(dataloader, model=None):
         cols = st.columns(len(active_slices))
         for i, (part_name, sl) in enumerate(active_slices.items()):
             fig = plot_3d_animation(
-                kps, {part_name: sl}, draw_edges, title=part_name.upper()
+                kps, {part_name: sl}, draw_lines, draw_points, title=part_name.upper()
             )
             with cols[i]:
                 st.plotly_chart(fig, width="stretch")
     else:
         st.plotly_chart(
-            plot_3d_animation(kps, active_slices, draw_edges),
+            plot_3d_animation(kps, active_slices, draw_lines, draw_points),
             width="stretch",
         )
+
+
+def render_augmentation_view(rnd_key, dataloader):
+    st.subheader("🛠️ Augmentation Lab")
+    total_samples = len(dataloader.dataset)
+    (
+        idx,
+        draw_lines,
+        draw_points,
+        separate_view,
+        active_slices,
+    ) = get_visual_controls(total_samples, rnd_key)
+
+    kps, lbl = dataloader.dataset[idx]
+
+    config = {
+        "hflip": False,
+        "affine": False,
+        "rotate": 0.0,
+        "scale": 1.0,
+        "tx": 0.0,
+        "ty": 0.0,
+    }
+    (col_settings,) = st.columns([1])
+    with col_settings:
+        st.write("Transformation Settings")
+        c1, c2 = st.columns(2)
+
+        config["hflip"] = c1.checkbox("Horizontal Flip", value=False)
+        config["affine"] = c2.checkbox("Affine Transform", value=False)
+
+    if config["affine"]:
+        ac1, ac2, ac3, ac4 = st.columns(4)
+        config["rotate"] = ac1.slider("Rotate (°)", -45.0, 45.0, 0.0, 1.0)
+        config["scale"] = ac2.slider("Scale", 0.5, 1.5, 1.0, 0.05)
+        config["tx"] = ac3.slider("Shift X", -0.5, 0.5, 0.0, 0.05)
+        config["ty"] = ac4.slider("Shift Y", -0.5, 0.5, 0.0, 0.05)
+
+    original_kps, lbl = dataloader.dataset[idx]
+
+    augmentor = DataAugmentor(
+        p_flip=1 if config["hflip"] else 0,
+        p_affine=1 if config["affine"] else 0,
+        rotate_range=(-config["rotate"], config["rotate"]),
+        scale_range=(-config["scale"], config["scale"]),
+        shiftx_range=(-config["tx"], config["tx"]),
+        shifty_range=(-config["ty"], config["ty"]),
+    )
+    aug_kps = original_kps.copy()
+    aug_kps = augmentor(aug_kps)
+
+    col_orig, col_aug = st.columns(2)
+
+    with col_orig:
+        original_kps = original_kps.reshape(SEQ_LEN, FEAT_NUM, FEAT_DIM)
+
+        fig_orig = plot_3d_animation(
+            original_kps, active_slices, draw_lines, draw_points, "Original"
+        )
+        st.plotly_chart(fig_orig, width="stretch")
+
+    with col_aug:
+        aug_kps = aug_kps.reshape(SEQ_LEN, FEAT_NUM, FEAT_DIM)
+
+        fig_aug = plot_3d_animation(
+            aug_kps, active_slices, draw_lines, draw_points, "Augmented"
+        )
+        st.plotly_chart(fig_aug, width="stretch")
