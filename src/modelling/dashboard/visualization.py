@@ -47,7 +47,9 @@ def get_face_camera_view(points_nx3):
     )
 
 
-def _generate_frame_traces(frame_data, active_slices_map, draw_lines, colors):
+def _generate_frame_traces(
+    frame_data, active_slices_map, draw_lines, draw_points, colors
+):
     """Helper to generate traces for a specific frame data array."""
     traces = []
 
@@ -80,20 +82,21 @@ def _generate_frame_traces(frame_data, active_slices_map, draw_lines, colors):
         if part_data.shape[0] == 0:
             continue
 
-        traces.append(
-            go.Scatter3d(
-                x=part_data[:, 0],
-                y=part_data[:, 2],
-                z=-part_data[:, 1],
-                mode="markers",
-                name=part_name.upper(),
-                marker=dict(
-                    size=2 if part_name == "face" else 5,
-                    color=colors.get(part_name, "gray"),
-                    opacity=0.8,
-                ),
+        if draw_points:
+            traces.append(
+                go.Scatter3d(
+                    x=part_data[:, 0],
+                    y=part_data[:, 2],
+                    z=-part_data[:, 1],
+                    mode="markers",
+                    name=part_name.upper(),
+                    marker=dict(
+                        size=2 if part_name == "face" else 5,
+                        color=colors.get(part_name, "gray"),
+                        opacity=0.8,
+                    ),
+                )
             )
-        )
 
         if draw_lines:
             coords = None
@@ -159,7 +162,7 @@ def calculate_layout_ranges(sequence, active_slices_map):
 
 
 def plot_3d_animation(
-    sequence, active_slices_map, draw_lines=True, title="3D Animation"
+    sequence, active_slices_map, draw_lines=True, draw_points=True, title="3D Animation"
 ):
     """Generates a 3D animation Plotly Figure with Play/Pause and Slider."""
     seq_reshaped = sequence.reshape(SEQ_LEN, FEAT_NUM, FEAT_DIM)
@@ -183,11 +186,11 @@ def plot_3d_animation(
     frames = []
     for k in range(SEQ_LEN):
         frame_traces = _generate_frame_traces(
-            seq_reshaped[k], active_slices_map, draw_lines, colors
+            seq_reshaped[k], active_slices_map, draw_lines, draw_points, colors
         )
         frames.append(go.Frame(data=frame_traces, name=str(k)))
     initial_traces = _generate_frame_traces(
-        seq_reshaped[0], active_slices_map, draw_lines, colors
+        seq_reshaped[0], active_slices_map, draw_lines, draw_points, colors
     )
     fig = go.Figure(data=initial_traces, frames=frames)
 
@@ -259,129 +262,4 @@ def plot_3d_animation(
         ],
     )
 
-    return fig
-
-
-def plot_3d_skeleton(
-    sequence,
-    active_slices_map,
-    frame_idx=SEQ_LEN // 2,
-    draw_lines=True,
-    title=None,
-):
-    """
-    Visualizes a single frame or average of frames from the keypoints sequence.
-    Input shape: (SEQ_LEN, FEAT_NUM * 3)
-    """
-    seq_reshaped = sequence.reshape(SEQ_LEN, FEAT_NUM, FEAT_DIM)
-    frame_data = seq_reshaped[frame_idx]  # (184, 3)
-
-    fig = go.Figure()
-
-    colors = {
-        "pose": "#ef4444",
-        "face": "#3b82f6",
-        "rh": "#10b981",
-        "lh": "#f59e0b",
-    }
-
-    def get_line_trace(coords, connections, color, name):
-        x_lines, y_lines, z_lines = [], [], []
-
-        for p1_idx, p2_idx in connections:
-            if p1_idx >= len(coords) or p2_idx >= len(coords):
-                continue
-            # FIXME: check this with draw_kps.py scripts
-            # TODO: AND THEN START ON AUGMENTATONS H-FLIP SCRIPT FOR FACE
-            # START ALREADY !!!
-            if coords[p1_idx, 0] != coords[p2_idx, 0]:
-                x_lines.extend([coords[p1_idx, 0], coords[p2_idx, 0], None])
-            if coords[p1_idx, 2] != coords[p2_idx, 2]:
-                y_lines.extend([coords[p1_idx, 2], coords[p2_idx, 2], None])
-            if coords[p1_idx, 1] != coords[p2_idx, 1]:
-                z_lines.extend([-coords[p1_idx, 1], -coords[p2_idx, 1], None])
-
-        return go.Scatter3d(
-            x=x_lines,
-            y=y_lines,
-            z=z_lines,
-            mode="lines",
-            line=dict(color=color, width=2),
-            name=f"{name} Edges",
-            showlegend=False,
-            hoverinfo="skip",
-        )
-
-    camera_settings = None
-    kps_traces = []
-    for part_name, sl in active_slices_map.items():
-        part_data = frame_data[sl]
-        if part_data.shape[0] == 0:
-            continue
-
-        x = part_data[:, 0]
-        y = part_data[:, 1]
-        z = part_data[:, 2]
-
-        if len(active_slices_map) == 1:
-            camera_settings = get_face_camera_view(np.column_stack((x, z, -y)))
-
-        fig.add_trace(
-            go.Scatter3d(
-                x=x,
-                y=z,
-                z=-y,
-                mode="markers",
-                name=part_name.upper(),
-                marker=dict(
-                    size=2 if part_name == "face" else 5,
-                    color=colors.get(part_name, "gray"),
-                    opacity=0.8,
-                ),
-            )
-        )
-
-        if draw_lines:
-            coords = None
-            connections = None
-            match part_name:
-                case "pose":
-                    coords = get_pose_lms_list(part_data, False)
-                    connections = POSE_KPS_CONNECTIONS
-
-                case "rh" | "lh":
-                    coords = get_hand_lms_list(part_data, False)
-                    connections = HAND_KPS_CONNECTIONS
-
-                # TODO: add face connections
-                case "face":
-                    coords: np.ndarray = get_face_lms_list(part_data, False)
-                    connections = FACE_KPS_CONNECTIONS
-
-            if connections and (coords is not None and coords.size > 0):
-                kps_traces.append(
-                    get_line_trace(
-                        coords,
-                        connections,
-                        colors.get(part_name, "gray"),
-                        part_name,
-                    )
-                )
-
-    if draw_lines:
-        fig.add_traces(kps_traces)
-
-    fig.update_layout(
-        title=title if title else "3D Keypoints Visualization",
-        scene=dict(
-            xaxis=dict(title="X"),
-            yaxis=dict(title="Z (Depth)"),
-            zaxis=dict(title="-Y (Height)"),
-            camera=camera_settings,
-        ),
-        margin=dict(l=50, r=50, b=50, t=40),
-        width=720,
-        height=480,
-        legend=dict(yanchor="top", y=0.9, xanchor="left", x=0.1),
-    )
     return fig

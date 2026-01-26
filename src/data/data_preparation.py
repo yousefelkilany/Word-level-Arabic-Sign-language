@@ -1,4 +1,5 @@
 import random
+from typing import Optional
 
 import numpy as np
 
@@ -46,11 +47,24 @@ class TSNSampler:
 
 
 class DataAugmentor:
-    def __init__(self, p_flip=0.5, p_affine=0.5):
+    def __init__(
+        self,
+        p_flip=0.5,
+        p_affine=0.5,
+        rotate_range: Optional[tuple[float, float]] = None,
+        scale_range: Optional[tuple[float, float]] = None,
+        shiftx_range: Optional[tuple[float, float]] = None,
+        shifty_range: Optional[tuple[float, float]] = None,
+    ):
         self.p_flip = p_flip
         self.p_affine = p_affine
         self.pose_perm = np.array([1, 0, 3, 2, 5, 4])
         self.face_perm = self._get_face_perm_subset(np.load(FACE_SYMMETRY_MAP_PATH))
+
+        self.rotate_range = rotate_range or (-15, 15)
+        self.scale_range = scale_range or (0.85, 1.15)
+        self.shiftx_range = shiftx_range or (-0.1, 0.1)
+        self.shifty_range = shifty_range or (-0.1, 0.1)
         self.logger = get_default_logger()
 
     def _get_face_perm_subset(self, face_perm) -> np.ndarray:
@@ -99,16 +113,18 @@ class DataAugmentor:
         """
         Expects sequence shape: (Seq_Len * Feats, 2) -> x, y
         """
-        theta = np.radians(np.random.uniform(-15, 15))
+        theta = np.radians(np.random.uniform(*self.rotate_range))
         c, s = np.cos(theta), np.sin(theta)
-        rotation_matrix = np.array(((c, s), (-s, c)))  # For row-vector multiplication
+        rotation_matrix = np.array(((c, s), (-s, c)))
 
-        scale_factor = np.random.uniform(0.85, 1.15)
+        scale_factor = np.random.uniform(*self.scale_range)
 
-        tx = np.random.uniform(-0.1, 0.1)
-        ty = np.random.uniform(-0.1, 0.1)
+        shift_amount = [
+            np.random.uniform(*self.shiftx_range),
+            np.random.uniform(*self.shifty_range),
+        ]
 
-        return np.dot(kps, rotation_matrix) * scale_factor + [[tx, ty]]
+        return np.dot(kps, rotation_matrix) * scale_factor + shift_amount
 
     def __call__(self, seq: np.ndarray) -> np.ndarray:
         if not seq.flags.writeable or seq.base is not None:
