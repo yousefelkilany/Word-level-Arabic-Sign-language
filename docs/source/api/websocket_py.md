@@ -30,12 +30,12 @@ from torch import nn
 ```
 
 **Internal Imports**:
-- [[source/api/cv2-utils-py#MotionDetector|MotionDetector]] from `api.cv2_utils`
-- [[source/api/live-processing-py#FrameBuffer|FrameBuffer]], [[source/api/live-processing-py#get_frame_kps|get_frame_kps]], [[source/api/live-processing-py#producer_handler|producer_handler]] from `api.live_processing`
-- [[source/core/constants-py#SEQ_LEN|SEQ_LEN]] from `core.constants`
-- [[source/core/mediapipe-utils-py#LandmarkerProcessor|LandmarkerProcessor]] from `core.mediapipe_utils`
-- `AR_WORDS`, `EN_WORDS`, `get_default_logger` from [[source/core/utils-py|core.utils]]
-- [[source/modelling/model-py#onnx_inference|onnx_inference]] from `modelling.model`
+- [[source/api/cv2_utils_py#MotionDetector|MotionDetector]] from `api.cv2_utils`
+- [[source/api/live_processing_py#FrameBuffer|FrameBuffer]], [[source/api/live_processing_py#get_frame_kps|get_frame_kps]], [[source/api/live_processing_py#producer_handler|producer_handler]] from `api.live_processing`
+- [[source/core/constants_py#SEQ_LEN|SEQ_LEN]] from `core.constants`
+- [[source/core/mediapipe_utils_py#LandmarkerProcessor|LandmarkerProcessor]] from `core.mediapipe_utils`
+- `AR_WORDS`, `EN_WORDS`, `get_default_logger` from [[source/core/utils_py|core.utils]]
+- [[source/modelling/model_py#onnx_inference|onnx_inference]] from `modelling.model`
 
 ## Constants
 
@@ -50,7 +50,7 @@ EXT_FRAME = ".jpg"          # Frame extension (unused)
 ```
 
 **Related**:
-- [[source/core/constants-py#SEQ_LEN|SEQ_LEN]] - Sequence length from constants
+- [[source/core/constants_py#SEQ_LEN|SEQ_LEN]] - Sequence length from constants
 
 ## Router
 
@@ -59,7 +59,7 @@ websocket_router = fastapi.APIRouter()
 ```
 
 **Exported To**:
-- [[source/api/main-py#Router Inclusion|main.py]] - Included in main FastAPI app
+- [[source/api/main_py#Router Inclusion|main.py]] - Included in main FastAPI app
 
 ## Functions
 
@@ -196,10 +196,10 @@ mp_processor: LandmarkerProcessor = await LandmarkerProcessor.create(True)
 
 **Calls**:
 - [[#get_default_state|get_default_state()]] - Creates client state
-- [[source/api/live-processing-py#FrameBuffer|FrameBuffer()]] - Creates frame buffer
-- [[source/api/live-processing-py#producer_handler|producer_handler()]] - Starts frame reception task
-- [[source/api/cv2-utils-py#MotionDetector|MotionDetector()]] - Creates motion detector
-- [[source/core/mediapipe-utils-py#LandmarkerProcessor.create|LandmarkerProcessor.create()]] - Initializes MediaPipe
+- [[source/api/live_processing_py#FrameBuffer|FrameBuffer()]] - Creates frame buffer
+- [[source/api/live_processing_py#producer_handler|producer_handler()]] - Starts frame reception task
+- [[source/api/cv2_utils_py#MotionDetector|MotionDetector()]] - Creates motion detector
+- [[source/core/mediapipe_utils_py#LandmarkerProcessor.create|LandmarkerProcessor.create()]] - Initializes MediaPipe
 
 #### 3. Main Processing Loop
 ```python
@@ -227,7 +227,7 @@ has_motion, gray = await asyncio.to_thread(
 ```
 
 **Calls**:
-- [[source/api/cv2-utils-py#MotionDetector.detect|motion_detector.detect()]] - Detects motion
+- [[source/api/cv2_utils_py#MotionDetector.detect|motion_detector.detect()]] - Detects motion
 
 **Behavior**:
 - If no motion for `NUM_IDLE_FRAMES` (15): Send idle status, clear buffers
@@ -240,7 +240,7 @@ client_buffer.append(kps)
 ```
 
 **Calls**:
-- [[source/api/live-processing-py#get_frame_kps|get_frame_kps()]] - Extracts keypoints asynchronously
+- [[source/api/live_processing_py#get_frame_kps|get_frame_kps()]] - Extracts keypoints asynchronously
 
 **Buffer Management**:
 - Maintains buffer between `MIN_SIGN_FRAMES` (15) and `MAX_SIGN_FRAMES` (50)
@@ -256,7 +256,7 @@ raw_outputs = await asyncio.to_thread(
 ```
 
 **Calls**:
-- [[source/modelling/model-py#onnx_inference|onnx_inference()]] - Runs ONNX model inference
+- [[source/modelling/model_py#onnx_inference|onnx_inference()]] - Runs ONNX model inference
 
 **Input Shape**: `(1, seq_len, features)`
 **Output Shape**: `(1, 502)` - Logits for 502 classes
@@ -320,7 +320,7 @@ if len(client_state["sign_history"]) == HISTORY_LEN:
 - `websocket.send_json()` - Sends prediction to client
 
 **Received By**:
-- [[source/frontend/live-signs-js#WebSocket Message Handler|live-signs.js]] - Client-side handler
+- [[source/frontend/live_signs_js#WebSocket Message Handler|live-signs.js]] - Client-side handler
 
 #### 9. Cleanup
 ```python
@@ -344,8 +344,8 @@ finally:
 
 **Calls**:
 - `producer_task.cancel()` - Stops frame reception
-- [[source/api/live-processing-py#FrameBuffer.clear|frame_buffer.clear()]] - Clears frame buffer
-- [[source/core/mediapipe-utils-py#LandmarkerProcessor.close|mp_processor.close()]] - Closes MediaPipe resources
+- [[source/api/live_processing_py#FrameBuffer.clear|frame_buffer.clear()]] - Clears frame buffer
+- [[source/core/mediapipe_utils_py#LandmarkerProcessor.close|mp_processor.close()]] - Closes MediaPipe resources
 - `gc.collect()` - Forces garbage collection
 
 **Exception Handling**:
@@ -353,17 +353,17 @@ finally:
 - Generic `Exception`: Logs error and cleans up
 
 **Called By**:
-- [[source/frontend/live-signs-js#WebSocket Connection|live-signs.js]] - Client WebSocket connection
+- [[source/frontend/live_signs_js#WebSocket Connection|live-signs.js]] - Client WebSocket connection
 
 **Calls**:
 - [[#get_default_state|get_default_state()]]
-- [[source/api/live-processing-py#FrameBuffer|FrameBuffer()]]
-- [[source/api/live-processing-py#producer_handler|producer_handler()]]
-- [[source/api/cv2-utils-py#MotionDetector|MotionDetector()]]
-- [[source/core/mediapipe-utils-py#LandmarkerProcessor.create|LandmarkerProcessor.create()]]
-- [[source/api/cv2-utils-py#MotionDetector.detect|motion_detector.detect()]]
-- [[source/api/live-processing-py#get_frame_kps|get_frame_kps()]]
-- [[source/modelling/model-py#onnx_inference|onnx_inference()]]
+- [[source/api/live_processing_py#FrameBuffer|FrameBuffer()]]
+- [[source/api/live_processing_py#producer_handler|producer_handler()]]
+- [[source/api/cv2_utils_py#MotionDetector|MotionDetector()]]
+- [[source/core/mediapipe_utils_py#LandmarkerProcessor.create|LandmarkerProcessor.create()]]
+- [[source/api/cv2_utils_py#MotionDetector.detect|motion_detector.detect()]]
+- [[source/api/live_processing_py#get_frame_kps|get_frame_kps()]]
+- [[source/modelling/model_py#onnx_inference|onnx_inference()]]
 
 ---
 
@@ -433,17 +433,17 @@ stateDiagram-v2
 ## Related Documentation
 
 **Conceptual**:
-- [[api/websocket-communication|WebSocket Communication]]
-- [[api/live-processing-pipeline|Live Processing Pipeline]]
-- [[core/mediapipe-integration|MediaPipe Integration]]
+- [[api/websocket_communication|WebSocket Communication]]
+- [[api/live_processing_pipeline|Live Processing Pipeline]]
+- [[core/mediapipe_integration|MediaPipe Integration]]
 
 **Source Code**:
-- [[source/api/main-py|main.py]] - Includes this router
-- [[source/api/live-processing-py|live_processing.py]] - Frame buffer and processing
-- [[source/api/cv2-utils-py|cv2_utils.py]] - Motion detection
-- [[source/core/mediapipe-utils-py|mediapipe_utils.py]] - Keypoint extraction
-- [[source/modelling/model-py|model.py]] - ONNX inference
-- [[source/frontend/live-signs-js|live-signs.js]] - Client-side WebSocket
+- [[source/api/main_py|main.py]] - Includes this router
+- [[source/api/live_processing_py|live_processing.py]] - Frame buffer and processing
+- [[source/api/cv2_utils_py|cv2_utils.py]] - Motion detection
+- [[source/core/mediapipe_utils_py|mediapipe_utils.py]] - Keypoint extraction
+- [[source/modelling/model_py|model.py]] - ONNX inference
+- [[source/frontend/live_signs_js|live-signs.js]] - Client-side WebSocket
 
 ---
 

@@ -27,9 +27,9 @@ from fastapi.staticfiles import StaticFiles
 ```
 
 **Internal Imports**:
-- [[source/api/websocket-py#websocket_router|websocket_router]] from `api.websocket`
-- [[source/core/constants-py#MODELS_DIR|MODELS_DIR]] from `core.constants`
-- [[source/modelling/model-py#load_onnx_model|load_onnx_model]] from `modelling.model`
+- [[source/api/websocket_py#websocket_router|websocket_router]] from `api.websocket`
+- [[source/core/constants_py#MODELS_DIR|MODELS_DIR]] from `core.constants`
+- [[source/modelling/model_py#load_onnx_model|load_onnx_model]] from `modelling.model`
 
 ## Functions
 
@@ -67,7 +67,7 @@ async def lifespan(app: fastapi.FastAPI):
 - FastAPI framework (automatic on startup/shutdown)
 
 **Calls**:
-- [[source/modelling/model-py#load_onnx_model|load_onnx_model()]] - Loads ONNX model from file
+- [[source/modelling/model_py#load_onnx_model|load_onnx_model()]] - Loads ONNX model from file
 
 **Side Effects**:
 - Sets `app.state.onnx_model` with loaded ONNX inference session
@@ -75,8 +75,8 @@ async def lifespan(app: fastapi.FastAPI):
 - Prints startup/shutdown messages to console
 
 **Related**:
-- [[deployment/environment-configuration#ONNX_CHECKPOINT_FILENAME|ONNX_CHECKPOINT_FILENAME]] environment variable
-- [[source/core/constants-py#MODELS_DIR|MODELS_DIR]] constant
+- [[deployment/environment_configuration#ONNX_CHECKPOINT_FILENAME|ONNX_CHECKPOINT_FILENAME]] environment variable
+- [[source/core/constants_py#MODELS_DIR|MODELS_DIR]] constant
 
 ---
 
@@ -109,11 +109,11 @@ async def live_signs_ui():
 - `FileResponse()` - FastAPI response class
 
 **Returns**:
-- [[source/frontend/index-html|index.html]] file from static directory
+- [[source/frontend/index_html|index.html]] file from static directory
 
 **Related**:
-- [[source/frontend/index-html|index.html]] - The served HTML file
-- [[frontend/web-interface-design|Web Interface Design]]
+- [[source/frontend/index_html|index.html]] - The served HTML file
+- [[frontend/web_interface_design|Web Interface Design]]
 
 ---
 
@@ -211,12 +211,12 @@ app.add_middleware(
 ```
 
 **Configuration**:
-- Allowed origins from [[deployment/environment-configuration#DOMAIN_NAME|DOMAIN_NAME]] environment variable
+- Allowed origins from [[deployment/environment_configuration#DOMAIN_NAME|DOMAIN_NAME]] environment variable
 - Allows credentials
 - Allows all HTTP methods and headers
 
 **Related**:
-- [[api/fastapi-application#CORS Configuration|CORS Configuration]]
+- [[api/fastapi_application#CORS Configuration|CORS Configuration]]
 
 ### Static Files
 
@@ -231,9 +231,9 @@ app.mount("/static", StaticFiles(directory=static_assets_dir, html=True), name="
 - HTML file serving enabled
 
 **Served Files**:
-- [[source/frontend/index-html|index.html]]
-- [[source/frontend/live-signs-js|live-signs.js]]
-- [[source/frontend/styles-css|styles.css]]
+- [[source/frontend/index_html|index.html]]
+- [[source/frontend/live_signs_js|live-signs.js]]
+- [[source/frontend/styles_css|styles.css]]
 - `mediapipe-logo.ico`
 
 ### Router Inclusion
@@ -243,11 +243,11 @@ app.include_router(websocket_router)
 ```
 
 **Includes**:
-- [[source/api/websocket-py#websocket_router|websocket_router]] - WebSocket routes for live sign detection
+- [[source/api/websocket_py#websocket_router|websocket_router]] - WebSocket routes for live sign detection
 
 ## Usage
 
-This module is not run directly. Instead, it's imported by [[source/api/run-py|run.py]]:
+This module is not run directly. Instead, it's imported by [[source/api/run_py|run.py]]:
 
 ```python
 # In run.py
@@ -258,8 +258,8 @@ uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
 
 | Variable                                                        | Usage                      | Default             |
 | --------------------------------------------------------------- | -------------------------- | ------------------- |
-| [[deployment/environment-configuration#ONNX_CHECKPOINT_FILENAME | ONNX_CHECKPOINT_FILENAME]] | ONNX model filename | `"ONNX_CHECKPOINT_FILENAME"` |
-| [[deployment/environment-configuration#DOMAIN_NAME              | DOMAIN_NAME]]              | CORS allowed origin | `"DOMAIN_NAME"`              |
+| [[deployment/environment_configuration#ONNX_CHECKPOINT_FILENAME | ONNX_CHECKPOINT_FILENAME]] | ONNX model filename | `"ONNX_CHECKPOINT_FILENAME"` |
+| [[deployment/environment_configuration#DOMAIN_NAME              | DOMAIN_NAME]]              | CORS allowed origin | `"DOMAIN_NAME"`              |
 
 ## State Management
 
@@ -272,7 +272,7 @@ app.state.onnx_model: InferenceSession
 ```
 
 **Set By**: [[#lifespan|lifespan()]]
-**Used By**: [[source/api/websocket-py#ws_live_signs|ws_live_signs()]]
+**Used By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 ## Error Handling
 
@@ -283,19 +283,19 @@ app.state.onnx_model: InferenceSession
 ## Related Documentation
 
 **Conceptual**:
-- [[api/fastapi-application|FastAPI Application]]
-- [[api/websocket-communication|WebSocket Communication]]
-- [[deployment/environment-configuration|Environment Configuration]]
+- [[api/fastapi_application|FastAPI Application]]
+- [[api/websocket_communication|WebSocket Communication]]
+- [[deployment/environment_configuration|Environment Configuration]]
 
 **Source Code**:
-- [[source/api/websocket-py|websocket.py]] - WebSocket handler
-- [[source/api/run-py|run.py]] - Application entry point
-- [[source/modelling/model-py|model.py]] - Model loading functions
-- [[source/core/constants-py|constants.py]] - Configuration constants
+- [[source/api/websocket_py|websocket.py]] - WebSocket handler
+- [[source/api/run_py|run.py]] - Application entry point
+- [[source/modelling/model_py|model.py]] - Model loading functions
+- [[source/core/constants_py|constants.py]] - Configuration constants
 
 **Frontend**:
-- [[source/frontend/index-html|index.html]] - Main HTML interface
-- [[source/frontend/live-signs-js|live-signs.js]] - Client-side logic
+- [[source/frontend/index_html|index.html]] - Main HTML interface
+- [[source/frontend/live_signs_js|live-signs.js]] - Client-side logic
 
 ## Call Graph
 

@@ -1,64 +1,63 @@
-# source/api/run.py
+# run.py
 
-#source-code #api #entry-point #uvicorn
+#source #api #entrypoint
 
 **File Path**: `src/api/run.py`
 
-**Purpose**: Application entry point for running the FastAPI server with Uvicorn.
+**Purpose**: Application entry point for development and production execution.
 
 ## Overview
 
-Simple entry point script that starts the Uvicorn ASGI server with development configuration.
+This script initializes and runs the ASGI application using `uvicorn`. It serves as the primary command-line interface for starting the server.
 
-## Implementation
-
-```python
-import uvicorn
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "api.main:app",
-        host="0.0.0.0",
-        port=8000,
-        # workers=2, # FIXME: enable in production
-        reload=True,  # FIXME: disable in production
-    )
-```
+### Execution Flow
+1. Checks for `__main__` entry.
+2. Invokes `uvicorn.run()` with configured parameters.
+3. Reloads on code changes (development mode).
 
 ## Configuration
 
-| Parameter | Value            | Purpose                                |
-| --------- | ---------------- | -------------------------------------- |
-| `app`     | `"api.main:app"` | Import path to FastAPI app             |
-| `host`    | `"0.0.0.0"`      | Listen on all interfaces               |
-| `port`    | `8000`           | HTTP port                              |
-| `reload`  | `True`           | Auto-reload on code changes (dev only) |
-| `workers` | Commented out    | Multi-worker mode (production)         |
+```python
+uvicorn.run(
+    "api.main:app",
+    host="0.0.0.0",
+    port=8000,
+    # workers=2, # FIXME: enable in production
+    reload=True,  # FIXME: disable in production
+)
+```
+
+### Parameters
+
+| Parameter | Value            | Description                                           |
+| :-------- | :--------------- | :---------------------------------------------------- |
+| `app`     | `"api.main:app"` | Import string for the FastAPI application instance    |
+| `host`    | `"0.0.0.0"`      | Binds to all network interfaces (required for Docker) |
+| `port`    | `8000`           | Listening port                                        |
+| `reload`  | `True`           | Enables hot-reloading for development                 |
+
+> [!WARNING]
+> The current configuration is optimized for **development**. For production deployment:
+> - Set `reload=False`
+> - Enable `workers` (e.g., `workers=4`)
+> - Consider using Gunicorn as a process manager.
 
 ## Usage
 
+### Command Line
 ```bash
-# Direct execution
 python src/api/run.py
-
-# With uv
-uv run src/api/run.py
 ```
 
-## Production Considerations
-
-For production deployment:
-1. Set `reload=False`
-2. Enable `workers=2` or more
-3. Use process manager (systemd, supervisor)
-4. Consider using Gunicorn with Uvicorn workers
+### via Makefile
+```bash
+make run  # (Assuming standard makefile command)
+```
 
 ## Related Documentation
 
-- [[source/api/main-py|main.py]] - FastAPI application
-- [[deployment/docker-setup|Docker Setup]] - Container deployment
-- [[getting-started|Getting Started]]
+**Calls**:
+- [[source/api/main_py|api.main:app]] - The application instance being run
 
----
-
-**File Location**: `../../../src/api/run.py`
+**Conceptual**:
+- [[deployment/docker_setup|Docker Setup]] - Uses this script as entrypoint

@@ -194,7 +194,7 @@ Content...
 
 ### Obsidian Features Used
 
-1. **Wiki Links**: `[[page-name|Display Text]]`
+1. **Wiki Links**: `[[page_name|Display Text]]`
 2. **Tags**: `#tag-name`
 3. **Mermaid Diagrams**: ` ```mermaid ... ``` `
 4. **Code Blocks**: ` ```python ... ``` `
@@ -210,8 +210,8 @@ Every function/class should document:
 
 Example:
 ```markdown
-**Called By**: [[source/api/websocket-py#ws_live_signs|ws_live_signs()]]
-**Calls**: [[source/core/mediapipe-utils-py#extract_frame_keypoints|extract_frame_keypoints()]]
+**Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Calls**: [[source/core/mediapipe_utils_py#extract_frame_keypoints|extract_frame_keypoints()]]
 ```
 
 ## 🚀 Next Steps

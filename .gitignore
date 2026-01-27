@@ -2,6 +2,8 @@ __pycache__/
 checkpoints/
 data/
 !src/data/
+!docs/data/
+!docs/source/data/
 other-works/
 logs/
 outputs/

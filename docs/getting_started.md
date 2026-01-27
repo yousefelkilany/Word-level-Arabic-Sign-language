@@ -53,7 +53,7 @@ USE_CPU=1
 > [!IMPORTANT]
 > Set `LOCAL_DEV=1` to use local `data/` and `models/` directories instead of Kaggle paths.
 
-See [[deployment/environment-configuration|Environment Configuration]] for detailed variable descriptions.
+See [[deployment/environment_configuration|Environment Configuration]] for detailed variable descriptions.
 
 ### 3. Choose Your Setup Method
 
@@ -73,7 +73,7 @@ The API will be available at `http://localhost:8000`.
 - ✅ Easy deployment
 - ✅ Hot reload enabled (code changes reflected immediately)
 
-See [[deployment/docker-setup|Docker Setup]] for advanced configuration.
+See [[deployment/docker_setup|Docker Setup]] for advanced configuration.
 
 #### Option B: Local Development Setup
 
@@ -131,7 +131,7 @@ arabic-sign-language-karsl/
 └── makefile          # Build automation
 ```
 
-See [[development/project-structure|Project Structure]] for detailed organization.
+See [[development/project_structure|Project Structure]] for detailed organization.
 
 ## Available Commands
 
@@ -152,7 +152,7 @@ make onnx_benchmark checkpoint_path=path/to/model.onnx
 make local_setup        # Set LOCAL_DEV=1 for current command
 ```
 
-See [[development/makefile-commands|Makefile Commands]] for all available commands.
+See [[development/makefile_commands|Makefile Commands]] for all available commands.
 
 ### Using Docker
 
@@ -218,11 +218,11 @@ See [[reference/troubleshooting|Troubleshooting]] for more solutions.
 
 ## Next Steps
 
-- **Understand the Architecture**: [[architecture-overview|Architecture Overview]]
-- **Explore the API**: [[api/fastapi-application|FastAPI Application]]
-- **Learn About the Model**: [[models/architecture-design|Model Architecture]]
-- **Train Your Own Model**: [[models/training-process|Training Process]]
-- **Customize the Frontend**: [[frontend/web-interface-design|Web Interface Design]]
+- **Understand the Architecture**: [[architecture_overview|Architecture Overview]]
+- **Explore the API**: [[api/fastapi_application|FastAPI Application]]
+- **Learn About the Model**: [[models/architecture_design|Model Architecture]]
+- **Train Your Own Model**: [[models/training_process|Training Process]]
+- **Customize the Frontend**: [[frontend/web_interface_design|Web Interface Design]]
 
 ## Resources
 
@@ -234,7 +234,7 @@ See [[reference/troubleshooting|Troubleshooting]] for more solutions.
 ---
 
 **Related Pages:**
-- [[architecture-overview|Architecture Overview]]
-- [[deployment/docker-setup|Docker Setup]]
-- [[deployment/environment-configuration|Environment Configuration]]
+- [[architecture_overview|Architecture Overview]]
+- [[deployment/docker_setup|Docker Setup]]
+- [[deployment/environment_configuration|Environment Configuration]]
 - [[reference/troubleshooting|Troubleshooting]]

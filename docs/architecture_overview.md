@@ -54,11 +54,11 @@ graph TB
 - **Frame Encoder**: Converts canvas frames to JPEG for transmission
 
 **Key Files**:
-- [[source/frontend/live-signs-js|live-signs.js]] - Main client logic
-- [[source/frontend/index-html|index.html]] - UI structure
-- [[source/frontend/styles-css|styles.css]] - Styling
+- [[source/frontend/live_signs_js|live-signs.js]] - Main client logic
+- [[source/frontend/index_html|index.html]] - UI structure
+- [[source/frontend/styles_css|styles.css]] - Styling
 
-See [[frontend/web-interface-design|Web Interface Design]] for details.
+See [[frontend/web_interface_design|Web Interface Design]] for details.
 
 ### 2. API Layer
 
@@ -71,16 +71,16 @@ See [[frontend/web-interface-design|Web Interface Design]] for details.
 - **Lifespan Manager**: Model loading and cleanup
 
 **Key Files**:
-- [[source/api/main-py|main.py]] - Application setup and routes
-- [[source/api/websocket-py|websocket.py]] - WebSocket handler
-- [[source/api/run-py|run.py]] - Entry point
+- [[source/api/main_py|main.py]] - Application setup and routes
+- [[source/api/websocket_py|websocket.py]] - WebSocket handler
+- [[source/api/run_py|run.py]] - Entry point
 
 **Functions**:
 - `lifespan()` - Loads ONNX model on startup
 - `ws_live_signs()` - Main WebSocket handler
 - `live_signs_ui()` - Serves frontend HTML
 
-See [[api/fastapi-application|FastAPI Application]] for details.
+See [[api/fastapi_application|FastAPI Application]] for details.
 
 ### 3. Processing Pipeline
 
@@ -91,7 +91,7 @@ See [[api/fastapi-application|FastAPI Application]] for details.
 #### Frame Buffer
 Circular buffer for managing incoming frames during inference.
 
-**Key Class**: `FrameBuffer` in [[source/api/live-processing-py|live_processing.py]]
+**Key Class**: `FrameBuffer` in [[source/api/live_processing_py|live_processing.py]]
 
 **Methods**:
 - `add_frame()` - Adds frame to buffer
@@ -101,7 +101,7 @@ Circular buffer for managing incoming frames during inference.
 #### Motion Detection
 Detects movement to trigger sign recognition.
 
-**Key Class**: `MotionDetector` in [[source/api/cv2-utils-py|cv2_utils.py]]
+**Key Class**: `MotionDetector` in [[source/api/cv2_utils_py|cv2_utils.py]]
 
 **Methods**:
 - `detect()` - Compares consecutive frames
@@ -110,13 +110,13 @@ Detects movement to trigger sign recognition.
 #### Keypoint Extraction
 Extracts pose, face, and hand landmarks using MediaPipe.
 
-**Key Class**: `LandmarkerProcessor` in [[source/core/mediapipe-utils-py|mediapipe_utils.py]]
+**Key Class**: `LandmarkerProcessor` in [[source/core/mediapipe_utils_py|mediapipe_utils.py]]
 
 **Methods**:
 - `extract_frame_keypoints()` - Extracts all landmarks
 - `init_mediapipe_landmarkers()` - Initializes MediaPipe models
 
-See [[core/mediapipe-integration|MediaPipe Integration]] for details.
+See [[core/mediapipe_integration|MediaPipe Integration]] for details.
 
 ### 4. Model Layer
 
@@ -127,7 +127,7 @@ See [[core/mediapipe-integration|MediaPipe Integration]] for details.
 #### Model Architecture
 Attention-based Bidirectional LSTM for sequence classification.
 
-**Key Classes** in [[source/modelling/model-py|model.py]]:
+**Key Classes** in [[source/modelling/model_py|model.py]]:
 - `AttentionBiLSTM` - Main model architecture
 - `SpatialGroupEmbedding` - Feature embedding layer
 - `ResidualBiLSTMBlock` - BiLSTM building block
@@ -141,12 +141,12 @@ Attention-based Bidirectional LSTM for sequence classification.
 5. **Pooling**: Attention-based temporal pooling
 6. **Output**: Class logits (502 classes)
 
-See [[models/architecture-design|Model Architecture]] for details.
+See [[models/architecture_design|Model Architecture]] for details.
 
 #### Inference Engine
 ONNX Runtime for optimized CPU inference.
 
-**Key Functions** in [[source/modelling/model-py|model.py]]:
+**Key Functions** in [[source/modelling/model_py|model.py]]:
 - `load_onnx_model()` - Loads ONNX model
 - `onnx_inference()` - Runs inference
 
@@ -161,8 +161,8 @@ ONNX Runtime for optimized CPU inference.
 - **MmapDataset**: Memory-mapped dataset for efficient access
 
 **Key Files**:
-- [[source/data/lazy-dataset-py|lazy_dataset.py]]
-- [[source/data/mmap-dataset-py|mmap_dataset.py]]
+- [[source/data/lazy_dataset_py|lazy_dataset.py]]
+- [[source/data/mmap_dataset_py|mmap_dataset.py]]
 
 #### Data Preparation
 - Video preprocessing
@@ -170,10 +170,10 @@ ONNX Runtime for optimized CPU inference.
 - Dataset splitting (train/val/test)
 
 **Key Files**:
-- [[source/data/data-preparation-py|data_preparation.py]]
-- [[source/data/prepare-npz-kps-py|prepare_npz_kps.py]]
+- [[source/data/data_preparation_py|data_preparation.py]]
+- [[source/data/prepare_npz_kps_py|prepare_npz_kps.py]]
 
-See [[data/data-preparation-pipeline|Data Preparation Pipeline]] for details.
+See [[data/data_preparation_pipeline|Data Preparation Pipeline]] for details.
 
 ## Data Flow
 
@@ -253,11 +253,11 @@ LOCAL_DEV                 # Local vs Kaggle paths
 USE_CPU                   # Force CPU execution
 ```
 
-See [[deployment/environment-configuration|Environment Configuration]] for all options.
+See [[deployment/environment_configuration|Environment Configuration]] for all options.
 
 ### Constants
 
-Defined in [[source/core/constants-py|constants.py]]:
+Defined in [[source/core/constants_py|constants.py]]:
 
 ```python
 SEQ_LEN = 50              # Sequence length
@@ -302,7 +302,7 @@ graph TB
 - Automatic dependency installation
 - Consistent environment across platforms
 
-See [[deployment/docker-setup|Docker Setup]] for configuration.
+See [[deployment/docker_setup|Docker Setup]] for configuration.
 
 ## Performance Considerations
 
@@ -343,15 +343,15 @@ See [[deployment/docker-setup|Docker Setup]] for configuration.
 
 ## Related Documentation
 
-- [[api/fastapi-application|FastAPI Application]]
-- [[api/websocket-communication|WebSocket Communication]]
-- [[core/mediapipe-integration|MediaPipe Integration]]
-- [[models/architecture-design|Model Architecture]]
-- [[deployment/docker-setup|Docker Setup]]
+- [[api/fastapi_application|FastAPI Application]]
+- [[api/websocket_communication|WebSocket Communication]]
+- [[core/mediapipe_integration|MediaPipe Integration]]
+- [[models/architecture_design|Model Architecture]]
+- [[deployment/docker_setup|Docker Setup]]
 
 ---
 
 **Next Steps:**
-- Explore [[api/live-processing-pipeline|Live Processing Pipeline]]
-- Learn about [[models/training-process|Training Process]]
-- Review [[source/api/websocket-py|WebSocket Implementation]]
+- Explore [[api/live_processing_pipeline|Live Processing Pipeline]]
+- Learn about [[models/training_process|Training Process]]
+- Review [[source/api/websocket_py|WebSocket Implementation]]

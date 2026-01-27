@@ -66,7 +66,7 @@ Converts frame to grayscale and resizes to target dimensions.
 5. Calculate motion ratio (non-zero pixels / total pixels)
 6. Compare ratio against threshold
 
-**Called By**: [[source/api/websocket-py#ws_live_signs|ws_live_signs()]]
+**Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 **Calls**:
 - [[#MotionDetector.convert_small_gray|convert_small_gray()]]
@@ -126,8 +126,8 @@ for frame in video_frames:
 
 ## Related Documentation
 
-- [[source/api/websocket-py|websocket.py]] - Uses MotionDetector
-- [[api/live-processing-pipeline|Live Processing Pipeline]]
+- [[source/api/websocket_py|websocket.py]] - Uses MotionDetector
+- [[api/live_processing_pipeline|Live Processing Pipeline]]
 
 ---
 
