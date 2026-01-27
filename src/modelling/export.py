@@ -1,10 +1,11 @@
+import os
 import argparse
 
 import onnx
 import torch
 
 from modelling.model import load_model, load_onnx_model, onnx_inference
-from core.constants import DEVICE, FEAT_NUM, SEQ_LEN
+from core.constants import DEVICE, FEAT_NUM, SEQ_LEN, FEAT_DIM
 
 
 def cli():
@@ -22,11 +23,11 @@ if __name__ == "__main__":
     model = load_model(checkpoint_path, device=DEVICE)
     model.eval()
 
-    torch_input = (torch.rand(2, SEQ_LEN, FEAT_NUM * 3, device=DEVICE),)
+    torch_input = (torch.rand(1, SEQ_LEN, FEAT_NUM * FEAT_DIM, device=DEVICE),)
     torch_output = model(*torch_input)
 
     onnx_model_path = args.onnx_model_path or f"{checkpoint_path}.onnx"
-    batch_dim = torch.export.Dim("batch_size")
+    # batch_dim = torch.export.Dim("batch_size")
     onnx_model = torch.onnx.export(
         model,
         torch_input,
@@ -34,14 +35,21 @@ if __name__ == "__main__":
         export_params=True,
         input_names=["input"],
         output_names=["output"],
-        dynamic_shapes={"x": {0: batch_dim}},
-        dynamo=True,
+        # dynamic_shapes={"x": {0: batch_dim}},
+        # dynamo=True,
+        dynamic_axes={
+            "input": {0: "batch_size"},
+            "output": {0: "batch_size"},
+        },
     )
-    if not onnx_model:
+    # if not onnx_model:
+    if os.path.exists(onnx_model_path):
+        print("✅ ONNX model exported successfully!")
+    else:
         raise ValueError("❌ Failed to export ONNX model ❌")
 
     try:
-        onnx.checker.check_model(onnx_model.model_proto)
+        onnx.checker.check_model(onnx_model_path)
     except onnx.checker.ValidationError as e:
         print("The model is invalid:", e)
     else:

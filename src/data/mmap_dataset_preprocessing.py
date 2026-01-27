@@ -7,7 +7,7 @@ from os.path import join as os_join
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import MMAP_PREPROCESSED_DIR, NPZ_KPS_DIR, SplitType
+from core.constants import MMAP_OUTPUT_PREPROCESSED_DIR, NPZ_KPS_DIR, SplitType
 
 
 def load_raw_kps(
@@ -50,20 +50,20 @@ def mmap_process_and_save_split(
     print(f"Final total size: {X.nbytes / 1024**3:.2f} GB")
     print(f"Final shape for {split} y: {y.shape}")
 
-    os.makedirs(MMAP_PREPROCESSED_DIR, exist_ok=True)
-    mmap_path = os_join(MMAP_PREPROCESSED_DIR, f"{split}_X.mmap")
+    os.makedirs(MMAP_OUTPUT_PREPROCESSED_DIR, exist_ok=True)
+    mmap_path = os_join(MMAP_OUTPUT_PREPROCESSED_DIR, f"{split}_X.mmap")
     fp = np.memmap(mmap_path, dtype="float32", mode="w+", shape=X.shape)
     fp[:] = X[:]
     fp.flush()
 
-    np.savez_compressed(os_join(MMAP_PREPROCESSED_DIR, f"{split}_y.npz"), y)
-    np.save(os_join(MMAP_PREPROCESSED_DIR, f"{split}_X_shape.npy"), X.shape)
+    np.savez_compressed(os_join(MMAP_OUTPUT_PREPROCESSED_DIR, f"{split}_y.npz"), y)
+    np.save(os_join(MMAP_OUTPUT_PREPROCESSED_DIR, f"{split}_X_shape.npy"), X.shape)
     np.save(
-        os_join(MMAP_PREPROCESSED_DIR, f"{split}_X_map_samples_lens.npy"),
+        os_join(MMAP_OUTPUT_PREPROCESSED_DIR, f"{split}_X_map_samples_lens.npy"),
         X_map_samples_lens,  # ty:ignore[invalid-argument-type]
     )
 
-    print(f"Successfully saved {split} data to {MMAP_PREPROCESSED_DIR}")
+    print(f"Successfully saved {split} data to {MMAP_OUTPUT_PREPROCESSED_DIR}")
 
     del X, y
     garbage_collect.collect()

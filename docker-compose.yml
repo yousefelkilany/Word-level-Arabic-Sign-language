@@ -51,7 +51,7 @@ services:
       - SITE_IMAGE=
       - SITE_DESC=
       - SITE_NAME=ArSl-docs
-      - SITE_TWITTER=#
+      - SITE_TWITTER=_
       - SITE_LOGO=perlite.svg
       - SITE_HOMEPAGE=https://yousefelkilany.com
       - SITE_GITHUB=https://github.com/yousefelkilany/word-level-arabic-sign-language/

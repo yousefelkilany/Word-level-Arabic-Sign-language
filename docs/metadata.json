@@ -1,7 +1,841 @@
 [
   {
-    "fileName": "constants-py",
-    "relativePath": "source/core/constants-py.md",
+    "fileName": "websocket_py",
+    "relativePath": "source/api/websocket_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "websocket",
+      "real-time",
+      "function",
+      "state-management",
+      "async",
+      "main-handler"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/websocket.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Dependencies",
+        "level": 2
+      },
+      {
+        "heading": "Constants",
+        "level": 2
+      },
+      {
+        "heading": "Router",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`get_default_state()`",
+        "level": 3
+      },
+      {
+        "heading": "`ws_live_signs(websocket: fastapi.WebSocket)`",
+        "level": 3
+      },
+      {
+        "heading": "1. Connection Setup",
+        "level": 4
+      },
+      {
+        "heading": "2. State Initialization",
+        "level": 4
+      },
+      {
+        "heading": "3. Main Processing Loop",
+        "level": 4
+      },
+      {
+        "heading": "4. Motion Detection",
+        "level": 4
+      },
+      {
+        "heading": "5. Keypoint Extraction",
+        "level": 4
+      },
+      {
+        "heading": "6. Inference",
+        "level": 4
+      },
+      {
+        "heading": "7. Classification",
+        "level": 4
+      },
+      {
+        "heading": "8. Consensus & Response",
+        "level": 4
+      },
+      {
+        "heading": "9. Cleanup",
+        "level": 4
+      },
+      {
+        "heading": "Performance Characteristics",
+        "level": 2
+      },
+      {
+        "heading": "Timing",
+        "level": 3
+      },
+      {
+        "heading": "Memory",
+        "level": 3
+      },
+      {
+        "heading": "Concurrency",
+        "level": 3
+      },
+      {
+        "heading": "Error Handling",
+        "level": 2
+      },
+      {
+        "heading": "Connection Errors",
+        "level": 3
+      },
+      {
+        "heading": "Processing Errors",
+        "level": 3
+      },
+      {
+        "heading": "Cleanup Errors",
+        "level": 3
+      },
+      {
+        "heading": "State Machine",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "cv2-utils-py#MotionDetector",
+        "cleanLink": "cv2-utils-py",
+        "displayText": "MotionDetector"
+      },
+      {
+        "link": "live-processing-py#FrameBuffer",
+        "cleanLink": "live-processing-py",
+        "displayText": "FrameBuffer"
+      },
+      {
+        "link": "live-processing-py#get_frame_kps",
+        "cleanLink": "live-processing-py",
+        "displayText": "get_frame_kps"
+      },
+      {
+        "link": "live-processing-py#producer_handler",
+        "cleanLink": "live-processing-py",
+        "displayText": "producer_handler"
+      },
+      {
+        "link": "constants-py#SEQ_LEN",
+        "cleanLink": "constants-py",
+        "displayText": "SEQ_LEN"
+      },
+      {
+        "link": "mediapipe-utils-py#LandmarkerProcessor",
+        "cleanLink": "mediapipe-utils-py",
+        "displayText": "LandmarkerProcessor"
+      },
+      {
+        "link": "utils-py",
+        "displayText": "core.utils"
+      },
+      {
+        "link": "model-py#onnx_inference",
+        "cleanLink": "model-py",
+        "displayText": "onnx_inference"
+      },
+      {
+        "link": "constants-py#SEQ_LEN",
+        "cleanLink": "constants-py",
+        "displayText": "SEQ_LEN"
+      },
+      {
+        "link": "main-py#Router Inclusion",
+        "cleanLink": "main-py",
+        "displayText": "main.py"
+      },
+      {
+        "link": "#ws_live_signs",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "#ws_live_signs",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "#get_default_state",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "get_default_state()"
+      },
+      {
+        "link": "live-processing-py#FrameBuffer",
+        "cleanLink": "live-processing-py",
+        "displayText": "FrameBuffer()"
+      },
+      {
+        "link": "live-processing-py#producer_handler",
+        "cleanLink": "live-processing-py",
+        "displayText": "producer_handler()"
+      },
+      {
+        "link": "cv2-utils-py#MotionDetector",
+        "cleanLink": "cv2-utils-py",
+        "displayText": "MotionDetector()"
+      },
+      {
+        "link": "mediapipe-utils-py#LandmarkerProcessor.create",
+        "cleanLink": "mediapipe-utils-py",
+        "displayText": "LandmarkerProcessor.create()"
+      },
+      {
+        "link": "cv2-utils-py#MotionDetector.detect",
+        "cleanLink": "cv2-utils-py",
+        "displayText": "motion_detector.detect()"
+      },
+      {
+        "link": "live-processing-py#get_frame_kps",
+        "cleanLink": "live-processing-py",
+        "displayText": "get_frame_kps()"
+      },
+      {
+        "link": "model-py#onnx_inference",
+        "cleanLink": "model-py",
+        "displayText": "onnx_inference()"
+      },
+      {
+        "link": "live-signs-js#WebSocket Message Handler",
+        "cleanLink": "live-signs-js",
+        "displayText": "live-signs.js"
+      },
+      {
+        "link": "live-processing-py#FrameBuffer.clear",
+        "cleanLink": "live-processing-py",
+        "displayText": "frame_buffer.clear()"
+      },
+      {
+        "link": "mediapipe-utils-py#LandmarkerProcessor.close",
+        "cleanLink": "mediapipe-utils-py",
+        "displayText": "mp_processor.close()"
+      },
+      {
+        "link": "live-signs-js#WebSocket Connection",
+        "cleanLink": "live-signs-js",
+        "displayText": "live-signs.js"
+      },
+      {
+        "link": "#get_default_state",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "get_default_state()"
+      },
+      {
+        "link": "live-processing-py#FrameBuffer",
+        "cleanLink": "live-processing-py",
+        "displayText": "FrameBuffer()"
+      },
+      {
+        "link": "live-processing-py#producer_handler",
+        "cleanLink": "live-processing-py",
+        "displayText": "producer_handler()"
+      },
+      {
+        "link": "cv2-utils-py#MotionDetector",
+        "cleanLink": "cv2-utils-py",
+        "displayText": "MotionDetector()"
+      },
+      {
+        "link": "mediapipe-utils-py#LandmarkerProcessor.create",
+        "cleanLink": "mediapipe-utils-py",
+        "displayText": "LandmarkerProcessor.create()"
+      },
+      {
+        "link": "cv2-utils-py#MotionDetector.detect",
+        "cleanLink": "cv2-utils-py",
+        "displayText": "motion_detector.detect()"
+      },
+      {
+        "link": "live-processing-py#get_frame_kps",
+        "cleanLink": "live-processing-py",
+        "displayText": "get_frame_kps()"
+      },
+      {
+        "link": "model-py#onnx_inference",
+        "cleanLink": "model-py",
+        "displayText": "onnx_inference()"
+      },
+      {
+        "link": "websocket-communication",
+        "displayText": "WebSocket Communication"
+      },
+      {
+        "link": "live-processing-pipeline",
+        "displayText": "Live Processing Pipeline"
+      },
+      {
+        "link": "mediapipe-integration",
+        "displayText": "MediaPipe Integration"
+      },
+      {
+        "link": "main-py",
+        "displayText": "main.py"
+      },
+      {
+        "link": "live-processing-py",
+        "displayText": "live_processing.py"
+      },
+      {
+        "link": "cv2-utils-py",
+        "displayText": "cv2_utils.py"
+      },
+      {
+        "link": "mediapipe-utils-py",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "link": "model-py",
+        "displayText": "model.py"
+      },
+      {
+        "link": "live-signs-js",
+        "displayText": "live-signs.js"
+      }
+    ]
+  },
+  {
+    "fileName": "run_py",
+    "relativePath": "source/api/run_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "entry-point",
+      "uvicorn"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/run.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Implementation",
+        "level": 2
+      },
+      {
+        "heading": "Configuration",
+        "level": 2
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Production Considerations",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "main-py",
+        "displayText": "main.py"
+      },
+      {
+        "link": "docker-setup",
+        "displayText": "Docker Setup"
+      },
+      {
+        "link": "getting-started",
+        "displayText": "Getting Started"
+      }
+    ]
+  },
+  {
+    "fileName": "main_py",
+    "relativePath": "source/api/main_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "fastapi",
+      "application",
+      "function",
+      "async",
+      "context-manager",
+      "route",
+      "get"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/main.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Dependencies",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`lifespan(app: fastapi.FastAPI)`",
+        "level": 3
+      },
+      {
+        "heading": "`live_signs_ui()`",
+        "level": 3
+      },
+      {
+        "heading": "`favicon()`",
+        "level": 3
+      },
+      {
+        "heading": "`chrome_devtools()`",
+        "level": 3
+      },
+      {
+        "heading": "Application Configuration",
+        "level": 2
+      },
+      {
+        "heading": "FastAPI App Instance",
+        "level": 3
+      },
+      {
+        "heading": "CORS Middleware",
+        "level": 3
+      },
+      {
+        "heading": "Static Files",
+        "level": 3
+      },
+      {
+        "heading": "Router Inclusion",
+        "level": 3
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Environment Variables Used",
+        "level": 2
+      },
+      {
+        "heading": "State Management",
+        "level": 2
+      },
+      {
+        "heading": "Application State",
+        "level": 3
+      },
+      {
+        "heading": "Error Handling",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      },
+      {
+        "heading": "Call Graph",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "websocket-py#websocket_router",
+        "cleanLink": "websocket-py",
+        "displayText": "websocket_router"
+      },
+      {
+        "link": "constants-py#MODELS_DIR",
+        "cleanLink": "constants-py",
+        "displayText": "MODELS_DIR"
+      },
+      {
+        "link": "model-py#load_onnx_model",
+        "cleanLink": "model-py",
+        "displayText": "load_onnx_model"
+      },
+      {
+        "link": "model-py#load_onnx_model",
+        "cleanLink": "model-py",
+        "displayText": "load_onnx_model()"
+      },
+      {
+        "link": "environment-configuration#ONNX_CHECKPOINT_FILENAME",
+        "cleanLink": "environment-configuration",
+        "displayText": "ONNX_CHECKPOINT_FILENAME"
+      },
+      {
+        "link": "constants-py#MODELS_DIR",
+        "cleanLink": "constants-py",
+        "displayText": "MODELS_DIR"
+      },
+      {
+        "link": "index-html",
+        "displayText": "index.html"
+      },
+      {
+        "link": "index-html",
+        "displayText": "index.html"
+      },
+      {
+        "link": "web-interface-design",
+        "displayText": "Web Interface Design"
+      },
+      {
+        "link": "#lifespan",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "main_py",
+        "displayText": "lifespan()"
+      },
+      {
+        "link": "environment-configuration#DOMAIN_NAME",
+        "cleanLink": "environment-configuration",
+        "displayText": "DOMAIN_NAME"
+      },
+      {
+        "link": "fastapi-application#CORS Configuration",
+        "cleanLink": "fastapi-application",
+        "displayText": "CORS Configuration"
+      },
+      {
+        "link": "index-html",
+        "displayText": "index.html"
+      },
+      {
+        "link": "live-signs-js",
+        "displayText": "live-signs.js"
+      },
+      {
+        "link": "styles-css",
+        "displayText": "styles.css"
+      },
+      {
+        "link": "websocket-py#websocket_router",
+        "cleanLink": "websocket-py",
+        "displayText": "websocket_router"
+      },
+      {
+        "link": "run-py",
+        "displayText": "run.py"
+      },
+      {
+        "link": "#lifespan",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "main_py",
+        "displayText": "lifespan()"
+      },
+      {
+        "link": "websocket-py#ws_live_signs",
+        "cleanLink": "websocket-py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "fastapi-application",
+        "displayText": "FastAPI Application"
+      },
+      {
+        "link": "websocket-communication",
+        "displayText": "WebSocket Communication"
+      },
+      {
+        "link": "environment-configuration",
+        "displayText": "Environment Configuration"
+      },
+      {
+        "link": "websocket-py",
+        "displayText": "websocket.py"
+      },
+      {
+        "link": "run-py",
+        "displayText": "run.py"
+      },
+      {
+        "link": "model-py",
+        "displayText": "model.py"
+      },
+      {
+        "link": "constants-py",
+        "displayText": "constants.py"
+      },
+      {
+        "link": "index-html",
+        "displayText": "index.html"
+      },
+      {
+        "link": "live-signs-js",
+        "displayText": "live-signs.js"
+      }
+    ]
+  },
+  {
+    "fileName": "live_processing_py",
+    "relativePath": "source/api/live_processing_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "frame-processing",
+      "async",
+      "class",
+      "buffer",
+      "circular-buffer",
+      "function",
+      "producer",
+      "keypoint-extraction"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/live-processing.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Classes",
+        "level": 2
+      },
+      {
+        "heading": "`FrameBuffer`",
+        "level": 3
+      },
+      {
+        "heading": "`__init__(max_size)`",
+        "level": 4
+      },
+      {
+        "heading": "`add_frame(frame)`",
+        "level": 4
+      },
+      {
+        "heading": "`get_frame(idx) -> Optional[np.ndarray]`",
+        "level": 4
+      },
+      {
+        "heading": "`latest_idx` (property)",
+        "level": 4
+      },
+      {
+        "heading": "`oldest_idx` (property)",
+        "level": 4
+      },
+      {
+        "heading": "`clear()`",
+        "level": 4
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`producer_handler(websocket, buffer: FrameBuffer)`",
+        "level": 3
+      },
+      {
+        "heading": "`get_frame_kps(mp_processor, frame, timestamp_ms=-1)`",
+        "level": 3
+      },
+      {
+        "heading": "Thread Pool",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "websocket-py#ws_live_signs",
+        "cleanLink": "websocket-py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "websocket-py#ws_live_signs",
+        "cleanLink": "websocket-py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "websocket-py#ws_live_signs",
+        "cleanLink": "websocket-py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "websocket-py#ws_live_signs",
+        "cleanLink": "websocket-py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "#FrameBuffer.add_frame",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "buffer.add_frame()"
+      },
+      {
+        "link": "mediapipe-utils-py#LandmarkerProcessor",
+        "cleanLink": "mediapipe-utils-py",
+        "displayText": "LandmarkerProcessor"
+      },
+      {
+        "link": "websocket-py#ws_live_signs",
+        "cleanLink": "websocket-py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "mediapipe-utils-py#LandmarkerProcessor.extract_frame_keypoints",
+        "cleanLink": "mediapipe-utils-py",
+        "displayText": "mp_processor.extract_frame_keypoints()"
+      },
+      {
+        "link": "constants-py#MAX_WORKERS",
+        "cleanLink": "constants-py",
+        "displayText": "MAX_WORKERS"
+      },
+      {
+        "link": "#get_frame_kps",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "get_frame_kps()"
+      },
+      {
+        "link": "websocket-py",
+        "displayText": "websocket.py"
+      },
+      {
+        "link": "mediapipe-utils-py",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "link": "live-processing-pipeline",
+        "displayText": "Live Processing Pipeline"
+      }
+    ]
+  },
+  {
+    "fileName": "cv2_utils_py",
+    "relativePath": "source/api/cv2_utils_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "opencv",
+      "motion-detection",
+      "class",
+      "computer-vision",
+      "method"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/cv2-utils.py",
+        "level": 1
+      },
+      {
+        "heading": "Classes",
+        "level": 2
+      },
+      {
+        "heading": "`MotionDetector`",
+        "level": 3
+      },
+      {
+        "heading": "`__init__(width=320, height=240, sigma_factor=0.005, thresh_val=20, motion_thresh=0.001)`",
+        "level": 4
+      },
+      {
+        "heading": "`convert_small_gray(frame) -> np.ndarray`",
+        "level": 4
+      },
+      {
+        "heading": "`detect(prev_frame, frame) -> tuple[bool, np.ndarray]`",
+        "level": 4
+      },
+      {
+        "heading": "Algorithm Details",
+        "level": 2
+      },
+      {
+        "heading": "Motion Detection Pipeline",
+        "level": 3
+      },
+      {
+        "heading": "Parameters Tuning",
+        "level": 3
+      },
+      {
+        "heading": "Usage Example",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "#MotionDetector.detect",
+        "relativePath": "source/api/cv2_utils_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "detect()"
+      },
+      {
+        "link": "websocket-py#ws_live_signs",
+        "cleanLink": "websocket-py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "#MotionDetector.convert_small_gray",
+        "relativePath": "source/api/cv2_utils_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "convert_small_gray()"
+      },
+      {
+        "link": "websocket-py",
+        "displayText": "websocket.py"
+      },
+      {
+        "link": "live-processing-pipeline",
+        "displayText": "Live Processing Pipeline"
+      }
+    ]
+  },
+  {
+    "fileName": "constants_py",
+    "relativePath": "source/core/constants_py.md",
     "tags": [
       "source-code",
       "core",
@@ -183,20 +1017,20 @@
     "links": [
       {
         "link": "#DEVICE",
-        "relativePath": "source/core/constants-py.md",
-        "cleanLink": "constants-py",
+        "relativePath": "source/core/constants_py.md",
+        "cleanLink": "constants_py",
         "displayText": "DEVICE"
       },
       {
         "link": "#DATA_INPUT_DIR",
-        "relativePath": "source/core/constants-py.md",
-        "cleanLink": "constants-py",
+        "relativePath": "source/core/constants_py.md",
+        "cleanLink": "constants_py",
         "displayText": "DATA_INPUT_DIR"
       },
       {
         "link": "#DATA_OUTPUT_DIR",
-        "relativePath": "source/core/constants-py.md",
-        "cleanLink": "constants-py",
+        "relativePath": "source/core/constants_py.md",
+        "cleanLink": "constants_py",
         "displayText": "DATA_OUTPUT_DIR"
       },
       {
@@ -206,8 +1040,7 @@
       {
         "link": "main-py#lifespan",
         "cleanLink": "main-py",
-        "displayText": "main.py lifespan()",
-        "relativePath": "source/api/main-py.md"
+        "displayText": "main.py lifespan()"
       },
       {
         "link": "train-py",
@@ -216,23 +1049,19 @@
       {
         "link": "live-processing-py#Thread Pool",
         "cleanLink": "live-processing-py",
-        "displayText": "live_processing.py",
-        "relativePath": "source/api/live-processing-py.md"
+        "displayText": "live_processing.py"
       },
       {
         "link": "main-py",
-        "displayText": "main.py",
-        "relativePath": "source/api/main-py.md"
+        "displayText": "main.py"
       },
       {
         "link": "live-processing-py",
-        "displayText": "live_processing.py",
-        "relativePath": "source/api/live-processing-py.md"
+        "displayText": "live_processing.py"
       },
       {
         "link": "websocket-py",
-        "displayText": "websocket.py",
-        "relativePath": "source/api/websocket-py.md"
+        "displayText": "websocket.py"
       },
       {
         "link": "mediapipe-utils-py",
@@ -244,1282 +1073,11 @@
       },
       {
         "link": "environment-configuration",
-        "displayText": "Environment Configuration",
-        "relativePath": "deployment/environment-configuration.md"
+        "displayText": "Environment Configuration"
       },
       {
         "link": "dataset-overview",
         "displayText": "Dataset Overview"
-      }
-    ],
-    "backlinks": [
-      {
-        "fileName": "websocket-py",
-        "link": "constants-py#SEQ_LEN",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "constants-py",
-        "displayText": "SEQ_LEN"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "constants-py#SEQ_LEN",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "constants-py",
-        "displayText": "SEQ_LEN"
-      },
-      {
-        "fileName": "main-py",
-        "link": "constants-py#MODELS_DIR",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "constants-py",
-        "displayText": "MODELS_DIR"
-      },
-      {
-        "fileName": "main-py",
-        "link": "constants-py#MODELS_DIR",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "constants-py",
-        "displayText": "MODELS_DIR"
-      },
-      {
-        "fileName": "main-py",
-        "link": "constants-py",
-        "relativePath": "source/api/main-py.md",
-        "displayText": "constants.py"
-      },
-      {
-        "fileName": "live-processing-py",
-        "link": "constants-py#MAX_WORKERS",
-        "relativePath": "source/api/live-processing-py.md",
-        "cleanLink": "constants-py",
-        "displayText": "MAX_WORKERS"
-      },
-      {
-        "fileName": "index",
-        "link": "constants-py",
-        "relativePath": "index.md",
-        "displayText": "constants.py"
-      },
-      {
-        "fileName": "architecture-overview",
-        "link": "constants-py",
-        "relativePath": "architecture-overview.md",
-        "displayText": "constants.py"
-      }
-    ]
-  },
-  {
-    "fileName": "websocket-py",
-    "relativePath": "source/api/websocket-py.md",
-    "tags": [
-      "source-code",
-      "api",
-      "websocket",
-      "real-time",
-      "function",
-      "state-management",
-      "async",
-      "main-handler"
-    ],
-    "headings": [
-      {
-        "heading": "source/api/websocket.py",
-        "level": 1
-      },
-      {
-        "heading": "Overview",
-        "level": 2
-      },
-      {
-        "heading": "Dependencies",
-        "level": 2
-      },
-      {
-        "heading": "Constants",
-        "level": 2
-      },
-      {
-        "heading": "Router",
-        "level": 2
-      },
-      {
-        "heading": "Functions",
-        "level": 2
-      },
-      {
-        "heading": "`get_default_state()`",
-        "level": 3
-      },
-      {
-        "heading": "`ws_live_signs(websocket: fastapi.WebSocket)`",
-        "level": 3
-      },
-      {
-        "heading": "1. Connection Setup",
-        "level": 4
-      },
-      {
-        "heading": "2. State Initialization",
-        "level": 4
-      },
-      {
-        "heading": "3. Main Processing Loop",
-        "level": 4
-      },
-      {
-        "heading": "4. Motion Detection",
-        "level": 4
-      },
-      {
-        "heading": "5. Keypoint Extraction",
-        "level": 4
-      },
-      {
-        "heading": "6. Inference",
-        "level": 4
-      },
-      {
-        "heading": "7. Classification",
-        "level": 4
-      },
-      {
-        "heading": "8. Consensus & Response",
-        "level": 4
-      },
-      {
-        "heading": "9. Cleanup",
-        "level": 4
-      },
-      {
-        "heading": "Performance Characteristics",
-        "level": 2
-      },
-      {
-        "heading": "Timing",
-        "level": 3
-      },
-      {
-        "heading": "Memory",
-        "level": 3
-      },
-      {
-        "heading": "Concurrency",
-        "level": 3
-      },
-      {
-        "heading": "Error Handling",
-        "level": 2
-      },
-      {
-        "heading": "Connection Errors",
-        "level": 3
-      },
-      {
-        "heading": "Processing Errors",
-        "level": 3
-      },
-      {
-        "heading": "Cleanup Errors",
-        "level": 3
-      },
-      {
-        "heading": "State Machine",
-        "level": 2
-      },
-      {
-        "heading": "Related Documentation",
-        "level": 2
-      }
-    ],
-    "links": [
-      {
-        "link": "cv2-utils-py#MotionDetector",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "MotionDetector",
-        "relativePath": "source/api/cv2-utils-py.md"
-      },
-      {
-        "link": "live-processing-py#FrameBuffer",
-        "cleanLink": "live-processing-py",
-        "displayText": "FrameBuffer",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "live-processing-py#get_frame_kps",
-        "cleanLink": "live-processing-py",
-        "displayText": "get_frame_kps",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "live-processing-py#producer_handler",
-        "cleanLink": "live-processing-py",
-        "displayText": "producer_handler",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "constants-py#SEQ_LEN",
-        "cleanLink": "constants-py",
-        "displayText": "SEQ_LEN",
-        "relativePath": "source/core/constants-py.md"
-      },
-      {
-        "link": "mediapipe-utils-py#LandmarkerProcessor",
-        "cleanLink": "mediapipe-utils-py",
-        "displayText": "LandmarkerProcessor"
-      },
-      {
-        "link": "utils-py",
-        "displayText": "core.utils"
-      },
-      {
-        "link": "model-py#onnx_inference",
-        "cleanLink": "model-py",
-        "displayText": "onnx_inference"
-      },
-      {
-        "link": "constants-py#SEQ_LEN",
-        "cleanLink": "constants-py",
-        "displayText": "SEQ_LEN",
-        "relativePath": "source/core/constants-py.md"
-      },
-      {
-        "link": "main-py#Router Inclusion",
-        "cleanLink": "main-py",
-        "displayText": "main.py",
-        "relativePath": "source/api/main-py.md"
-      },
-      {
-        "link": "#ws_live_signs",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "link": "#ws_live_signs",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "link": "#get_default_state",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "get_default_state()"
-      },
-      {
-        "link": "live-processing-py#FrameBuffer",
-        "cleanLink": "live-processing-py",
-        "displayText": "FrameBuffer()",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "live-processing-py#producer_handler",
-        "cleanLink": "live-processing-py",
-        "displayText": "producer_handler()",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "cv2-utils-py#MotionDetector",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "MotionDetector()",
-        "relativePath": "source/api/cv2-utils-py.md"
-      },
-      {
-        "link": "mediapipe-utils-py#LandmarkerProcessor.create",
-        "cleanLink": "mediapipe-utils-py",
-        "displayText": "LandmarkerProcessor.create()"
-      },
-      {
-        "link": "cv2-utils-py#MotionDetector.detect",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "motion_detector.detect()",
-        "relativePath": "source/api/cv2-utils-py.md"
-      },
-      {
-        "link": "live-processing-py#get_frame_kps",
-        "cleanLink": "live-processing-py",
-        "displayText": "get_frame_kps()",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "model-py#onnx_inference",
-        "cleanLink": "model-py",
-        "displayText": "onnx_inference()"
-      },
-      {
-        "link": "live-signs-js#WebSocket Message Handler",
-        "cleanLink": "live-signs-js",
-        "displayText": "live-signs.js"
-      },
-      {
-        "link": "live-processing-py#FrameBuffer.clear",
-        "cleanLink": "live-processing-py",
-        "displayText": "frame_buffer.clear()",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "mediapipe-utils-py#LandmarkerProcessor.close",
-        "cleanLink": "mediapipe-utils-py",
-        "displayText": "mp_processor.close()"
-      },
-      {
-        "link": "live-signs-js#WebSocket Connection",
-        "cleanLink": "live-signs-js",
-        "displayText": "live-signs.js"
-      },
-      {
-        "link": "#get_default_state",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "get_default_state()"
-      },
-      {
-        "link": "live-processing-py#FrameBuffer",
-        "cleanLink": "live-processing-py",
-        "displayText": "FrameBuffer()",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "live-processing-py#producer_handler",
-        "cleanLink": "live-processing-py",
-        "displayText": "producer_handler()",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "cv2-utils-py#MotionDetector",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "MotionDetector()",
-        "relativePath": "source/api/cv2-utils-py.md"
-      },
-      {
-        "link": "mediapipe-utils-py#LandmarkerProcessor.create",
-        "cleanLink": "mediapipe-utils-py",
-        "displayText": "LandmarkerProcessor.create()"
-      },
-      {
-        "link": "cv2-utils-py#MotionDetector.detect",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "motion_detector.detect()",
-        "relativePath": "source/api/cv2-utils-py.md"
-      },
-      {
-        "link": "live-processing-py#get_frame_kps",
-        "cleanLink": "live-processing-py",
-        "displayText": "get_frame_kps()",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "model-py#onnx_inference",
-        "cleanLink": "model-py",
-        "displayText": "onnx_inference()"
-      },
-      {
-        "link": "websocket-communication",
-        "displayText": "WebSocket Communication"
-      },
-      {
-        "link": "live-processing-pipeline",
-        "displayText": "Live Processing Pipeline"
-      },
-      {
-        "link": "mediapipe-integration",
-        "displayText": "MediaPipe Integration"
-      },
-      {
-        "link": "main-py",
-        "displayText": "main.py",
-        "relativePath": "source/api/main-py.md"
-      },
-      {
-        "link": "live-processing-py",
-        "displayText": "live_processing.py",
-        "relativePath": "source/api/live-processing-py.md"
-      },
-      {
-        "link": "cv2-utils-py",
-        "displayText": "cv2_utils.py",
-        "relativePath": "source/api/cv2-utils-py.md"
-      },
-      {
-        "link": "mediapipe-utils-py",
-        "displayText": "mediapipe_utils.py"
-      },
-      {
-        "link": "model-py",
-        "displayText": "model.py"
-      },
-      {
-        "link": "live-signs-js",
-        "displayText": "live-signs.js"
-      }
-    ],
-    "backlinks": [
-      {
-        "fileName": "constants-py",
-        "link": "websocket-py",
-        "relativePath": "source/core/constants-py.md",
-        "displayText": "websocket.py"
-      },
-      {
-        "fileName": "main-py",
-        "link": "websocket-py#websocket_router",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "websocket_router"
-      },
-      {
-        "fileName": "main-py",
-        "link": "websocket-py#websocket_router",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "websocket_router"
-      },
-      {
-        "fileName": "main-py",
-        "link": "websocket-py#ws_live_signs",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "fileName": "main-py",
-        "link": "websocket-py",
-        "relativePath": "source/api/main-py.md",
-        "displayText": "websocket.py"
-      },
-      {
-        "fileName": "live-processing-py",
-        "link": "websocket-py#ws_live_signs",
-        "relativePath": "source/api/live-processing-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "fileName": "live-processing-py",
-        "link": "websocket-py#ws_live_signs",
-        "relativePath": "source/api/live-processing-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "fileName": "live-processing-py",
-        "link": "websocket-py#ws_live_signs",
-        "relativePath": "source/api/live-processing-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "fileName": "live-processing-py",
-        "link": "websocket-py#ws_live_signs",
-        "relativePath": "source/api/live-processing-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "fileName": "live-processing-py",
-        "link": "websocket-py#ws_live_signs",
-        "relativePath": "source/api/live-processing-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "fileName": "live-processing-py",
-        "link": "websocket-py",
-        "relativePath": "source/api/live-processing-py.md",
-        "displayText": "websocket.py"
-      },
-      {
-        "fileName": "cv2-utils-py",
-        "link": "websocket-py#ws_live_signs",
-        "relativePath": "source/api/cv2-utils-py.md",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()"
-      },
-      {
-        "fileName": "cv2-utils-py",
-        "link": "websocket-py",
-        "relativePath": "source/api/cv2-utils-py.md",
-        "displayText": "websocket.py"
-      },
-      {
-        "fileName": "index",
-        "link": "websocket-py",
-        "relativePath": "index.md",
-        "displayText": "websocket.py"
-      },
-      {
-        "fileName": "architecture-overview",
-        "link": "websocket-py",
-        "relativePath": "architecture-overview.md",
-        "displayText": "websocket.py"
-      },
-      {
-        "fileName": "architecture-overview",
-        "link": "websocket-py",
-        "relativePath": "architecture-overview.md",
-        "displayText": "WebSocket Implementation"
-      }
-    ]
-  },
-  {
-    "fileName": "run-py",
-    "relativePath": "source/api/run-py.md",
-    "tags": [
-      "source-code",
-      "api",
-      "entry-point",
-      "uvicorn"
-    ],
-    "headings": [
-      {
-        "heading": "source/api/run.py",
-        "level": 1
-      },
-      {
-        "heading": "Overview",
-        "level": 2
-      },
-      {
-        "heading": "Implementation",
-        "level": 2
-      },
-      {
-        "heading": "Configuration",
-        "level": 2
-      },
-      {
-        "heading": "Usage",
-        "level": 2
-      },
-      {
-        "heading": "Production Considerations",
-        "level": 2
-      },
-      {
-        "heading": "Related Documentation",
-        "level": 2
-      }
-    ],
-    "links": [
-      {
-        "link": "main-py",
-        "displayText": "main.py",
-        "relativePath": "source/api/main-py.md"
-      },
-      {
-        "link": "docker-setup",
-        "displayText": "Docker Setup"
-      },
-      {
-        "link": "getting-started",
-        "displayText": "Getting Started",
-        "relativePath": "getting-started.md"
-      }
-    ],
-    "backlinks": [
-      {
-        "fileName": "main-py",
-        "link": "run-py",
-        "relativePath": "source/api/main-py.md",
-        "displayText": "run.py"
-      },
-      {
-        "fileName": "main-py",
-        "link": "run-py",
-        "relativePath": "source/api/main-py.md",
-        "displayText": "run.py"
-      },
-      {
-        "fileName": "index",
-        "link": "run-py",
-        "relativePath": "index.md",
-        "displayText": "run.py"
-      },
-      {
-        "fileName": "architecture-overview",
-        "link": "run-py",
-        "relativePath": "architecture-overview.md",
-        "displayText": "run.py"
-      }
-    ]
-  },
-  {
-    "fileName": "main-py",
-    "relativePath": "source/api/main-py.md",
-    "tags": [
-      "source-code",
-      "api",
-      "fastapi",
-      "application",
-      "function",
-      "async",
-      "context-manager",
-      "route",
-      "get"
-    ],
-    "headings": [
-      {
-        "heading": "source/api/main.py",
-        "level": 1
-      },
-      {
-        "heading": "Overview",
-        "level": 2
-      },
-      {
-        "heading": "Dependencies",
-        "level": 2
-      },
-      {
-        "heading": "Functions",
-        "level": 2
-      },
-      {
-        "heading": "`lifespan(app: fastapi.FastAPI)`",
-        "level": 3
-      },
-      {
-        "heading": "`live_signs_ui()`",
-        "level": 3
-      },
-      {
-        "heading": "`favicon()`",
-        "level": 3
-      },
-      {
-        "heading": "`chrome_devtools()`",
-        "level": 3
-      },
-      {
-        "heading": "Application Configuration",
-        "level": 2
-      },
-      {
-        "heading": "FastAPI App Instance",
-        "level": 3
-      },
-      {
-        "heading": "CORS Middleware",
-        "level": 3
-      },
-      {
-        "heading": "Static Files",
-        "level": 3
-      },
-      {
-        "heading": "Router Inclusion",
-        "level": 3
-      },
-      {
-        "heading": "Usage",
-        "level": 2
-      },
-      {
-        "heading": "Environment Variables Used",
-        "level": 2
-      },
-      {
-        "heading": "State Management",
-        "level": 2
-      },
-      {
-        "heading": "Application State",
-        "level": 3
-      },
-      {
-        "heading": "Error Handling",
-        "level": 2
-      },
-      {
-        "heading": "Related Documentation",
-        "level": 2
-      },
-      {
-        "heading": "Call Graph",
-        "level": 2
-      }
-    ],
-    "links": [
-      {
-        "link": "websocket-py#websocket_router",
-        "cleanLink": "websocket-py",
-        "displayText": "websocket_router",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "constants-py#MODELS_DIR",
-        "cleanLink": "constants-py",
-        "displayText": "MODELS_DIR",
-        "relativePath": "source/core/constants-py.md"
-      },
-      {
-        "link": "model-py#load_onnx_model",
-        "cleanLink": "model-py",
-        "displayText": "load_onnx_model"
-      },
-      {
-        "link": "model-py#load_onnx_model",
-        "cleanLink": "model-py",
-        "displayText": "load_onnx_model()"
-      },
-      {
-        "link": "environment-configuration#ONNX_CHECKPOINT_FILENAME",
-        "cleanLink": "environment-configuration",
-        "displayText": "ONNX_CHECKPOINT_FILENAME",
-        "relativePath": "deployment/environment-configuration.md"
-      },
-      {
-        "link": "constants-py#MODELS_DIR",
-        "cleanLink": "constants-py",
-        "displayText": "MODELS_DIR",
-        "relativePath": "source/core/constants-py.md"
-      },
-      {
-        "link": "index-html",
-        "displayText": "index.html"
-      },
-      {
-        "link": "index-html",
-        "displayText": "index.html"
-      },
-      {
-        "link": "web-interface-design",
-        "displayText": "Web Interface Design"
-      },
-      {
-        "link": "#lifespan",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "main-py",
-        "displayText": "lifespan()"
-      },
-      {
-        "link": "environment-configuration#DOMAIN_NAME",
-        "cleanLink": "environment-configuration",
-        "displayText": "DOMAIN_NAME",
-        "relativePath": "deployment/environment-configuration.md"
-      },
-      {
-        "link": "fastapi-application#CORS Configuration",
-        "cleanLink": "fastapi-application",
-        "displayText": "CORS Configuration"
-      },
-      {
-        "link": "index-html",
-        "displayText": "index.html"
-      },
-      {
-        "link": "live-signs-js",
-        "displayText": "live-signs.js"
-      },
-      {
-        "link": "styles-css",
-        "displayText": "styles.css"
-      },
-      {
-        "link": "websocket-py#websocket_router",
-        "cleanLink": "websocket-py",
-        "displayText": "websocket_router",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "run-py",
-        "displayText": "run.py",
-        "relativePath": "source/api/run-py.md"
-      },
-      {
-        "link": "#lifespan",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "main-py",
-        "displayText": "lifespan()"
-      },
-      {
-        "link": "websocket-py#ws_live_signs",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "fastapi-application",
-        "displayText": "FastAPI Application"
-      },
-      {
-        "link": "websocket-communication",
-        "displayText": "WebSocket Communication"
-      },
-      {
-        "link": "environment-configuration",
-        "displayText": "Environment Configuration",
-        "relativePath": "deployment/environment-configuration.md"
-      },
-      {
-        "link": "websocket-py",
-        "displayText": "websocket.py",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "run-py",
-        "displayText": "run.py",
-        "relativePath": "source/api/run-py.md"
-      },
-      {
-        "link": "model-py",
-        "displayText": "model.py"
-      },
-      {
-        "link": "constants-py",
-        "displayText": "constants.py",
-        "relativePath": "source/core/constants-py.md"
-      },
-      {
-        "link": "index-html",
-        "displayText": "index.html"
-      },
-      {
-        "link": "live-signs-js",
-        "displayText": "live-signs.js"
-      }
-    ],
-    "backlinks": [
-      {
-        "fileName": "constants-py",
-        "link": "main-py#lifespan",
-        "relativePath": "source/core/constants-py.md",
-        "cleanLink": "main-py",
-        "displayText": "main.py lifespan()"
-      },
-      {
-        "fileName": "constants-py",
-        "link": "main-py",
-        "relativePath": "source/core/constants-py.md",
-        "displayText": "main.py"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "main-py#Router Inclusion",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "main-py",
-        "displayText": "main.py"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "main-py",
-        "relativePath": "source/api/websocket-py.md",
-        "displayText": "main.py"
-      },
-      {
-        "fileName": "run-py",
-        "link": "main-py",
-        "relativePath": "source/api/run-py.md",
-        "displayText": "main.py"
-      },
-      {
-        "fileName": "index",
-        "link": "main-py",
-        "relativePath": "index.md",
-        "displayText": "main.py"
-      },
-      {
-        "fileName": "architecture-overview",
-        "link": "main-py",
-        "relativePath": "architecture-overview.md",
-        "displayText": "main.py"
-      }
-    ]
-  },
-  {
-    "fileName": "live-processing-py",
-    "relativePath": "source/api/live-processing-py.md",
-    "tags": [
-      "source-code",
-      "api",
-      "frame-processing",
-      "async",
-      "class",
-      "buffer",
-      "circular-buffer",
-      "function",
-      "producer",
-      "keypoint-extraction"
-    ],
-    "headings": [
-      {
-        "heading": "source/api/live-processing.py",
-        "level": 1
-      },
-      {
-        "heading": "Overview",
-        "level": 2
-      },
-      {
-        "heading": "Classes",
-        "level": 2
-      },
-      {
-        "heading": "`FrameBuffer`",
-        "level": 3
-      },
-      {
-        "heading": "`__init__(max_size)`",
-        "level": 4
-      },
-      {
-        "heading": "`add_frame(frame)`",
-        "level": 4
-      },
-      {
-        "heading": "`get_frame(idx) -> Optional[np.ndarray]`",
-        "level": 4
-      },
-      {
-        "heading": "`latest_idx` (property)",
-        "level": 4
-      },
-      {
-        "heading": "`oldest_idx` (property)",
-        "level": 4
-      },
-      {
-        "heading": "`clear()`",
-        "level": 4
-      },
-      {
-        "heading": "Functions",
-        "level": 2
-      },
-      {
-        "heading": "`producer_handler(websocket, buffer: FrameBuffer)`",
-        "level": 3
-      },
-      {
-        "heading": "`get_frame_kps(mp_processor, frame, timestamp_ms=-1)`",
-        "level": 3
-      },
-      {
-        "heading": "Thread Pool",
-        "level": 2
-      },
-      {
-        "heading": "Related Documentation",
-        "level": 2
-      }
-    ],
-    "links": [
-      {
-        "link": "websocket-py#ws_live_signs",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "websocket-py#ws_live_signs",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "websocket-py#ws_live_signs",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "websocket-py#ws_live_signs",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "#FrameBuffer.add_frame",
-        "relativePath": "source/api/live-processing-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "buffer.add_frame()"
-      },
-      {
-        "link": "mediapipe-utils-py#LandmarkerProcessor",
-        "cleanLink": "mediapipe-utils-py",
-        "displayText": "LandmarkerProcessor"
-      },
-      {
-        "link": "websocket-py#ws_live_signs",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "mediapipe-utils-py#LandmarkerProcessor.extract_frame_keypoints",
-        "cleanLink": "mediapipe-utils-py",
-        "displayText": "mp_processor.extract_frame_keypoints()"
-      },
-      {
-        "link": "constants-py#MAX_WORKERS",
-        "cleanLink": "constants-py",
-        "displayText": "MAX_WORKERS",
-        "relativePath": "source/core/constants-py.md"
-      },
-      {
-        "link": "#get_frame_kps",
-        "relativePath": "source/api/live-processing-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "get_frame_kps()"
-      },
-      {
-        "link": "websocket-py",
-        "displayText": "websocket.py",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "mediapipe-utils-py",
-        "displayText": "mediapipe_utils.py"
-      },
-      {
-        "link": "live-processing-pipeline",
-        "displayText": "Live Processing Pipeline"
-      }
-    ],
-    "backlinks": [
-      {
-        "fileName": "constants-py",
-        "link": "live-processing-py#Thread Pool",
-        "relativePath": "source/core/constants-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "live_processing.py"
-      },
-      {
-        "fileName": "constants-py",
-        "link": "live-processing-py",
-        "relativePath": "source/core/constants-py.md",
-        "displayText": "live_processing.py"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#FrameBuffer",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "FrameBuffer"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#get_frame_kps",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "get_frame_kps"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#producer_handler",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "producer_handler"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#FrameBuffer",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "FrameBuffer()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#producer_handler",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "producer_handler()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#get_frame_kps",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "get_frame_kps()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#FrameBuffer.clear",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "frame_buffer.clear()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#FrameBuffer",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "FrameBuffer()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#producer_handler",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "producer_handler()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py#get_frame_kps",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "live-processing-py",
-        "displayText": "get_frame_kps()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "live-processing-py",
-        "relativePath": "source/api/websocket-py.md",
-        "displayText": "live_processing.py"
-      },
-      {
-        "fileName": "index",
-        "link": "live-processing-py",
-        "relativePath": "index.md",
-        "displayText": "live_processing.py"
-      },
-      {
-        "fileName": "architecture-overview",
-        "link": "live-processing-py",
-        "relativePath": "architecture-overview.md",
-        "displayText": "live_processing.py"
-      }
-    ]
-  },
-  {
-    "fileName": "cv2-utils-py",
-    "relativePath": "source/api/cv2-utils-py.md",
-    "tags": [
-      "source-code",
-      "api",
-      "opencv",
-      "motion-detection",
-      "class",
-      "computer-vision",
-      "method"
-    ],
-    "headings": [
-      {
-        "heading": "source/api/cv2-utils.py",
-        "level": 1
-      },
-      {
-        "heading": "Classes",
-        "level": 2
-      },
-      {
-        "heading": "`MotionDetector`",
-        "level": 3
-      },
-      {
-        "heading": "`__init__(width=320, height=240, sigma_factor=0.005, thresh_val=20, motion_thresh=0.001)`",
-        "level": 4
-      },
-      {
-        "heading": "`convert_small_gray(frame) -> np.ndarray`",
-        "level": 4
-      },
-      {
-        "heading": "`detect(prev_frame, frame) -> tuple[bool, np.ndarray]`",
-        "level": 4
-      },
-      {
-        "heading": "Algorithm Details",
-        "level": 2
-      },
-      {
-        "heading": "Motion Detection Pipeline",
-        "level": 3
-      },
-      {
-        "heading": "Parameters Tuning",
-        "level": 3
-      },
-      {
-        "heading": "Usage Example",
-        "level": 2
-      },
-      {
-        "heading": "Related Documentation",
-        "level": 2
-      }
-    ],
-    "links": [
-      {
-        "link": "#MotionDetector.detect",
-        "relativePath": "source/api/cv2-utils-py.md",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "detect()"
-      },
-      {
-        "link": "websocket-py#ws_live_signs",
-        "cleanLink": "websocket-py",
-        "displayText": "ws_live_signs()",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "#MotionDetector.convert_small_gray",
-        "relativePath": "source/api/cv2-utils-py.md",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "convert_small_gray()"
-      },
-      {
-        "link": "websocket-py",
-        "displayText": "websocket.py",
-        "relativePath": "source/api/websocket-py.md"
-      },
-      {
-        "link": "live-processing-pipeline",
-        "displayText": "Live Processing Pipeline"
-      }
-    ],
-    "backlinks": [
-      {
-        "fileName": "websocket-py",
-        "link": "cv2-utils-py#MotionDetector",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "MotionDetector"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "cv2-utils-py#MotionDetector",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "MotionDetector()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "cv2-utils-py#MotionDetector.detect",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "motion_detector.detect()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "cv2-utils-py#MotionDetector",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "MotionDetector()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "cv2-utils-py#MotionDetector.detect",
-        "relativePath": "source/api/websocket-py.md",
-        "cleanLink": "cv2-utils-py",
-        "displayText": "motion_detector.detect()"
-      },
-      {
-        "fileName": "websocket-py",
-        "link": "cv2-utils-py",
-        "relativePath": "source/api/websocket-py.md",
-        "displayText": "cv2_utils.py"
-      },
-      {
-        "fileName": "index",
-        "link": "cv2-utils-py",
-        "relativePath": "index.md",
-        "displayText": "cv2_utils.py"
-      },
-      {
-        "fileName": "architecture-overview",
-        "link": "cv2-utils-py",
-        "relativePath": "architecture-overview.md",
-        "displayText": "cv2_utils.py"
       }
     ]
   },
@@ -1670,62 +1228,6 @@
     ]
   },
   {
-    "fileName": "environment-configuration",
-    "relativePath": "deployment/environment-configuration.md",
-    "backlinks": [
-      {
-        "fileName": "constants-py",
-        "link": "environment-configuration",
-        "relativePath": "source/core/constants-py.md",
-        "displayText": "Environment Configuration"
-      },
-      {
-        "fileName": "main-py",
-        "link": "environment-configuration#ONNX_CHECKPOINT_FILENAME",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "environment-configuration",
-        "displayText": "ONNX_CHECKPOINT_FILENAME"
-      },
-      {
-        "fileName": "main-py",
-        "link": "environment-configuration#DOMAIN_NAME",
-        "relativePath": "source/api/main-py.md",
-        "cleanLink": "environment-configuration",
-        "displayText": "DOMAIN_NAME"
-      },
-      {
-        "fileName": "main-py",
-        "link": "environment-configuration",
-        "relativePath": "source/api/main-py.md",
-        "displayText": "Environment Configuration"
-      },
-      {
-        "fileName": "index",
-        "link": "environment-configuration",
-        "relativePath": "index.md",
-        "displayText": "Environment Configuration"
-      },
-      {
-        "fileName": "getting-started",
-        "link": "environment-configuration",
-        "relativePath": "getting-started.md",
-        "displayText": "Environment Configuration"
-      },
-      {
-        "fileName": "getting-started",
-        "link": "environment-configuration",
-        "relativePath": "getting-started.md",
-        "displayText": "Environment Configuration"
-      },
-      {
-        "fileName": "architecture-overview",
-        "link": "environment-configuration",
-        "relativePath": "architecture-overview.md",
-        "displayText": "Environment Configuration"
-      }
-    ]
-  },
-  {
     "fileName": "index",
     "relativePath": "index.md",
     "tags": [
@@ -1819,13 +1321,11 @@
     "links": [
       {
         "link": "getting-started",
-        "displayText": "Getting Started",
-        "relativePath": "getting-started.md"
+        "displayText": "Getting Started"
       },
       {
         "link": "architecture-overview",
-        "displayText": "Architecture Overview",
-        "relativePath": "architecture-overview.md"
+        "displayText": "Architecture Overview"
       },
       {
         "link": "troubleshooting",
@@ -1889,8 +1389,7 @@
       },
       {
         "link": "environment-configuration",
-        "displayText": "Environment Configuration",
-        "relativePath": "deployment/environment-configuration.md"
+        "displayText": "Environment Configuration"
       },
       {
         "link": "project-structure",
@@ -1906,33 +1405,27 @@
       },
       {
         "link": "main-py",
-        "displayText": "main.py",
-        "relativePath": "source/api/main-py.md"
+        "displayText": "main.py"
       },
       {
         "link": "websocket-py",
-        "displayText": "websocket.py",
-        "relativePath": "source/api/websocket-py.md"
+        "displayText": "websocket.py"
       },
       {
         "link": "live-processing-py",
-        "displayText": "live_processing.py",
-        "relativePath": "source/api/live-processing-py.md"
+        "displayText": "live_processing.py"
       },
       {
         "link": "cv2-utils-py",
-        "displayText": "cv2_utils.py",
-        "relativePath": "source/api/cv2-utils-py.md"
+        "displayText": "cv2_utils.py"
       },
       {
         "link": "run-py",
-        "displayText": "run.py",
-        "relativePath": "source/api/run-py.md"
+        "displayText": "run.py"
       },
       {
         "link": "constants-py",
-        "displayText": "constants.py",
-        "relativePath": "source/core/constants-py.md"
+        "displayText": "constants.py"
       },
       {
         "link": "mediapipe-utils-py",
@@ -2073,8 +1566,12 @@
     ]
   },
   {
-    "fileName": "getting-started",
-    "relativePath": "getting-started.md",
+    "fileName": "docker_setup",
+    "relativePath": "deployment/docker_setup.md"
+  },
+  {
+    "fileName": "getting_started",
+    "relativePath": "getting_started.md",
     "tags": [
       "getting-started",
       "installation",
@@ -2201,8 +1698,7 @@
     "links": [
       {
         "link": "environment-configuration",
-        "displayText": "Environment Configuration",
-        "relativePath": "deployment/environment-configuration.md"
+        "displayText": "Environment Configuration"
       },
       {
         "link": "docker-setup",
@@ -2222,8 +1718,7 @@
       },
       {
         "link": "architecture-overview",
-        "displayText": "Architecture Overview",
-        "relativePath": "architecture-overview.md"
+        "displayText": "Architecture Overview"
       },
       {
         "link": "fastapi-application",
@@ -2243,8 +1738,7 @@
       },
       {
         "link": "architecture-overview",
-        "displayText": "Architecture Overview",
-        "relativePath": "architecture-overview.md"
+        "displayText": "Architecture Overview"
       },
       {
         "link": "docker-setup",
@@ -2252,32 +1746,17 @@
       },
       {
         "link": "environment-configuration",
-        "displayText": "Environment Configuration",
-        "relativePath": "deployment/environment-configuration.md"
+        "displayText": "Environment Configuration"
       },
       {
         "link": "troubleshooting",
         "displayText": "Troubleshooting"
       }
-    ],
-    "backlinks": [
-      {
-        "fileName": "run-py",
-        "link": "getting-started",
-        "relativePath": "source/api/run-py.md",
-        "displayText": "Getting Started"
-      },
-      {
-        "fileName": "index",
-        "link": "getting-started",
-        "relativePath": "index.md",
-        "displayText": "Getting Started"
-      }
     ]
   },
   {
-    "fileName": "architecture-overview",
-    "relativePath": "architecture-overview.md",
+    "fileName": "architecture_overview",
+    "relativePath": "architecture_overview.md",
     "tags": [
       "architecture",
       "system-design",
@@ -2428,18 +1907,15 @@
       },
       {
         "link": "main-py",
-        "displayText": "main.py",
-        "relativePath": "source/api/main-py.md"
+        "displayText": "main.py"
       },
       {
         "link": "websocket-py",
-        "displayText": "websocket.py",
-        "relativePath": "source/api/websocket-py.md"
+        "displayText": "websocket.py"
       },
       {
         "link": "run-py",
-        "displayText": "run.py",
-        "relativePath": "source/api/run-py.md"
+        "displayText": "run.py"
       },
       {
         "link": "fastapi-application",
@@ -2447,13 +1923,11 @@
       },
       {
         "link": "live-processing-py",
-        "displayText": "live_processing.py",
-        "relativePath": "source/api/live-processing-py.md"
+        "displayText": "live_processing.py"
       },
       {
         "link": "cv2-utils-py",
-        "displayText": "cv2_utils.py",
-        "relativePath": "source/api/cv2-utils-py.md"
+        "displayText": "cv2_utils.py"
       },
       {
         "link": "mediapipe-utils-py",
@@ -2497,13 +1971,11 @@
       },
       {
         "link": "environment-configuration",
-        "displayText": "Environment Configuration",
-        "relativePath": "deployment/environment-configuration.md"
+        "displayText": "Environment Configuration"
       },
       {
         "link": "constants-py",
-        "displayText": "constants.py",
-        "relativePath": "source/core/constants-py.md"
+        "displayText": "constants.py"
       },
       {
         "link": "docker-setup",
@@ -2539,28 +2011,7 @@
       },
       {
         "link": "websocket-py",
-        "displayText": "WebSocket Implementation",
-        "relativePath": "source/api/websocket-py.md"
-      }
-    ],
-    "backlinks": [
-      {
-        "fileName": "index",
-        "link": "architecture-overview",
-        "relativePath": "index.md",
-        "displayText": "Architecture Overview"
-      },
-      {
-        "fileName": "getting-started",
-        "link": "architecture-overview",
-        "relativePath": "getting-started.md",
-        "displayText": "Architecture Overview"
-      },
-      {
-        "fileName": "getting-started",
-        "link": "architecture-overview",
-        "relativePath": "getting-started.md",
-        "displayText": "Architecture Overview"
+        "displayText": "WebSocket Implementation"
       }
     ]
   }
