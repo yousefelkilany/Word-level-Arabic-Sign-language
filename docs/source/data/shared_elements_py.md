@@ -29,7 +29,7 @@ Provides standardized widgets for selecting samples and configuring visualizatio
 ## Related Documentation
 
 **Depends On**:
-- [[source/core/mediapipe_utils_py|mediapipe_utils.py]] - `KP2SLICE`.
+- [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]] - `KP2SLICE`.
 
 **Used By**:
-- [[source/modelling/dashboard/visualization_py|Visualization Dashboard]]
+- [[../../source/modelling/dashboard/visualization_py|Visualization Dashboard]]

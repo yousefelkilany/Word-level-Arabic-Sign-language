@@ -81,5 +81,5 @@ graph TD
 ## Related Documentation
 
 **Connects To**:
-- [[source/api/websocket_py|websocket.py]] - The backend endpoint receiving the blobs.
-- [[source/frontend/index_html|index.html]] - The DOM elements manipulated.
+- [[../../source/api/websocket_py|websocket.py]] - The backend endpoint receiving the blobs.
+- [[../../source/frontend/index_html|index.html]] - The DOM elements manipulated.

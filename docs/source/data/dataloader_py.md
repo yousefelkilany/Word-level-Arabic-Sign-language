@@ -19,5 +19,5 @@ Wrapper function to generate all three dataloaders (Train, Val, Test) in one go.
 
 ## Related Code
 
-- [[source/data/mmap_dataset_py|mmap_dataset.py]]
-- [[source/data/data_preparation_py|data_preparation.py]]
+- [[../../source/data/mmap_dataset_py|mmap_dataset.py]]
+- [[../../source/data/data_preparation_py|data_preparation.py]]

@@ -64,6 +64,6 @@ graph LR
 
 ## Related Documentation
 
-- [[source/api/live_processing_py|live_processing.py Source Code]]
-- [[source/core/mediapipe_utils_py|mediapipe_utils.py Source Code]]
-- [[source/api/cv2_utils_py|cv2_utils.py Source Code]]
+- [[../source/api/live_processing_py|live_processing.py Source Code]]
+- [[../source/core/mediapipe_utils_py|mediapipe_utils.py Source Code]]
+- [[../source/api/cv2_utils_py|cv2_utils.py Source Code]]

@@ -46,5 +46,5 @@ We use **uv** for fast package management.
 
 ## Related Documentation
 
-- [[development/project_structure|Project Structure]]
-- [[development/makefile_commands|Makefile Commands]]
+- [[../development/project_structure|Project Structure]]
+- [[../development/makefile_commands|Makefile Commands]]

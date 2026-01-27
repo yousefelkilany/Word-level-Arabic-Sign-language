@@ -241,13 +241,13 @@ tensor = torch.zeros(10, 10).to(DEVICE)
 ## Related Documentation
 
 **Used By**:
-- [[source/api/main_py|main.py]] - MODELS_DIR
-- [[source/api/live_processing_py|live_processing.py]] - MAX_WORKERS
-- [[source/api/websocket_py|websocket.py]] - SEQ_LEN
-- [[source/core/mediapipe_utils_py|mediapipe_utils.py]] - LANDMARKERS_DIR
-- [[source/modelling/model_py|model.py]] - DEVICE, SEQ_LEN, FEAT_DIM
+- [[../../source/api/main_py|main.py]] - MODELS_DIR
+- [[../../source/api/live_processing_py|live_processing.py]] - MAX_WORKERS
+- [[../../source/api/websocket_py|websocket.py]] - SEQ_LEN
+- [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]] - LANDMARKERS_DIR
+- [[../../source/modelling/model_py|model.py]] - DEVICE, SEQ_LEN, FEAT_DIM
 - All data modules - Dataset paths and constants
 
 **Conceptual**:
-- [[deployment/environment_configuration|Environment Configuration]]
-- [[data/dataset_overview|Dataset Overview]]
+- [[../../deployment/environment_configuration|Environment Configuration]]
+- [[../../data/dataset_overview|Dataset Overview]]

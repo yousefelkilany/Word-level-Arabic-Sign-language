@@ -28,5 +28,5 @@ python -m modelling.export --checkpoint_path checkpoints/best_model.pth
 
 ## Related Documentation
 
-- [[source/modelling/export_py|export.py Source Code]]
-- [[source/api/main_py|main.py (ONNX Loading)]]
+- [[../source/modelling/export_py|export.py Source Code]]
+- [[../source/api/main_py|main.py (ONNX Loading)]]

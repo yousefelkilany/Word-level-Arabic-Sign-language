@@ -126,8 +126,8 @@ for frame in video_frames:
 
 ## Related Documentation
 
-- [[source/api/websocket_py|websocket.py]] - Uses MotionDetector
-- [[api/live_processing_pipeline|Live Processing Pipeline]]
+- [[../../source/api/websocket_py|websocket.py]] - Uses MotionDetector
+- [[../../api/live_processing_pipeline|Live Processing Pipeline]]
 
 ---
 

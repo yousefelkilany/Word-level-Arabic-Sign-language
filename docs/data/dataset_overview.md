@@ -40,6 +40,6 @@ Where `TOTAL_FEATURES` is the flattened vector of all landmarks:
 
 ## Related Documentation
 
-- [[source/data/mmap_dataset_py|mmap_dataset.py Source Code]]
-- [[source/core/constants_py|constants.py Source Code]]
-- [[reference/dataset_citation|Dataset Citation]]
+- [[../source/data/mmap_dataset_py|mmap_dataset.py Source Code]]
+- [[../source/core/constants_py|constants.py Source Code]]
+- [[../reference/dataset_citation|Dataset Citation]]

@@ -50,5 +50,5 @@ MediaPipe models are loaded from the `assets/` directory. The specific model com
 
 ## Related Documentation
 
-- [[source/core/mediapipe_utils_py|mediapipe_utils.py Source Code]]
-- [[source/core/constants_py|constants.py Source Code]]
+- [[../source/core/mediapipe_utils_py|mediapipe_utils.py Source Code]]
+- [[../source/core/constants_py|constants.py Source Code]]

@@ -22,4 +22,4 @@ Uses CSS variables (`:root` vs `[data-theme="dark"]`) for color schemes.
 
 ## Related Code
 
-- [[frontend/web_interface_design|Web Interface Design]]
+- [[../../frontend/web_interface_design|Web Interface Design]]

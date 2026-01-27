@@ -56,7 +56,7 @@ python -m modelling.export --checkpoint_path "..."
 ## Related Documentation
 
 **Depends On**:
-- [[source/modelling/model_py|model.py]] - `load_model`
+- [[../../source/modelling/model_py|model.py]] - `load_model`
 
 **Produces**:
-- Artifacts used by [[source/api/main_py|main.py]] (FastAPI).
+- Artifacts used by [[../../source/api/main_py|main.py]] (FastAPI).

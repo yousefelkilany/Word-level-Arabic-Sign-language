@@ -37,5 +37,5 @@ Integrates the browser's `SpeechSynthesis` API to vocalize recognized sentences.
 
 ## Related Documentation
 
-- [[source/frontend/live_signs_js|live-signs.js Source Code]]
-- [[api/websocket_communication|WebSocket Communication Protocol]]
+- [[../source/frontend/live_signs_js|live-signs.js Source Code]]
+- [[../api/websocket_communication|WebSocket Communication Protocol]]

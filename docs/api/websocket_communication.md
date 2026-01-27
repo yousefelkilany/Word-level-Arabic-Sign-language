@@ -84,6 +84,6 @@ sequenceDiagram
 
 ## Related Documentation
 
-- [[source/api/websocket_py|websocket.py Source Code]]
-- [[api/live_processing_pipeline|Live Processing Pipeline]]
-- [[frontend/websocket_client_implementation|WebSocket Client Implementation]]
+- [[../source/api/websocket_py|websocket.py Source Code]]
+- [[../api/live_processing_pipeline|Live Processing Pipeline]]
+- [[../frontend/websocket_client_implementation|WebSocket Client Implementation]]

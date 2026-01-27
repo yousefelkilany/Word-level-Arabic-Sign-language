@@ -50,8 +50,8 @@ Debug script to visualize a specific sample.
 ## Related Documentation
 
 **Depends On**:
-- [[source/core/mediapipe_utils_py|mediapipe_utils.py]] - Connection definitions.
+- [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]] - Connection definitions.
 
 **Used By**:
-- [[source/api/live_processing_py|live_processing.py]] - Debug visualization frames.
-- [[source/modelling/dashboard/visualization_py|Database Visualization]] - Streamlit component.
+- [[../../source/api/live_processing_py|live_processing.py]] - Debug visualization frames.
+- [[../../source/modelling/dashboard/visualization_py|Database Visualization]] - Streamlit component.

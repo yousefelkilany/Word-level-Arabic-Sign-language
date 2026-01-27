@@ -28,5 +28,5 @@ sample = self.X[chunk_idx : chunk_idx + length]
 
 ## Related Documentation
 
-- [[source/data/mmap_dataset_py|mmap_dataset.py Source Code]]
-- [[source/data/mmap_dataset_preprocessing_py|mmap_dataset_preprocessing.py Source Code]]
+- [[../source/data/mmap_dataset_py|mmap_dataset.py Source Code]]
+- [[../source/data/mmap_dataset_preprocessing_py|mmap_dataset_preprocessing.py Source Code]]

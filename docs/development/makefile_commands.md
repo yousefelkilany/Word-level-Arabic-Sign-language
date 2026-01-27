@@ -43,5 +43,5 @@ make cpu_train
 
 ## Related Documentation
 
-- [[source/modelling/train_py|train.py]]
-- [[deployment/docker_setup|Docker Setup]]
+- [[../source/modelling/train_py|train.py]]
+- [[../deployment/docker_setup|Docker Setup]]

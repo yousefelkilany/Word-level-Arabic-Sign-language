@@ -42,5 +42,5 @@ graph LR
 
 ## Related Documentation
 
-- [[source/data/data_preparation_py|data_preparation.py Source Code]]
-- [[source/data/prepare_npz_kps_py|prepare_npz_kps.py Source Code]]
+- [[../source/data/data_preparation_py|data_preparation.py Source Code]]
+- [[../source/data/prepare_npz_kps_py|prepare_npz_kps.py Source Code]]

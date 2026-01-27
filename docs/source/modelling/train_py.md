@@ -67,9 +67,9 @@ python -m src.modelling.train
 ## Related Documentation
 
 **Depends On**:
-- [[source/data/dataloader_py|dataloader.py]] - Data providers
-- [[source/modelling/model_py|model.py]] - Model Architecture
-- [[source/core/constants_py|constants.py]] - `DEVICE`
+- [[../../source/data/dataloader_py|dataloader.py]] - Data providers
+- [[../../source/modelling/model_py|model.py]] - Model Architecture
+- [[../../source/core/constants_py|constants.py]] - `DEVICE`
 
 **Conceptual**:
-- [[models/training_process|Training Process Overview]]
+- [[../../models/training_process|Training Process Overview]]

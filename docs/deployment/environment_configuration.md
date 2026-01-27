@@ -30,5 +30,5 @@ Some configurations are hardcoded constants but can be influenced by environment
 
 ## Related Documentation
 
-- [[source/core/constants_py|constants.py Source Code]]
-- [[deployment/docker_setup|Docker Setup]]
+- [[../source/core/constants_py|constants.py Source Code]]
+- [[../deployment/docker_setup|Docker Setup]]

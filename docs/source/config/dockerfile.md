@@ -50,5 +50,5 @@ docker run -p 8000:8000 arsl-app
 
 **Driven By**:
 
-- [[source/config/pyproject_toml|pyproject.toml]] - Dependency definitions
-- [[source/config/docker_compose_yml|docker-compose.yml]] - Orchestration
+- [[../../source/config/pyproject_toml|pyproject.toml]] - Dependency definitions
+- [[../../source/config/docker_compose_yml|docker-compose.yml]] - Orchestration

@@ -51,6 +51,6 @@ We use **CSS Variables** for easy theming (Light/Dark mode).
 
 ## Related Documentation
 
-- [[source/frontend/index_html|index.html Source Code]]
-- [[source/frontend/styles_css|styles.css Source Code]]
-- [[frontend/websocket_client_implementation|WebSocket Client]]
+- [[../source/frontend/index_html|index.html Source Code]]
+- [[../source/frontend/styles_css|styles.css Source Code]]
+- [[../frontend/websocket_client_implementation|WebSocket Client]]

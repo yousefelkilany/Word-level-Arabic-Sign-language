@@ -1,6 +1,6 @@
 # prepare_npz_kps.py
 
-#source #data #script #mediapipe
+# source #data #script #mediapipe
 
 **File Path**: `src/data/prepare_npz_kps.py`
 
@@ -13,27 +13,33 @@ Uses Python's `ProcessPoolExecutor` to parallelize processing across CPU cores. 
 ## Key Functions
 
 ### `init_worker(landmarkers)`
+
 **Role**: Process initializer.
 **Action**: Creates a global `_worker_processor` (instance of `LandmarkerProcessor`) inside the worker process memory space.
 
 ### `process_video(video_dir, adjusted)`
+
 **Role**: Single video processor.
 **Logic**:
+
 1. Iterates frames sorted by name.
 2. Converts BGR -> RGB.
 3. Calls `_worker_processor.extract_frame_keypoints`.
 4. Returns `(Seq_Len, 184, 4)` array.
 
 ### `process_sign_wrapper(info)`
+
 **Role**: Unit of work for the executor.
 **Scope**: Processes ALL videos for a specific **Sign ID**.
+
 - Iterates (Signer × Split).
 - Saves results to: `karsl-kps/{signer}-{split}/{sign_id}.npz`.
 - **Format**: Dictionary `{video_filename: keypoint_array}`.
 
 ## Parallelization Strategy
 
-The script parallelizes at the **Sign** level. 
+The script parallelizes at the **Sign** level.
+
 - If you have 500 signs, it creates 500 tasks.
 - A 16-core CPU will process 16 signs simultaneously.
 
@@ -53,8 +59,10 @@ python src/data/prepare_npz_kps.py \
 ## Related Documentation
 
 **Depends On**:
-- [[source/core/mediapipe_utils_py|mediapipe_utils.py]] - Extraction logic
-- [[source/core/constants_py|constants.py]] - Paths
+
+- [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]] - Extraction logic
+- [[../../source/core/constants_py|constants.py]] - Paths
 
 **Produces**:
-- Raw `.npz` files consumed by [[source/data/lazy_dataset_py|LazyDataset]] and [[source/data/mmap_dataset_preprocessing_py|Preprocessing]].
+
+- Raw `.npz` files consumed by [[../../source/data/lazy_dataset_py|LazyDataset]] and [[../../source/data/mmap_dataset_preprocessing_py|Preprocessing]].

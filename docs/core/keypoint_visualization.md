@@ -65,5 +65,5 @@ graph TD
 
 ## Related Documentation
 
-- [[source/core/draw_kps_py|draw_kps.py Source Code]]
-- [[source/core/mediapipe_utils_py|mediapipe_utils.py Source Code]]
+- [[../source/core/draw_kps_py|draw_kps.py Source Code]]
+- [[../source/core/mediapipe_utils_py|mediapipe_utils.py Source Code]]

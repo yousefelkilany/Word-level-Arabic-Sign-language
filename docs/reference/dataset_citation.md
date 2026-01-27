@@ -17,4 +17,4 @@ If you use this codebase or the KArSL dataset in your research, please link the 
 
 ## Related Documentation
 
-- [[data/dataset_overview|Dataset Overview]]
+- [[../data/dataset_overview|Dataset Overview]]

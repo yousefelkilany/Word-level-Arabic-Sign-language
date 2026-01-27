@@ -46,6 +46,6 @@ docker compose down
 
 ## Related Documentation
 
-- [[source/config/dockerfile|Dockerfile Source]]
-- [[source/config/docker_compose_yml|docker-compose.yml Source]]
-- [[deployment/environment_configuration|Environment Configuration]]
+- [[../source/config/dockerfile|Dockerfile Source]]
+- [[../source/config/docker_compose_yml|docker-compose.yml Source]]
+- [[../deployment/environment_configuration|Environment Configuration]]

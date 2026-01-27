@@ -42,5 +42,5 @@ Common issues and solutions when running the application.
 
 ## Related Documentation
 
-- [[deployment/docker_setup|Docker Setup]]
-- [[api/websocket_communication|WebSocket Protocol]]
+- [[../deployment/docker_setup|Docker Setup]]
+- [[../api/websocket_communication|WebSocket Protocol]]

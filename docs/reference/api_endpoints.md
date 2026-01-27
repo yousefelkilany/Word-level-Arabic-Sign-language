@@ -37,5 +37,5 @@ The application exposes a minimal set of endpoints, primarily handling static as
 
 ## Related Documentation
 
-- [[api/websocket_communication|WebSocket Protocol]]
-- [[source/api/main_py|main.py Source]]
+- [[../api/websocket_communication|WebSocket Protocol]]
+- [[../source/api/main_py|main.py Source]]

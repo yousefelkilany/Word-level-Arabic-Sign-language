@@ -29,5 +29,5 @@ Specific indices are used to slice the flattened keypoint vector:
 
 ## Related Documentation
 
-- [[source/core/constants_py|constants.py Source]]
-- [[deployment/environment_configuration|Environment Variables]]
+- [[../source/core/constants_py|constants.py Source]]
+- [[../deployment/environment_configuration|Environment Variables]]

@@ -48,4 +48,4 @@ Contains the vanilla JS frontend.
 
 ## Related Documentation
 
-- [[development/contributing_guide|Contributing Guide]]
+- [[../development/contributing_guide|Contributing Guide]]

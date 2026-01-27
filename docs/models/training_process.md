@@ -39,5 +39,5 @@ The model is saved only when validation loss improves.
 
 ## Related Documentation
 
-- [[source/modelling/train_py|train.py Source Code]]
-- [[source/modelling/parallel_train_py|parallel_train.py Source Code]]
+- [[../source/modelling/train_py|train.py Source Code]]
+- [[../source/modelling/parallel_train_py|parallel_train.py Source Code]]

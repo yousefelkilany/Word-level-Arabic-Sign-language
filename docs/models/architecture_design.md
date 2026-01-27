@@ -50,5 +50,5 @@ graph TD
 
 ## Related Documentation
 
-- [[source/modelling/model_py|model.py Source Code]]
-- [[models/training_process|Training Process]]
+- [[../source/modelling/model_py|model.py Source Code]]
+- [[../models/training_process|Training Process]]
