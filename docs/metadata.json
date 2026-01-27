@@ -1,0 +1,6977 @@
+[
+  {
+    "fileName": "class_index",
+    "relativePath": "indexes/class_index.md",
+    "tags": [
+      "index",
+      "classes"
+    ],
+    "headings": [
+      {
+        "heading": "Class Index",
+        "level": 1
+      },
+      {
+        "heading": "Core",
+        "level": 2
+      },
+      {
+        "heading": "Data",
+        "level": 2
+      },
+      {
+        "heading": "Modelling",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mediapipe_utils_py#Classes",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "constants_py#Enumerations",
+        "cleanLink": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "constants_py#Enumerations",
+        "cleanLink": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "mmap_dataset_py#Class MmapKArSLDataset",
+        "cleanLink": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py",
+        "relativePath": "source/data/mmap_dataset_py.md"
+      },
+      {
+        "link": "lazy_dataset_py#Class LazyKArSLDataset",
+        "cleanLink": "lazy_dataset_py",
+        "displayText": "lazy_dataset.py",
+        "relativePath": "source/data/lazy_dataset_py.md"
+      },
+      {
+        "link": "data_preparation_py#Classes",
+        "cleanLink": "data_preparation_py",
+        "displayText": "data_preparation.py",
+        "relativePath": "source/data/data_preparation_py.md"
+      },
+      {
+        "link": "data_preparation_py#Classes",
+        "cleanLink": "data_preparation_py",
+        "displayText": "data_preparation.py",
+        "relativePath": "source/data/data_preparation_py.md"
+      },
+      {
+        "link": "model_py#Classes",
+        "cleanLink": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "model_py#Classes",
+        "cleanLink": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "model_py#Classes",
+        "cleanLink": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "model_py#Classes",
+        "cleanLink": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "class_index",
+        "relativePath": "index.md",
+        "displayText": "Class Index"
+      }
+    ]
+  },
+  {
+    "fileName": "function_index",
+    "relativePath": "indexes/function_index.md",
+    "tags": [
+      "index",
+      "functions"
+    ],
+    "headings": [
+      {
+        "heading": "Function Index",
+        "level": 1
+      },
+      {
+        "heading": "API",
+        "level": 2
+      },
+      {
+        "heading": "Core",
+        "level": 2
+      },
+      {
+        "heading": "Data Preparation",
+        "level": 2
+      },
+      {
+        "heading": "Modelling",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "run_py#Execution",
+        "cleanLink": "run_py",
+        "displayText": "run.py",
+        "relativePath": "source/api/run_py.md"
+      },
+      {
+        "link": "live_signs_js#Functions",
+        "cleanLink": "live_signs_js",
+        "displayText": "live_signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      },
+      {
+        "link": "live_signs_js#Functions",
+        "cleanLink": "live_signs_js",
+        "displayText": "live_signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      },
+      {
+        "link": "utils_py#Functions",
+        "cleanLink": "utils_py",
+        "displayText": "utils.py",
+        "relativePath": "source/core/utils_py.md"
+      },
+      {
+        "link": "utils_py#Functions",
+        "cleanLink": "utils_py",
+        "displayText": "utils.py",
+        "relativePath": "source/core/utils_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py#Classes",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "draw_kps_py#Functions",
+        "cleanLink": "draw_kps_py",
+        "displayText": "draw_kps.py",
+        "relativePath": "source/core/draw_kps_py.md"
+      },
+      {
+        "link": "data_preparation_py#Classes",
+        "cleanLink": "data_preparation_py",
+        "displayText": "data_preparation.py",
+        "relativePath": "source/data/data_preparation_py.md"
+      },
+      {
+        "link": "data_preparation_py#Classes",
+        "cleanLink": "data_preparation_py",
+        "displayText": "data_preparation.py",
+        "relativePath": "source/data/data_preparation_py.md"
+      },
+      {
+        "link": "mmap_dataset_preprocessing_py#Functions",
+        "cleanLink": "mmap_dataset_preprocessing_py",
+        "displayText": "mmap_dataset_preprocessing.py",
+        "relativePath": "source/data/mmap_dataset_preprocessing_py.md"
+      },
+      {
+        "link": "mmap_dataset_preprocessing_py#Functions",
+        "cleanLink": "mmap_dataset_preprocessing_py",
+        "displayText": "mmap_dataset_preprocessing.py",
+        "relativePath": "source/data/mmap_dataset_preprocessing_py.md"
+      },
+      {
+        "link": "prepare_npz_kps_py#Key Functions",
+        "cleanLink": "prepare_npz_kps_py",
+        "displayText": "prepare_npz_kps.py",
+        "relativePath": "source/data/prepare_npz_kps_py.md"
+      },
+      {
+        "link": "model_py#Functions",
+        "cleanLink": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "model_py#Functions",
+        "cleanLink": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "model_py#Functions",
+        "cleanLink": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "train_py#Functions",
+        "cleanLink": "train_py",
+        "displayText": "train.py",
+        "relativePath": "source/modelling/train_py.md"
+      },
+      {
+        "link": "export_py#Functions",
+        "cleanLink": "export_py",
+        "displayText": "export.py",
+        "relativePath": "source/modelling/export_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "function_index",
+        "relativePath": "index.md",
+        "displayText": "Function Index"
+      }
+    ]
+  },
+  {
+    "fileName": "troubleshooting",
+    "relativePath": "reference/troubleshooting.md",
+    "tags": [
+      "reference",
+      "debug",
+      "troubleshooting"
+    ],
+    "headings": [
+      {
+        "heading": "Troubleshooting",
+        "level": 1
+      },
+      {
+        "heading": "Connection Issues",
+        "level": 2
+      },
+      {
+        "heading": "\"Connecting...\" stuck forever",
+        "level": 3
+      },
+      {
+        "heading": "\"Camera access denied\"",
+        "level": 3
+      },
+      {
+        "heading": "Inference Issues",
+        "level": 2
+      },
+      {
+        "heading": "High Latency / Lag",
+        "level": 3
+      },
+      {
+        "heading": "Poor Accuracy",
+        "level": 3
+      },
+      {
+        "heading": "Build Failures",
+        "level": 2
+      },
+      {
+        "heading": "\"uv not found\"",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      },
+      {
+        "link": "websocket_communication",
+        "displayText": "WebSocket Protocol",
+        "relativePath": "api/websocket_communication.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "troubleshooting",
+        "relativePath": "index.md",
+        "displayText": "Troubleshooting"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "troubleshooting",
+        "relativePath": "getting_started.md",
+        "displayText": "Troubleshooting"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "troubleshooting",
+        "relativePath": "getting_started.md",
+        "displayText": "Troubleshooting"
+      }
+    ]
+  },
+  {
+    "fileName": "dataset_citation",
+    "relativePath": "reference/dataset_citation.md",
+    "tags": [
+      "reference",
+      "citation",
+      "karsl"
+    ],
+    "headings": [
+      {
+        "heading": "Dataset Citation",
+        "level": 1
+      },
+      {
+        "heading": "KArSL-502",
+        "level": 2
+      },
+      {
+        "heading": "Acknowledgements",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "dataset_overview",
+        "displayText": "Dataset Overview",
+        "relativePath": "data/dataset_overview.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "dataset_overview",
+        "link": "dataset_citation",
+        "relativePath": "data/dataset_overview.md",
+        "displayText": "Dataset Citation"
+      },
+      {
+        "fileName": "index",
+        "link": "dataset_citation",
+        "relativePath": "index.md",
+        "displayText": "Dataset Citation"
+      }
+    ]
+  },
+  {
+    "fileName": "configuration_options",
+    "relativePath": "reference/configuration_options.md",
+    "tags": [
+      "reference",
+      "configuration",
+      "constants"
+    ],
+    "headings": [
+      {
+        "heading": "Configuration Options (Constants)",
+        "level": 1
+      },
+      {
+        "heading": "Data Dimensions",
+        "level": 2
+      },
+      {
+        "heading": "Directories",
+        "level": 2
+      },
+      {
+        "heading": "Feature Indices",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "constants_py",
+        "displayText": "constants.py Source",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Variables",
+        "relativePath": "deployment/environment_configuration.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "configuration_options",
+        "relativePath": "index.md",
+        "displayText": "Configuration Options"
+      }
+    ]
+  },
+  {
+    "fileName": "api_endpoints",
+    "relativePath": "reference/api_endpoints.md",
+    "tags": [
+      "api",
+      "reference",
+      "http",
+      "websocket"
+    ],
+    "headings": [
+      {
+        "heading": "API Endpoints",
+        "level": 1
+      },
+      {
+        "heading": "HTTP Endpoints",
+        "level": 2
+      },
+      {
+        "heading": "Root",
+        "level": 3
+      },
+      {
+        "heading": "Static Files",
+        "level": 3
+      },
+      {
+        "heading": "Health Check (Implicit)",
+        "level": 3
+      },
+      {
+        "heading": "WebSocket Endpoints",
+        "level": 2
+      },
+      {
+        "heading": "Live Signs",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "websocket_communication",
+        "displayText": "WebSocket Protocol",
+        "relativePath": "api/websocket_communication.md"
+      },
+      {
+        "link": "main_py",
+        "displayText": "main.py Source",
+        "relativePath": "source/api/main_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "api_endpoints",
+        "relativePath": "index.md",
+        "displayText": "API Endpoints"
+      }
+    ]
+  },
+  {
+    "fileName": "websocket_client_implementation",
+    "relativePath": "frontend/websocket_client_implementation.md",
+    "tags": [
+      "frontend",
+      "websocket",
+      "javascript"
+    ],
+    "headings": [
+      {
+        "heading": "WebSocket Client Implementation",
+        "level": 1
+      },
+      {
+        "heading": "Core Logic",
+        "level": 2
+      },
+      {
+        "heading": "1. Camera Setup (`setupWebcam`)",
+        "level": 3
+      },
+      {
+        "heading": "2. Main Loop (`loop`)",
+        "level": 3
+      },
+      {
+        "heading": "3. Frame Transmission (`processFrame`)",
+        "level": 3
+      },
+      {
+        "heading": "4. Message Handling (`socket.onmessage`)",
+        "level": 3
+      },
+      {
+        "heading": "Stability & Filtering",
+        "level": 2
+      },
+      {
+        "heading": "Text-to-Speech (TTS)",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "live_signs_js",
+        "displayText": "live-signs.js Source Code",
+        "relativePath": "source/frontend/live_signs_js.md"
+      },
+      {
+        "link": "websocket_communication",
+        "displayText": "WebSocket Communication Protocol",
+        "relativePath": "api/websocket_communication.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "web_interface_design",
+        "link": "websocket_client_implementation",
+        "relativePath": "frontend/web_interface_design.md",
+        "displayText": "WebSocket Client"
+      },
+      {
+        "fileName": "websocket_communication",
+        "link": "websocket_client_implementation",
+        "relativePath": "api/websocket_communication.md",
+        "displayText": "WebSocket Client Implementation"
+      },
+      {
+        "fileName": "index",
+        "link": "websocket_client_implementation",
+        "relativePath": "index.md",
+        "displayText": "WebSocket Client"
+      }
+    ]
+  },
+  {
+    "fileName": "web_interface_design",
+    "relativePath": "frontend/web_interface_design.md",
+    "tags": [
+      "frontend",
+      "ui",
+      "ux",
+      "html",
+      "css"
+    ],
+    "headings": [
+      {
+        "heading": "Web Interface Design",
+        "level": 1
+      },
+      {
+        "heading": "Design Philosophy",
+        "level": 2
+      },
+      {
+        "heading": "Layout Structure",
+        "level": 2
+      },
+      {
+        "heading": "1. Viewport Layer",
+        "level": 3
+      },
+      {
+        "heading": "2. HUD (Heads-Up Display)",
+        "level": 3
+      },
+      {
+        "heading": "3. Modals & Overlays",
+        "level": 3
+      },
+      {
+        "heading": "Styling System",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "index_html",
+        "displayText": "index.html Source Code",
+        "relativePath": "source/frontend/index_html.md"
+      },
+      {
+        "link": "styles_css",
+        "displayText": "styles.css Source Code",
+        "relativePath": "source/frontend/styles_css.md"
+      },
+      {
+        "link": "websocket_client_implementation",
+        "displayText": "WebSocket Client",
+        "relativePath": "frontend/websocket_client_implementation.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "styles_css",
+        "link": "web_interface_design",
+        "relativePath": "source/frontend/styles_css.md",
+        "displayText": "Web Interface Design"
+      },
+      {
+        "fileName": "main_py",
+        "link": "web_interface_design",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "Web Interface Design"
+      },
+      {
+        "fileName": "index",
+        "link": "web_interface_design",
+        "relativePath": "index.md",
+        "displayText": "Web Interface Design"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "web_interface_design",
+        "relativePath": "getting_started.md",
+        "displayText": "Web Interface Design"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "web_interface_design",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Web Interface Design"
+      }
+    ]
+  },
+  {
+    "fileName": "onnx_export_process",
+    "relativePath": "models/onnx_export_process.md",
+    "tags": [
+      "model",
+      "onnx",
+      "deployment"
+    ],
+    "headings": [
+      {
+        "heading": "ONNX Export Process",
+        "level": 1
+      },
+      {
+        "heading": "Why ONNX?",
+        "level": 2
+      },
+      {
+        "heading": "Export Workflow",
+        "level": 2
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "export_py",
+        "displayText": "export.py Source Code",
+        "relativePath": "source/modelling/export_py.md"
+      },
+      {
+        "link": "main_py",
+        "displayText": "main.py (ONNX Loading)",
+        "relativePath": "source/api/main_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "onnx_export_process",
+        "relativePath": "index.md",
+        "displayText": "ONNX Export Process"
+      }
+    ]
+  },
+  {
+    "fileName": "training_process",
+    "relativePath": "models/training_process.md",
+    "tags": [
+      "model",
+      "training",
+      "pytorch"
+    ],
+    "headings": [
+      {
+        "heading": "Training Process",
+        "level": 1
+      },
+      {
+        "heading": "Training Concepts",
+        "level": 2
+      },
+      {
+        "heading": "1. Loop Structure",
+        "level": 3
+      },
+      {
+        "heading": "2. Mixed Precision (AMP)",
+        "level": 3
+      },
+      {
+        "heading": "3. Distributed Data Parallel (DDP)",
+        "level": 3
+      },
+      {
+        "heading": "4. Hyperparameters",
+        "level": 3
+      },
+      {
+        "heading": "Checkpointing",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "train_py",
+        "displayText": "train.py Source Code",
+        "relativePath": "source/modelling/train_py.md"
+      },
+      {
+        "link": "parallel_train_py",
+        "displayText": "parallel_train.py Source Code",
+        "relativePath": "source/modelling/parallel_train_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "architecture_design",
+        "link": "training_process",
+        "relativePath": "models/architecture_design.md",
+        "displayText": "Training Process"
+      },
+      {
+        "fileName": "train_py",
+        "link": "training_process",
+        "relativePath": "source/modelling/train_py.md",
+        "displayText": "Training Process Overview"
+      },
+      {
+        "fileName": "index",
+        "link": "training_process",
+        "relativePath": "index.md",
+        "displayText": "Training Process"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "training_process",
+        "relativePath": "getting_started.md",
+        "displayText": "Training Process"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "training_process",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Training Process"
+      }
+    ]
+  },
+  {
+    "fileName": "architecture_design",
+    "relativePath": "models/architecture_design.md",
+    "tags": [
+      "model",
+      "architecture",
+      "deep-learning"
+    ],
+    "headings": [
+      {
+        "heading": "Model Architecture Design",
+        "level": 1
+      },
+      {
+        "heading": "Architecture Overview",
+        "level": 2
+      },
+      {
+        "heading": "1. Spatial Group Embedding (SGE)",
+        "level": 3
+      },
+      {
+        "heading": "2. Residual BiLSTM Layers",
+        "level": 3
+      },
+      {
+        "heading": "3. Self-Attention Pooling",
+        "level": 3
+      },
+      {
+        "heading": "4. Classification Head",
+        "level": 3
+      },
+      {
+        "heading": "Diagram",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "model_py",
+        "displayText": "model.py Source Code",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "training_process",
+        "displayText": "Training Process",
+        "relativePath": "models/training_process.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "architecture_design",
+        "relativePath": "index.md",
+        "displayText": "Architecture Design"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "architecture_design",
+        "relativePath": "getting_started.md",
+        "displayText": "Model Architecture"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "architecture_design",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Model Architecture"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "architecture_design",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Model Architecture"
+      }
+    ]
+  },
+  {
+    "fileName": "memory_mapped_datasets",
+    "relativePath": "data/memory_mapped_datasets.md",
+    "tags": [
+      "data",
+      "optimization",
+      "performance"
+    ],
+    "headings": [
+      {
+        "heading": "Memory-Mapped Datasets",
+        "level": 1
+      },
+      {
+        "heading": "Implementation Strategy",
+        "level": 2
+      },
+      {
+        "heading": "1. Consolidation",
+        "level": 3
+      },
+      {
+        "heading": "2. Random Access",
+        "level": 3
+      },
+      {
+        "heading": "3. Impact",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py Source Code",
+        "relativePath": "source/data/mmap_dataset_py.md"
+      },
+      {
+        "link": "mmap_dataset_preprocessing_py",
+        "displayText": "mmap_dataset_preprocessing.py Source Code",
+        "relativePath": "source/data/mmap_dataset_preprocessing_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "memory_mapped_datasets",
+        "relativePath": "index.md",
+        "displayText": "Memory-Mapped Datasets"
+      }
+    ]
+  },
+  {
+    "fileName": "data_preparation_pipeline",
+    "relativePath": "data/data_preparation_pipeline.md",
+    "tags": [
+      "data",
+      "pipeline",
+      "preprocessing"
+    ],
+    "headings": [
+      {
+        "heading": "Data Preparation Pipeline",
+        "level": 1
+      },
+      {
+        "heading": "Pipeline Steps",
+        "level": 2
+      },
+      {
+        "heading": "1. Landmark Extraction",
+        "level": 3
+      },
+      {
+        "heading": "2. Normalization",
+        "level": 3
+      },
+      {
+        "heading": "3. Sampling (TSN)",
+        "level": 3
+      },
+      {
+        "heading": "4. Augmentation",
+        "level": 3
+      },
+      {
+        "heading": "Flowchart",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "data_preparation_py",
+        "displayText": "data_preparation.py Source Code",
+        "relativePath": "source/data/data_preparation_py.md"
+      },
+      {
+        "link": "prepare_npz_kps_py",
+        "displayText": "prepare_npz_kps.py Source Code",
+        "relativePath": "source/data/prepare_npz_kps_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "data_preparation_pipeline",
+        "relativePath": "index.md",
+        "displayText": "Data Preparation Pipeline"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "data_preparation_pipeline",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Data Preparation Pipeline"
+      }
+    ]
+  },
+  {
+    "fileName": "dataset_overview",
+    "relativePath": "data/dataset_overview.md",
+    "tags": [
+      "data",
+      "dataset",
+      "karsl"
+    ],
+    "headings": [
+      {
+        "heading": "Dataset Overview",
+        "level": 1
+      },
+      {
+        "heading": "Dataset Characteristics",
+        "level": 2
+      },
+      {
+        "heading": "Directory Structure",
+        "level": 2
+      },
+      {
+        "heading": "Keypoint Data Format",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py Source Code",
+        "relativePath": "source/data/mmap_dataset_py.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py Source Code",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "dataset_citation",
+        "displayText": "Dataset Citation",
+        "relativePath": "reference/dataset_citation.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "dataset_citation",
+        "link": "dataset_overview",
+        "relativePath": "reference/dataset_citation.md",
+        "displayText": "Dataset Overview"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "dataset_overview",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "Dataset Overview"
+      },
+      {
+        "fileName": "index",
+        "link": "dataset_overview",
+        "relativePath": "index.md",
+        "displayText": "Dataset Overview"
+      }
+    ]
+  },
+  {
+    "fileName": "keypoint_visualization",
+    "relativePath": "core/keypoint_visualization.md",
+    "tags": [
+      "core",
+      "visualization",
+      "debugging"
+    ],
+    "headings": [
+      {
+        "heading": "Keypoint Visualization",
+        "level": 1
+      },
+      {
+        "heading": "Visualization Strategy",
+        "level": 2
+      },
+      {
+        "heading": "Drawing Layers",
+        "level": 3
+      },
+      {
+        "heading": "Components",
+        "level": 3
+      },
+      {
+        "heading": "1. `draw_landmarks` Utility",
+        "level": 4
+      },
+      {
+        "heading": "2. Data Conversion",
+        "level": 4
+      },
+      {
+        "heading": "Usage",
+        "level": 3
+      },
+      {
+        "heading": "Structure",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "draw_kps_py",
+        "displayText": "draw_kps.py Source Code",
+        "relativePath": "source/core/draw_kps_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py Source Code",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "keypoint_visualization",
+        "relativePath": "index.md",
+        "displayText": "Keypoint Visualization"
+      }
+    ]
+  },
+  {
+    "fileName": "mediapipe_integration",
+    "relativePath": "core/mediapipe_integration.md",
+    "tags": [
+      "core",
+      "mediapipe",
+      "computer-vision"
+    ],
+    "headings": [
+      {
+        "heading": "MediaPipe Integration",
+        "level": 1
+      },
+      {
+        "heading": "Landmark Components",
+        "level": 2
+      },
+      {
+        "heading": "1. Pose Landmarks",
+        "level": 3
+      },
+      {
+        "heading": "2. Hand Landmarks",
+        "level": 3
+      },
+      {
+        "heading": "3. Face Landmarks",
+        "level": 3
+      },
+      {
+        "heading": "Integration Strategy",
+        "level": 2
+      },
+      {
+        "heading": "efficient Asynchronous Execution",
+        "level": 3
+      },
+      {
+        "heading": "Feature Normalization",
+        "level": 3
+      },
+      {
+        "heading": "Configuration",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py Source Code",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py Source Code",
+        "relativePath": "source/core/constants_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "websocket_py",
+        "link": "mediapipe_integration",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "MediaPipe Integration"
+      },
+      {
+        "fileName": "index",
+        "link": "mediapipe_integration",
+        "relativePath": "index.md",
+        "displayText": "MediaPipe Integration"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "mediapipe_integration",
+        "relativePath": "architecture_overview.md",
+        "displayText": "MediaPipe Integration"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "mediapipe_integration",
+        "relativePath": "architecture_overview.md",
+        "displayText": "MediaPipe Integration"
+      }
+    ]
+  },
+  {
+    "fileName": "live_processing_pipeline",
+    "relativePath": "api/live_processing_pipeline.md",
+    "tags": [
+      "api",
+      "pipeline",
+      "processing",
+      "cv"
+    ],
+    "headings": [
+      {
+        "heading": "Live Processing Pipeline",
+        "level": 1
+      },
+      {
+        "heading": "Pipeline Stages",
+        "level": 2
+      },
+      {
+        "heading": "1. Frame Acquisition",
+        "level": 3
+      },
+      {
+        "heading": "2. Motion Detection",
+        "level": 3
+      },
+      {
+        "heading": "3. Frame Buffering",
+        "level": 3
+      },
+      {
+        "heading": "4. Keypoint Extraction (MediaPipe)",
+        "level": 3
+      },
+      {
+        "heading": "5. Inference",
+        "level": 3
+      },
+      {
+        "heading": "6. Post-Processing",
+        "level": 3
+      },
+      {
+        "heading": "Processing Flow",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "live_processing_py",
+        "displayText": "live_processing.py Source Code",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py Source Code",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "cv2_utils_py",
+        "displayText": "cv2_utils.py Source Code",
+        "relativePath": "source/api/cv2_utils_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "websocket_communication",
+        "link": "live_processing_pipeline",
+        "relativePath": "api/websocket_communication.md",
+        "displayText": "Live Processing Pipeline"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_pipeline",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "Live Processing Pipeline"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "live_processing_pipeline",
+        "relativePath": "source/api/live_processing_py.md",
+        "displayText": "Live Processing Pipeline"
+      },
+      {
+        "fileName": "cv2_utils_py",
+        "link": "live_processing_pipeline",
+        "relativePath": "source/api/cv2_utils_py.md",
+        "displayText": "Live Processing Pipeline"
+      },
+      {
+        "fileName": "index",
+        "link": "live_processing_pipeline",
+        "relativePath": "index.md",
+        "displayText": "Live Processing Pipeline"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "live_processing_pipeline",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Live Processing Pipeline"
+      }
+    ]
+  },
+  {
+    "fileName": "websocket_communication",
+    "relativePath": "api/websocket_communication.md",
+    "tags": [
+      "api",
+      "websocket",
+      "real-time"
+    ],
+    "headings": [
+      {
+        "heading": "WebSocket Communication Protocol",
+        "level": 1
+      },
+      {
+        "heading": "Protocol Overview",
+        "level": 2
+      },
+      {
+        "heading": "Connection Lifecycle",
+        "level": 3
+      },
+      {
+        "heading": "Message Format",
+        "level": 2
+      },
+      {
+        "heading": "Client -> Server",
+        "level": 3
+      },
+      {
+        "heading": "Server -> Client",
+        "level": 3
+      },
+      {
+        "heading": "Prediction Payload",
+        "level": 4
+      },
+      {
+        "heading": "Status Payload (Example)",
+        "level": 4
+      },
+      {
+        "heading": "Concurrency and Performance",
+        "level": 2
+      },
+      {
+        "heading": "Sequence Diagram",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py Source Code",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "live_processing_pipeline",
+        "displayText": "Live Processing Pipeline",
+        "relativePath": "api/live_processing_pipeline.md"
+      },
+      {
+        "link": "websocket_client_implementation",
+        "displayText": "WebSocket Client Implementation",
+        "relativePath": "frontend/websocket_client_implementation.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "troubleshooting",
+        "link": "websocket_communication",
+        "relativePath": "reference/troubleshooting.md",
+        "displayText": "WebSocket Protocol"
+      },
+      {
+        "fileName": "api_endpoints",
+        "link": "websocket_communication",
+        "relativePath": "reference/api_endpoints.md",
+        "displayText": "WebSocket Protocol"
+      },
+      {
+        "fileName": "websocket_client_implementation",
+        "link": "websocket_communication",
+        "relativePath": "frontend/websocket_client_implementation.md",
+        "displayText": "WebSocket Communication Protocol"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "websocket_communication",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "WebSocket Communication"
+      },
+      {
+        "fileName": "main_py",
+        "link": "websocket_communication",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "WebSocket Communication"
+      },
+      {
+        "fileName": "index",
+        "link": "websocket_communication",
+        "relativePath": "index.md",
+        "displayText": "WebSocket Communication"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "websocket_communication",
+        "relativePath": "architecture_overview.md",
+        "displayText": "WebSocket Communication"
+      }
+    ]
+  },
+  {
+    "fileName": "fastapi_application",
+    "relativePath": "api/fastapi_application.md",
+    "tags": [
+      "api",
+      "fastapi",
+      "architecture"
+    ],
+    "headings": [
+      {
+        "heading": "FastAPI Application Structure",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Key Components",
+        "level": 2
+      },
+      {
+        "heading": "1. Application Lifecycle (`main.py`)",
+        "level": 3
+      },
+      {
+        "heading": "2. Middleware",
+        "level": 3
+      },
+      {
+        "heading": "3. Routing",
+        "level": 3
+      },
+      {
+        "heading": "Call Graph",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "main_py",
+        "displayText": "main.py Source Documentation",
+        "relativePath": "source/api/main_py.md"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py Source Documentation",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Configuration",
+        "relativePath": "deployment/environment_configuration.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "main_py",
+        "link": "fastapi_application#CORS Configuration",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "fastapi_application",
+        "displayText": "CORS Configuration"
+      },
+      {
+        "fileName": "main_py",
+        "link": "fastapi_application",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "FastAPI Application"
+      },
+      {
+        "fileName": "index",
+        "link": "fastapi_application",
+        "relativePath": "index.md",
+        "displayText": "FastAPI Application"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "fastapi_application",
+        "relativePath": "getting_started.md",
+        "displayText": "FastAPI Application"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "fastapi_application",
+        "relativePath": "architecture_overview.md",
+        "displayText": "FastAPI Application"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "fastapi_application",
+        "relativePath": "architecture_overview.md",
+        "displayText": "FastAPI Application"
+      }
+    ]
+  },
+  {
+    "fileName": "pyproject_toml",
+    "relativePath": "source/config/pyproject_toml.md",
+    "tags": [
+      "source",
+      "config",
+      "python"
+    ],
+    "headings": [
+      {
+        "heading": "pyproject.toml",
+        "level": 1
+      },
+      {
+        "heading": "Project Metadata",
+        "level": 2
+      },
+      {
+        "heading": "Optional Dependencies (`extras`)",
+        "level": 2
+      },
+      {
+        "heading": "Development Group (`dev`)",
+        "level": 2
+      },
+      {
+        "heading": "Tool Configuration (`[tool.uv]`)",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "dockerfile",
+        "displayText": "Dockerfile",
+        "relativePath": "source/config/dockerfile.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "dockerfile",
+        "link": "pyproject_toml",
+        "relativePath": "source/config/dockerfile.md",
+        "displayText": "pyproject.toml"
+      },
+      {
+        "fileName": "index",
+        "link": "pyproject_toml",
+        "relativePath": "index.md",
+        "displayText": "pyproject.toml"
+      }
+    ]
+  },
+  {
+    "fileName": "makefile",
+    "relativePath": "source/config/makefile.md",
+    "tags": [
+      "source",
+      "config",
+      "makefile"
+    ],
+    "headings": [
+      {
+        "heading": "Makefile",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Key Commands",
+        "level": 2
+      },
+      {
+        "heading": "Training & Modelling",
+        "level": 3
+      },
+      {
+        "heading": "Data Processing",
+        "level": 3
+      },
+      {
+        "heading": "Dashboard",
+        "level": 3
+      },
+      {
+        "heading": "Variable Handling",
+        "level": 2
+      },
+      {
+        "heading": "Helper Targets",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "train_py",
+        "displayText": "train.py",
+        "relativePath": "source/modelling/train_py.md"
+      },
+      {
+        "link": "prepare_npz_kps_py",
+        "displayText": "prepare_npz_kps.py",
+        "relativePath": "source/data/prepare_npz_kps_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "makefile",
+        "relativePath": "index.md",
+        "displayText": "Makefile"
+      }
+    ]
+  },
+  {
+    "fileName": "docker_compose_yml",
+    "relativePath": "source/config/docker_compose_yml.md",
+    "tags": [
+      "source",
+      "config",
+      "docker"
+    ],
+    "headings": [
+      {
+        "heading": "docker-compose.yml",
+        "level": 1
+      },
+      {
+        "heading": "Services",
+        "level": 2
+      },
+      {
+        "heading": "1. `live-app`",
+        "level": 3
+      },
+      {
+        "heading": "2. `docs`",
+        "level": 3
+      },
+      {
+        "heading": "3. `nginx`",
+        "level": 3
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "dockerfile",
+        "displayText": "Dockerfile",
+        "relativePath": "source/config/dockerfile.md"
+      },
+      {
+        "link": "dockerfile",
+        "displayText": "Dockerfile",
+        "relativePath": "source/config/dockerfile.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": ".env",
+        "relativePath": "deployment/environment_configuration.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "dockerfile",
+        "link": "docker_compose_yml",
+        "relativePath": "source/config/dockerfile.md",
+        "displayText": "docker-compose.yml"
+      },
+      {
+        "fileName": "index",
+        "link": "docker_compose_yml",
+        "relativePath": "index.md",
+        "displayText": "docker-compose.yml"
+      },
+      {
+        "fileName": "docker_setup",
+        "link": "docker_compose_yml",
+        "relativePath": "deployment/docker_setup.md",
+        "displayText": "docker-compose.yml Source"
+      }
+    ]
+  },
+  {
+    "fileName": "dockerfile",
+    "relativePath": "source/config/dockerfile.md",
+    "tags": [
+      "source",
+      "config",
+      "docker"
+    ],
+    "headings": [
+      {
+        "heading": "Dockerfile",
+        "level": 1
+      },
+      {
+        "heading": "Build Stages",
+        "level": 2
+      },
+      {
+        "heading": "Stage 1: `builder`",
+        "level": 3
+      },
+      {
+        "heading": "Stage 2: `runtime`",
+        "level": 3
+      },
+      {
+        "heading": "Environment Variables",
+        "level": 2
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "pyproject_toml",
+        "displayText": "pyproject.toml",
+        "relativePath": "source/config/pyproject_toml.md"
+      },
+      {
+        "link": "docker_compose_yml",
+        "displayText": "docker-compose.yml",
+        "relativePath": "source/config/docker_compose_yml.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "pyproject_toml",
+        "link": "dockerfile",
+        "relativePath": "source/config/pyproject_toml.md",
+        "displayText": "Dockerfile"
+      },
+      {
+        "fileName": "docker_compose_yml",
+        "link": "dockerfile",
+        "relativePath": "source/config/docker_compose_yml.md",
+        "displayText": "Dockerfile"
+      },
+      {
+        "fileName": "docker_compose_yml",
+        "link": "dockerfile",
+        "relativePath": "source/config/docker_compose_yml.md",
+        "displayText": "Dockerfile"
+      },
+      {
+        "fileName": "index",
+        "link": "dockerfile",
+        "relativePath": "index.md",
+        "displayText": "Dockerfile"
+      },
+      {
+        "fileName": "docker_setup",
+        "link": "dockerfile",
+        "relativePath": "deployment/docker_setup.md",
+        "displayText": "Dockerfile Source"
+      }
+    ]
+  },
+  {
+    "fileName": "data_preparation_py",
+    "relativePath": "source/data/data_preparation_py.md",
+    "tags": [
+      "source",
+      "data",
+      "pytorch",
+      "preprocessing"
+    ],
+    "headings": [
+      {
+        "heading": "data_preparation.py",
+        "level": 1
+      },
+      {
+        "heading": "Classes",
+        "level": 2
+      },
+      {
+        "heading": "`TSNSampler`",
+        "level": 3
+      },
+      {
+        "heading": "`__init__(target_len, mode, jitter_scale)`",
+        "level": 4
+      },
+      {
+        "heading": "`__call__(kps)`",
+        "level": 4
+      },
+      {
+        "heading": "`DataAugmentor`",
+        "level": 3
+      },
+      {
+        "heading": "`__init__(...)`",
+        "level": 4
+      },
+      {
+        "heading": "`_apply_hflip(sequence)`",
+        "level": 4
+      },
+      {
+        "heading": "`_apply_affine(kps)`",
+        "level": 4
+      },
+      {
+        "heading": "Usage Example",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "lazy_dataset_py",
+        "displayText": "lazy_dataset.py",
+        "relativePath": "source/data/lazy_dataset_py.md"
+      },
+      {
+        "link": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py",
+        "relativePath": "source/data/mmap_dataset_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "class_index",
+        "link": "data_preparation_py#Classes",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "data_preparation_py",
+        "displayText": "data_preparation.py"
+      },
+      {
+        "fileName": "class_index",
+        "link": "data_preparation_py#Classes",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "data_preparation_py",
+        "displayText": "data_preparation.py"
+      },
+      {
+        "fileName": "function_index",
+        "link": "data_preparation_py#Classes",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "data_preparation_py",
+        "displayText": "data_preparation.py"
+      },
+      {
+        "fileName": "function_index",
+        "link": "data_preparation_py#Classes",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "data_preparation_py",
+        "displayText": "data_preparation.py"
+      },
+      {
+        "fileName": "data_preparation_pipeline",
+        "link": "data_preparation_py",
+        "relativePath": "data/data_preparation_pipeline.md",
+        "displayText": "data_preparation.py Source Code"
+      },
+      {
+        "fileName": "lazy_dataset_py",
+        "link": "data_preparation_py",
+        "relativePath": "source/data/lazy_dataset_py.md",
+        "displayText": "data_preparation.py"
+      },
+      {
+        "fileName": "dataloader_py",
+        "link": "data_preparation_py",
+        "relativePath": "source/data/dataloader_py.md",
+        "displayText": "data_preparation.py"
+      },
+      {
+        "fileName": "index",
+        "link": "data_preparation_py",
+        "relativePath": "index.md",
+        "displayText": "data_preparation.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "data_preparation_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "data_preparation.py"
+      }
+    ]
+  },
+  {
+    "fileName": "shared_elements_py",
+    "relativePath": "source/data/shared_elements_py.md",
+    "tags": [
+      "source",
+      "data",
+      "streamlit"
+    ],
+    "headings": [
+      {
+        "heading": "shared_elements.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`get_visual_controls(total_samples, rnd_key)`",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "visualization_py",
+        "displayText": "Visualization Dashboard"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "shared_elements_py",
+        "relativePath": "index.md",
+        "displayText": "shared_elements.py"
+      }
+    ]
+  },
+  {
+    "fileName": "lazy_dataset_py",
+    "relativePath": "source/data/lazy_dataset_py.md",
+    "tags": [
+      "source",
+      "data",
+      "pytorch",
+      "dataloader"
+    ],
+    "headings": [
+      {
+        "heading": "lazy_dataset.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Class `LazyKArSLDataset`",
+        "level": 2
+      },
+      {
+        "heading": "`__init__`",
+        "level": 3
+      },
+      {
+        "heading": "`_load_file(path)`",
+        "level": 3
+      },
+      {
+        "heading": "`__getitem__(index)`",
+        "level": 3
+      },
+      {
+        "heading": "Comparison",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "data_preparation_py",
+        "displayText": "data_preparation.py",
+        "relativePath": "source/data/data_preparation_py.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "dataloader_py",
+        "displayText": "dataloader.py",
+        "relativePath": "source/data/dataloader_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "class_index",
+        "link": "lazy_dataset_py#Class LazyKArSLDataset",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "lazy_dataset_py",
+        "displayText": "lazy_dataset.py"
+      },
+      {
+        "fileName": "data_preparation_py",
+        "link": "lazy_dataset_py",
+        "relativePath": "source/data/data_preparation_py.md",
+        "displayText": "lazy_dataset.py"
+      },
+      {
+        "fileName": "prepare_npz_kps_py",
+        "link": "lazy_dataset_py",
+        "relativePath": "source/data/prepare_npz_kps_py.md",
+        "displayText": "LazyDataset"
+      },
+      {
+        "fileName": "index",
+        "link": "lazy_dataset_py",
+        "relativePath": "index.md",
+        "displayText": "lazy_dataset.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "lazy_dataset_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "lazy_dataset.py"
+      }
+    ]
+  },
+  {
+    "fileName": "prepare_npz_kps_py",
+    "relativePath": "source/data/prepare_npz_kps_py.md",
+    "tags": [
+      "source",
+      "data",
+      "script",
+      "mediapipe"
+    ],
+    "headings": [
+      {
+        "heading": "prepare_npz_kps.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Key Functions",
+        "level": 2
+      },
+      {
+        "heading": "`init_worker(landmarkers)`",
+        "level": 3
+      },
+      {
+        "heading": "`process_video(video_dir, adjusted)`",
+        "level": 3
+      },
+      {
+        "heading": "`process_sign_wrapper(info)`",
+        "level": 3
+      },
+      {
+        "heading": "Parallelization Strategy",
+        "level": 2
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "lazy_dataset_py",
+        "displayText": "LazyDataset",
+        "relativePath": "source/data/lazy_dataset_py.md"
+      },
+      {
+        "link": "mmap_dataset_preprocessing_py",
+        "displayText": "Preprocessing",
+        "relativePath": "source/data/mmap_dataset_preprocessing_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "function_index",
+        "link": "prepare_npz_kps_py#Key Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "prepare_npz_kps_py",
+        "displayText": "prepare_npz_kps.py"
+      },
+      {
+        "fileName": "data_preparation_pipeline",
+        "link": "prepare_npz_kps_py",
+        "relativePath": "data/data_preparation_pipeline.md",
+        "displayText": "prepare_npz_kps.py Source Code"
+      },
+      {
+        "fileName": "makefile",
+        "link": "prepare_npz_kps_py",
+        "relativePath": "source/config/makefile.md",
+        "displayText": "prepare_npz_kps.py"
+      },
+      {
+        "fileName": "mediapipe_utils_py",
+        "link": "prepare_npz_kps_py",
+        "relativePath": "source/core/mediapipe_utils_py.md",
+        "displayText": "prepare_npz_kps.py"
+      },
+      {
+        "fileName": "index",
+        "link": "prepare_npz_kps_py",
+        "relativePath": "index.md",
+        "displayText": "prepare_npz_kps.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "prepare_npz_kps_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "prepare_npz_kps.py"
+      }
+    ]
+  },
+  {
+    "fileName": "mmap_dataset_preprocessing_py",
+    "relativePath": "source/data/mmap_dataset_preprocessing_py.md",
+    "tags": [
+      "source",
+      "data",
+      "script",
+      "preprocessing"
+    ],
+    "headings": [
+      {
+        "heading": "mmap_dataset_preprocessing.py",
+        "level": 1
+      },
+      {
+        "heading": "Process Overview",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`load_raw_kps(...)`",
+        "level": 3
+      },
+      {
+        "heading": "`mmap_process_and_save_split(...)`",
+        "level": 3
+      },
+      {
+        "heading": "CLI Usage",
+        "level": 2
+      },
+      {
+        "heading": "Output Structure",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py",
+        "relativePath": "source/data/mmap_dataset_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "function_index",
+        "link": "mmap_dataset_preprocessing_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "mmap_dataset_preprocessing_py",
+        "displayText": "mmap_dataset_preprocessing.py"
+      },
+      {
+        "fileName": "function_index",
+        "link": "mmap_dataset_preprocessing_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "mmap_dataset_preprocessing_py",
+        "displayText": "mmap_dataset_preprocessing.py"
+      },
+      {
+        "fileName": "memory_mapped_datasets",
+        "link": "mmap_dataset_preprocessing_py",
+        "relativePath": "data/memory_mapped_datasets.md",
+        "displayText": "mmap_dataset_preprocessing.py Source Code"
+      },
+      {
+        "fileName": "prepare_npz_kps_py",
+        "link": "mmap_dataset_preprocessing_py",
+        "relativePath": "source/data/prepare_npz_kps_py.md",
+        "displayText": "Preprocessing"
+      },
+      {
+        "fileName": "mmap_dataset_py",
+        "link": "mmap_dataset_preprocessing_py",
+        "relativePath": "source/data/mmap_dataset_py.md",
+        "displayText": "mmap_dataset_preprocessing.py"
+      },
+      {
+        "fileName": "index",
+        "link": "mmap_dataset_preprocessing_py",
+        "relativePath": "index.md",
+        "displayText": "mmap_dataset_preprocessing.py"
+      }
+    ]
+  },
+  {
+    "fileName": "mmap_dataset_py",
+    "relativePath": "source/data/mmap_dataset_py.md",
+    "tags": [
+      "source",
+      "data",
+      "pytorch",
+      "performance"
+    ],
+    "headings": [
+      {
+        "heading": "mmap_dataset.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Class `MmapKArSLDataset`",
+        "level": 2
+      },
+      {
+        "heading": "`__init__`",
+        "level": 3
+      },
+      {
+        "heading": "`__getitem__(index)`",
+        "level": 3
+      },
+      {
+        "heading": "Performance Note",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mmap_dataset_preprocessing_py",
+        "displayText": "mmap_dataset_preprocessing.py",
+        "relativePath": "source/data/mmap_dataset_preprocessing_py.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "dataloader_py",
+        "displayText": "dataloader.py",
+        "relativePath": "source/data/dataloader_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "class_index",
+        "link": "mmap_dataset_py#Class MmapKArSLDataset",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py"
+      },
+      {
+        "fileName": "memory_mapped_datasets",
+        "link": "mmap_dataset_py",
+        "relativePath": "data/memory_mapped_datasets.md",
+        "displayText": "mmap_dataset.py Source Code"
+      },
+      {
+        "fileName": "dataset_overview",
+        "link": "mmap_dataset_py",
+        "relativePath": "data/dataset_overview.md",
+        "displayText": "mmap_dataset.py Source Code"
+      },
+      {
+        "fileName": "data_preparation_py",
+        "link": "mmap_dataset_py",
+        "relativePath": "source/data/data_preparation_py.md",
+        "displayText": "mmap_dataset.py"
+      },
+      {
+        "fileName": "mmap_dataset_preprocessing_py",
+        "link": "mmap_dataset_py",
+        "relativePath": "source/data/mmap_dataset_preprocessing_py.md",
+        "displayText": "mmap_dataset.py"
+      },
+      {
+        "fileName": "dataloader_py",
+        "link": "mmap_dataset_py",
+        "relativePath": "source/data/dataloader_py.md",
+        "displayText": "mmap_dataset.py"
+      },
+      {
+        "fileName": "index",
+        "link": "mmap_dataset_py",
+        "relativePath": "index.md",
+        "displayText": "mmap_dataset.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "mmap_dataset_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "mmap_dataset.py"
+      }
+    ]
+  },
+  {
+    "fileName": "dataloader_py",
+    "relativePath": "source/data/dataloader_py.md",
+    "tags": [
+      "source",
+      "data",
+      "pytorch"
+    ],
+    "headings": [
+      {
+        "heading": "dataloader.py",
+        "level": 1
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`prepare_dataloader(...)`",
+        "level": 3
+      },
+      {
+        "heading": "`prepare_dataloaders(...)`",
+        "level": 3
+      },
+      {
+        "heading": "Related Code",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py",
+        "relativePath": "source/data/mmap_dataset_py.md"
+      },
+      {
+        "link": "data_preparation_py",
+        "displayText": "data_preparation.py",
+        "relativePath": "source/data/data_preparation_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "lazy_dataset_py",
+        "link": "dataloader_py",
+        "relativePath": "source/data/lazy_dataset_py.md",
+        "displayText": "dataloader.py"
+      },
+      {
+        "fileName": "mmap_dataset_py",
+        "link": "dataloader_py",
+        "relativePath": "source/data/mmap_dataset_py.md",
+        "displayText": "dataloader.py"
+      },
+      {
+        "fileName": "train_py",
+        "link": "dataloader_py",
+        "relativePath": "source/modelling/train_py.md",
+        "displayText": "dataloader.py"
+      },
+      {
+        "fileName": "index",
+        "link": "dataloader_py",
+        "relativePath": "index.md",
+        "displayText": "dataloader.py"
+      }
+    ]
+  },
+  {
+    "fileName": "visualize_model_performance_py",
+    "relativePath": "source/modelling/visualize_model_performance_py.md",
+    "tags": [
+      "source",
+      "modelling",
+      "visualization"
+    ],
+    "headings": [
+      {
+        "heading": "visualize_model_performance.py",
+        "level": 1
+      },
+      {
+        "heading": "Output",
+        "level": 2
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "visualize_model_performance_py",
+        "relativePath": "index.md",
+        "displayText": "visualize_model_performance.py"
+      }
+    ]
+  },
+  {
+    "fileName": "onnx_benchmark_py",
+    "relativePath": "source/modelling/onnx_benchmark_py.md",
+    "tags": [
+      "source",
+      "modelling",
+      "profiling"
+    ],
+    "headings": [
+      {
+        "heading": "onnx_benchmark.py",
+        "level": 1
+      },
+      {
+        "heading": "Metrics",
+        "level": 2
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "onnx_benchmark_py",
+        "relativePath": "index.md",
+        "displayText": "onnx_benchmark.py"
+      }
+    ]
+  },
+  {
+    "fileName": "parallel_train_py",
+    "relativePath": "source/modelling/parallel_train_py.md",
+    "tags": [
+      "source",
+      "modelling",
+      "distributed"
+    ],
+    "headings": [
+      {
+        "heading": "parallel_train.py",
+        "level": 1
+      },
+      {
+        "heading": "Functionality",
+        "level": 2
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Related Code",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "train_py",
+        "displayText": "train.py",
+        "relativePath": "source/modelling/train_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "training_process",
+        "link": "parallel_train_py",
+        "relativePath": "models/training_process.md",
+        "displayText": "parallel_train.py Source Code"
+      },
+      {
+        "fileName": "index",
+        "link": "parallel_train_py",
+        "relativePath": "index.md",
+        "displayText": "parallel_train.py"
+      }
+    ]
+  },
+  {
+    "fileName": "export_py",
+    "relativePath": "source/modelling/export_py.md",
+    "tags": [
+      "source",
+      "modelling",
+      "onnx",
+      "deployment"
+    ],
+    "headings": [
+      {
+        "heading": "export.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "process",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`export_model(checkpoint_path, output_path)`",
+        "level": 3
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "main_py",
+        "displayText": "main.py",
+        "relativePath": "source/api/main_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "function_index",
+        "link": "export_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "export_py",
+        "displayText": "export.py"
+      },
+      {
+        "fileName": "onnx_export_process",
+        "link": "export_py",
+        "relativePath": "models/onnx_export_process.md",
+        "displayText": "export.py Source Code"
+      },
+      {
+        "fileName": "index",
+        "link": "export_py",
+        "relativePath": "index.md",
+        "displayText": "export.py"
+      }
+    ]
+  },
+  {
+    "fileName": "train_py",
+    "relativePath": "source/modelling/train_py.md",
+    "tags": [
+      "source",
+      "modelling",
+      "training",
+      "pytorch"
+    ],
+    "headings": [
+      {
+        "heading": "train.py",
+        "level": 1
+      },
+      {
+        "heading": "Features",
+        "level": 2
+      },
+      {
+        "heading": "Training Pipeline",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`train(...)`",
+        "level": 3
+      },
+      {
+        "heading": "Execution (`__main__`)",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "dataloader_py",
+        "displayText": "dataloader.py",
+        "relativePath": "source/data/dataloader_py.md"
+      },
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "training_process",
+        "displayText": "Training Process Overview",
+        "relativePath": "models/training_process.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "function_index",
+        "link": "train_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "train_py",
+        "displayText": "train.py"
+      },
+      {
+        "fileName": "training_process",
+        "link": "train_py",
+        "relativePath": "models/training_process.md",
+        "displayText": "train.py Source Code"
+      },
+      {
+        "fileName": "makefile",
+        "link": "train_py",
+        "relativePath": "source/config/makefile.md",
+        "displayText": "train.py"
+      },
+      {
+        "fileName": "parallel_train_py",
+        "link": "train_py",
+        "relativePath": "source/modelling/parallel_train_py.md",
+        "displayText": "train.py"
+      },
+      {
+        "fileName": "model_py",
+        "link": "train_py",
+        "relativePath": "source/modelling/model_py.md",
+        "displayText": "train.py"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "train_py",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "train.py"
+      },
+      {
+        "fileName": "index",
+        "link": "train_py",
+        "relativePath": "index.md",
+        "displayText": "train.py"
+      },
+      {
+        "fileName": "makefile_commands",
+        "link": "train_py",
+        "relativePath": "development/makefile_commands.md",
+        "displayText": "train.py"
+      }
+    ]
+  },
+  {
+    "fileName": "model_py",
+    "relativePath": "source/modelling/model_py.md",
+    "tags": [
+      "source",
+      "modelling",
+      "pytorch",
+      "architecture"
+    ],
+    "headings": [
+      {
+        "heading": "model.py",
+        "level": 1
+      },
+      {
+        "heading": "System Architecture",
+        "level": 2
+      },
+      {
+        "heading": "Classes",
+        "level": 2
+      },
+      {
+        "heading": "`SpatialGroupEmbedding`",
+        "level": 3
+      },
+      {
+        "heading": "`ResidualBiLSTMBlock`",
+        "level": 3
+      },
+      {
+        "heading": "`AttentionPooling`",
+        "level": 3
+      },
+      {
+        "heading": "`AttentionBiLSTM`",
+        "level": 3
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`get_model_instance(...)`",
+        "level": 3
+      },
+      {
+        "heading": "`load_onnx_model(...)`",
+        "level": 3
+      },
+      {
+        "heading": "`onnx_inference(...)`",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "train_py",
+        "displayText": "train.py",
+        "relativePath": "source/modelling/train_py.md"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "class_index",
+        "link": "model_py#Classes",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "model_py",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "class_index",
+        "link": "model_py#Classes",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "model_py",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "class_index",
+        "link": "model_py#Classes",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "model_py",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "class_index",
+        "link": "model_py#Classes",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "model_py",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "function_index",
+        "link": "model_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "model_py",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "function_index",
+        "link": "model_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "model_py",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "function_index",
+        "link": "model_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "model_py",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "architecture_design",
+        "link": "model_py",
+        "relativePath": "models/architecture_design.md",
+        "displayText": "model.py Source Code"
+      },
+      {
+        "fileName": "export_py",
+        "link": "model_py",
+        "relativePath": "source/modelling/export_py.md",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "train_py",
+        "link": "model_py",
+        "relativePath": "source/modelling/train_py.md",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "model_py#onnx_inference",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "model_py",
+        "displayText": "onnx_inference"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "model_py#onnx_inference",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "model_py",
+        "displayText": "onnx_inference()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "model_py#onnx_inference",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "model_py",
+        "displayText": "onnx_inference()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "model_py",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "main_py",
+        "link": "model_py#load_onnx_model",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "model_py",
+        "displayText": "load_onnx_model"
+      },
+      {
+        "fileName": "main_py",
+        "link": "model_py#load_onnx_model",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "model_py",
+        "displayText": "load_onnx_model()"
+      },
+      {
+        "fileName": "main_py",
+        "link": "model_py",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "utils_py",
+        "link": "model_py",
+        "relativePath": "source/core/utils_py.md",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "model_py",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "index",
+        "link": "model_py",
+        "relativePath": "index.md",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "model_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "model.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "model_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "model.py"
+      }
+    ]
+  },
+  {
+    "fileName": "styles_css",
+    "relativePath": "source/frontend/styles_css.md",
+    "tags": [
+      "source",
+      "frontend",
+      "css"
+    ],
+    "headings": [
+      {
+        "heading": "styles.css",
+        "level": 1
+      },
+      {
+        "heading": "Theming",
+        "level": 2
+      },
+      {
+        "heading": "Layouts",
+        "level": 2
+      },
+      {
+        "heading": "Animations",
+        "level": 2
+      },
+      {
+        "heading": "Related Code",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "web_interface_design",
+        "displayText": "Web Interface Design",
+        "relativePath": "frontend/web_interface_design.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "web_interface_design",
+        "link": "styles_css",
+        "relativePath": "frontend/web_interface_design.md",
+        "displayText": "styles.css Source Code"
+      },
+      {
+        "fileName": "index_html",
+        "link": "styles_css",
+        "relativePath": "source/frontend/index_html.md",
+        "displayText": "styles.css"
+      },
+      {
+        "fileName": "main_py",
+        "link": "styles_css",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "styles.css"
+      },
+      {
+        "fileName": "index",
+        "link": "styles_css",
+        "relativePath": "index.md",
+        "displayText": "styles.css"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "styles_css",
+        "relativePath": "architecture_overview.md",
+        "displayText": "styles.css"
+      }
+    ]
+  },
+  {
+    "fileName": "live_signs_js",
+    "relativePath": "source/frontend/live_signs_js.md",
+    "tags": [
+      "source",
+      "frontend",
+      "javascript",
+      "websocket"
+    ],
+    "headings": [
+      {
+        "heading": "live_signs.js",
+        "level": 1
+      },
+      {
+        "heading": "State Management",
+        "level": 2
+      },
+      {
+        "heading": "Configuration (`CONFIG`)",
+        "level": 2
+      },
+      {
+        "heading": "Component Diagrams",
+        "level": 2
+      },
+      {
+        "heading": "Frame Processing Loop",
+        "level": 3
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`setupWebcam()`",
+        "level": 3
+      },
+      {
+        "heading": "`socket.onmessage(event)`",
+        "level": 3
+      },
+      {
+        "heading": "`updateUI(data)`",
+        "level": 3
+      },
+      {
+        "heading": "`saveCurrentSession()`",
+        "level": 3
+      },
+      {
+        "heading": "UI Interactions",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "index_html",
+        "displayText": "index.html",
+        "relativePath": "source/frontend/index_html.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "function_index",
+        "link": "live_signs_js#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "live_signs_js",
+        "displayText": "live_signs.js"
+      },
+      {
+        "fileName": "function_index",
+        "link": "live_signs_js#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "live_signs_js",
+        "displayText": "live_signs.js"
+      },
+      {
+        "fileName": "websocket_client_implementation",
+        "link": "live_signs_js",
+        "relativePath": "frontend/websocket_client_implementation.md",
+        "displayText": "live-signs.js Source Code"
+      },
+      {
+        "fileName": "index_html",
+        "link": "live_signs_js",
+        "relativePath": "source/frontend/index_html.md",
+        "displayText": "live_signs.js"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_signs_js#WebSocket Message Handler",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_signs_js",
+        "displayText": "live-signs.js"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_signs_js#WebSocket Connection",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_signs_js",
+        "displayText": "live-signs.js"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_signs_js",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "live-signs.js"
+      },
+      {
+        "fileName": "main_py",
+        "link": "live_signs_js",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "live-signs.js"
+      },
+      {
+        "fileName": "main_py",
+        "link": "live_signs_js",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "live-signs.js"
+      },
+      {
+        "fileName": "index",
+        "link": "live_signs_js",
+        "relativePath": "index.md",
+        "displayText": "live-signs.js"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "live_signs_js",
+        "relativePath": "architecture_overview.md",
+        "displayText": "live-signs.js"
+      }
+    ]
+  },
+  {
+    "fileName": "index_html",
+    "relativePath": "source/frontend/index_html.md",
+    "tags": [
+      "source",
+      "frontend",
+      "html",
+      "ui"
+    ],
+    "headings": [
+      {
+        "heading": "index.html",
+        "level": 1
+      },
+      {
+        "heading": "Structure Overview",
+        "level": 2
+      },
+      {
+        "heading": "Key Elements",
+        "level": 2
+      },
+      {
+        "heading": "Video Processing",
+        "level": 3
+      },
+      {
+        "heading": "Heads-Up Display (HUD)",
+        "level": 3
+      },
+      {
+        "heading": "Overlays",
+        "level": 3
+      },
+      {
+        "heading": "External Resources",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "styles_css",
+        "displayText": "styles.css",
+        "relativePath": "source/frontend/styles_css.md"
+      },
+      {
+        "link": "live_signs_js",
+        "displayText": "live_signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "web_interface_design",
+        "link": "index_html",
+        "relativePath": "frontend/web_interface_design.md",
+        "displayText": "index.html Source Code"
+      },
+      {
+        "fileName": "live_signs_js",
+        "link": "index_html",
+        "relativePath": "source/frontend/live_signs_js.md",
+        "displayText": "index.html"
+      },
+      {
+        "fileName": "main_py",
+        "link": "index_html",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "index.html"
+      },
+      {
+        "fileName": "main_py",
+        "link": "index_html",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "index.html"
+      },
+      {
+        "fileName": "main_py",
+        "link": "index_html",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "index.html"
+      },
+      {
+        "fileName": "main_py",
+        "link": "index_html",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "index.html"
+      },
+      {
+        "fileName": "index",
+        "link": "index_html",
+        "relativePath": "index.md",
+        "displayText": "index.html"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "index_html",
+        "relativePath": "architecture_overview.md",
+        "displayText": "index.html"
+      }
+    ]
+  },
+  {
+    "fileName": "websocket_py",
+    "relativePath": "source/api/websocket_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "websocket",
+      "real-time",
+      "function",
+      "state-management",
+      "async",
+      "main-handler"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/websocket.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Dependencies",
+        "level": 2
+      },
+      {
+        "heading": "Constants",
+        "level": 2
+      },
+      {
+        "heading": "Router",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`get_default_state()`",
+        "level": 3
+      },
+      {
+        "heading": "`ws_live_signs(websocket: fastapi.WebSocket)`",
+        "level": 3
+      },
+      {
+        "heading": "1. Connection Setup",
+        "level": 4
+      },
+      {
+        "heading": "2. State Initialization",
+        "level": 4
+      },
+      {
+        "heading": "3. Main Processing Loop",
+        "level": 4
+      },
+      {
+        "heading": "4. Motion Detection",
+        "level": 4
+      },
+      {
+        "heading": "5. Keypoint Extraction",
+        "level": 4
+      },
+      {
+        "heading": "6. Inference",
+        "level": 4
+      },
+      {
+        "heading": "7. Classification",
+        "level": 4
+      },
+      {
+        "heading": "8. Consensus & Response",
+        "level": 4
+      },
+      {
+        "heading": "9. Cleanup",
+        "level": 4
+      },
+      {
+        "heading": "Performance Characteristics",
+        "level": 2
+      },
+      {
+        "heading": "Timing",
+        "level": 3
+      },
+      {
+        "heading": "Memory",
+        "level": 3
+      },
+      {
+        "heading": "Concurrency",
+        "level": 3
+      },
+      {
+        "heading": "Error Handling",
+        "level": 2
+      },
+      {
+        "heading": "Connection Errors",
+        "level": 3
+      },
+      {
+        "heading": "Processing Errors",
+        "level": 3
+      },
+      {
+        "heading": "Cleanup Errors",
+        "level": 3
+      },
+      {
+        "heading": "State Machine",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "cv2_utils_py#MotionDetector",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "MotionDetector",
+        "relativePath": "source/api/cv2_utils_py.md"
+      },
+      {
+        "link": "live_processing_py#FrameBuffer",
+        "cleanLink": "live_processing_py",
+        "displayText": "FrameBuffer",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "live_processing_py#get_frame_kps",
+        "cleanLink": "live_processing_py",
+        "displayText": "get_frame_kps",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "live_processing_py#producer_handler",
+        "cleanLink": "live_processing_py",
+        "displayText": "producer_handler",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "constants_py#SEQ_LEN",
+        "cleanLink": "constants_py",
+        "displayText": "SEQ_LEN",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py#LandmarkerProcessor",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "LandmarkerProcessor",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "utils_py",
+        "displayText": "core.utils",
+        "relativePath": "source/core/utils_py.md"
+      },
+      {
+        "link": "model_py#onnx_inference",
+        "cleanLink": "model_py",
+        "displayText": "onnx_inference",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "constants_py#SEQ_LEN",
+        "cleanLink": "constants_py",
+        "displayText": "SEQ_LEN",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "main_py#Router Inclusion",
+        "cleanLink": "main_py",
+        "displayText": "main.py",
+        "relativePath": "source/api/main_py.md"
+      },
+      {
+        "link": "#ws_live_signs",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "#ws_live_signs",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "link": "#get_default_state",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "get_default_state()"
+      },
+      {
+        "link": "live_processing_py#FrameBuffer",
+        "cleanLink": "live_processing_py",
+        "displayText": "FrameBuffer()",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "live_processing_py#producer_handler",
+        "cleanLink": "live_processing_py",
+        "displayText": "producer_handler()",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "cv2_utils_py#MotionDetector",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "MotionDetector()",
+        "relativePath": "source/api/cv2_utils_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py#LandmarkerProcessor.create",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "LandmarkerProcessor.create()",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "cv2_utils_py#MotionDetector.detect",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "motion_detector.detect()",
+        "relativePath": "source/api/cv2_utils_py.md"
+      },
+      {
+        "link": "live_processing_py#get_frame_kps",
+        "cleanLink": "live_processing_py",
+        "displayText": "get_frame_kps()",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "model_py#onnx_inference",
+        "cleanLink": "model_py",
+        "displayText": "onnx_inference()",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "live_signs_js#WebSocket Message Handler",
+        "cleanLink": "live_signs_js",
+        "displayText": "live-signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      },
+      {
+        "link": "live_processing_py#FrameBuffer.clear",
+        "cleanLink": "live_processing_py",
+        "displayText": "frame_buffer.clear()",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py#LandmarkerProcessor.close",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "mp_processor.close()",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "live_signs_js#WebSocket Connection",
+        "cleanLink": "live_signs_js",
+        "displayText": "live-signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      },
+      {
+        "link": "#get_default_state",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "get_default_state()"
+      },
+      {
+        "link": "live_processing_py#FrameBuffer",
+        "cleanLink": "live_processing_py",
+        "displayText": "FrameBuffer()",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "live_processing_py#producer_handler",
+        "cleanLink": "live_processing_py",
+        "displayText": "producer_handler()",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "cv2_utils_py#MotionDetector",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "MotionDetector()",
+        "relativePath": "source/api/cv2_utils_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py#LandmarkerProcessor.create",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "LandmarkerProcessor.create()",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "cv2_utils_py#MotionDetector.detect",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "motion_detector.detect()",
+        "relativePath": "source/api/cv2_utils_py.md"
+      },
+      {
+        "link": "live_processing_py#get_frame_kps",
+        "cleanLink": "live_processing_py",
+        "displayText": "get_frame_kps()",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "model_py#onnx_inference",
+        "cleanLink": "model_py",
+        "displayText": "onnx_inference()",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "websocket_communication",
+        "displayText": "WebSocket Communication",
+        "relativePath": "api/websocket_communication.md"
+      },
+      {
+        "link": "live_processing_pipeline",
+        "displayText": "Live Processing Pipeline",
+        "relativePath": "api/live_processing_pipeline.md"
+      },
+      {
+        "link": "mediapipe_integration",
+        "displayText": "MediaPipe Integration",
+        "relativePath": "core/mediapipe_integration.md"
+      },
+      {
+        "link": "main_py",
+        "displayText": "main.py",
+        "relativePath": "source/api/main_py.md"
+      },
+      {
+        "link": "live_processing_py",
+        "displayText": "live_processing.py",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "cv2_utils_py",
+        "displayText": "cv2_utils.py",
+        "relativePath": "source/api/cv2_utils_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "live_signs_js",
+        "displayText": "live-signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "websocket_communication",
+        "link": "websocket_py",
+        "relativePath": "api/websocket_communication.md",
+        "displayText": "websocket.py Source Code"
+      },
+      {
+        "fileName": "fastapi_application",
+        "link": "websocket_py",
+        "relativePath": "api/fastapi_application.md",
+        "displayText": "websocket.py Source Documentation"
+      },
+      {
+        "fileName": "model_py",
+        "link": "websocket_py",
+        "relativePath": "source/modelling/model_py.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "live_signs_js",
+        "link": "websocket_py",
+        "relativePath": "source/frontend/live_signs_js.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "main_py",
+        "link": "websocket_py#websocket_router",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "websocket_router"
+      },
+      {
+        "fileName": "main_py",
+        "link": "websocket_py#websocket_router",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "websocket_router"
+      },
+      {
+        "fileName": "main_py",
+        "link": "websocket_py#ws_live_signs",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "fileName": "main_py",
+        "link": "websocket_py",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "websocket_py#ws_live_signs",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "websocket_py#ws_live_signs",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "websocket_py#ws_live_signs",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "websocket_py#ws_live_signs",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "websocket_py#ws_live_signs",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "websocket_py",
+        "relativePath": "source/api/live_processing_py.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "cv2_utils_py",
+        "link": "websocket_py#ws_live_signs",
+        "relativePath": "source/api/cv2_utils_py.md",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()"
+      },
+      {
+        "fileName": "cv2_utils_py",
+        "link": "websocket_py",
+        "relativePath": "source/api/cv2_utils_py.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "utils_py",
+        "link": "websocket_py",
+        "relativePath": "source/core/utils_py.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "websocket_py",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "index",
+        "link": "websocket_py",
+        "relativePath": "index.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "websocket_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "websocket.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "websocket_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "WebSocket Implementation"
+      }
+    ]
+  },
+  {
+    "fileName": "run_py",
+    "relativePath": "source/api/run_py.md",
+    "tags": [
+      "source",
+      "api",
+      "entrypoint"
+    ],
+    "headings": [
+      {
+        "heading": "run.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Execution Flow",
+        "level": 3
+      },
+      {
+        "heading": "Configuration",
+        "level": 2
+      },
+      {
+        "heading": "Parameters",
+        "level": 3
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Command Line",
+        "level": 3
+      },
+      {
+        "heading": "via Makefile",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "main_py",
+        "displayText": "api.main:app",
+        "relativePath": "source/api/main_py.md"
+      },
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "function_index",
+        "link": "run_py#Execution",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "run_py",
+        "displayText": "run.py"
+      },
+      {
+        "fileName": "main_py",
+        "link": "run_py",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "run.py"
+      },
+      {
+        "fileName": "main_py",
+        "link": "run_py",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "run.py"
+      },
+      {
+        "fileName": "index",
+        "link": "run_py",
+        "relativePath": "index.md",
+        "displayText": "run.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "run_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "run.py"
+      }
+    ]
+  },
+  {
+    "fileName": "main_py",
+    "relativePath": "source/api/main_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "fastapi",
+      "application",
+      "function",
+      "async",
+      "context-manager",
+      "route",
+      "get"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/main.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Dependencies",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`lifespan(app: fastapi.FastAPI)`",
+        "level": 3
+      },
+      {
+        "heading": "`live_signs_ui()`",
+        "level": 3
+      },
+      {
+        "heading": "`favicon()`",
+        "level": 3
+      },
+      {
+        "heading": "`chrome_devtools()`",
+        "level": 3
+      },
+      {
+        "heading": "Application Configuration",
+        "level": 2
+      },
+      {
+        "heading": "FastAPI App Instance",
+        "level": 3
+      },
+      {
+        "heading": "CORS Middleware",
+        "level": 3
+      },
+      {
+        "heading": "Static Files",
+        "level": 3
+      },
+      {
+        "heading": "Router Inclusion",
+        "level": 3
+      },
+      {
+        "heading": "Usage",
+        "level": 2
+      },
+      {
+        "heading": "Environment Variables Used",
+        "level": 2
+      },
+      {
+        "heading": "State Management",
+        "level": 2
+      },
+      {
+        "heading": "Application State",
+        "level": 3
+      },
+      {
+        "heading": "Error Handling",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      },
+      {
+        "heading": "Call Graph",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "websocket_py#websocket_router",
+        "cleanLink": "websocket_py",
+        "displayText": "websocket_router",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "constants_py#MODELS_DIR",
+        "cleanLink": "constants_py",
+        "displayText": "MODELS_DIR",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "model_py#load_onnx_model",
+        "cleanLink": "model_py",
+        "displayText": "load_onnx_model",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "model_py#load_onnx_model",
+        "cleanLink": "model_py",
+        "displayText": "load_onnx_model()",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "environment_configuration#ONNX_CHECKPOINT_FILENAME",
+        "cleanLink": "environment_configuration",
+        "displayText": "ONNX_CHECKPOINT_FILENAME",
+        "relativePath": "deployment/environment_configuration.md"
+      },
+      {
+        "link": "constants_py#MODELS_DIR",
+        "cleanLink": "constants_py",
+        "displayText": "MODELS_DIR",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "index_html",
+        "displayText": "index.html",
+        "relativePath": "source/frontend/index_html.md"
+      },
+      {
+        "link": "index_html",
+        "displayText": "index.html",
+        "relativePath": "source/frontend/index_html.md"
+      },
+      {
+        "link": "web_interface_design",
+        "displayText": "Web Interface Design",
+        "relativePath": "frontend/web_interface_design.md"
+      },
+      {
+        "link": "#lifespan",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "main_py",
+        "displayText": "lifespan()"
+      },
+      {
+        "link": "environment_configuration#DOMAIN_NAME",
+        "cleanLink": "environment_configuration",
+        "displayText": "DOMAIN_NAME",
+        "relativePath": "deployment/environment_configuration.md"
+      },
+      {
+        "link": "fastapi_application#CORS Configuration",
+        "cleanLink": "fastapi_application",
+        "displayText": "CORS Configuration",
+        "relativePath": "api/fastapi_application.md"
+      },
+      {
+        "link": "index_html",
+        "displayText": "index.html",
+        "relativePath": "source/frontend/index_html.md"
+      },
+      {
+        "link": "live_signs_js",
+        "displayText": "live-signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      },
+      {
+        "link": "styles_css",
+        "displayText": "styles.css",
+        "relativePath": "source/frontend/styles_css.md"
+      },
+      {
+        "link": "websocket_py#websocket_router",
+        "cleanLink": "websocket_py",
+        "displayText": "websocket_router",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "run_py",
+        "displayText": "run.py",
+        "relativePath": "source/api/run_py.md"
+      },
+      {
+        "link": "#lifespan",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "main_py",
+        "displayText": "lifespan()"
+      },
+      {
+        "link": "websocket_py#ws_live_signs",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "fastapi_application",
+        "displayText": "FastAPI Application",
+        "relativePath": "api/fastapi_application.md"
+      },
+      {
+        "link": "websocket_communication",
+        "displayText": "WebSocket Communication",
+        "relativePath": "api/websocket_communication.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Configuration",
+        "relativePath": "deployment/environment_configuration.md"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "run_py",
+        "displayText": "run.py",
+        "relativePath": "source/api/run_py.md"
+      },
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "index_html",
+        "displayText": "index.html",
+        "relativePath": "source/frontend/index_html.md"
+      },
+      {
+        "link": "live_signs_js",
+        "displayText": "live-signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "api_endpoints",
+        "link": "main_py",
+        "relativePath": "reference/api_endpoints.md",
+        "displayText": "main.py Source"
+      },
+      {
+        "fileName": "onnx_export_process",
+        "link": "main_py",
+        "relativePath": "models/onnx_export_process.md",
+        "displayText": "main.py (ONNX Loading)"
+      },
+      {
+        "fileName": "fastapi_application",
+        "link": "main_py",
+        "relativePath": "api/fastapi_application.md",
+        "displayText": "main.py Source Documentation"
+      },
+      {
+        "fileName": "export_py",
+        "link": "main_py",
+        "relativePath": "source/modelling/export_py.md",
+        "displayText": "main.py"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "main_py#Router Inclusion",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "main_py",
+        "displayText": "main.py"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "main_py",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "main.py"
+      },
+      {
+        "fileName": "run_py",
+        "link": "main_py",
+        "relativePath": "source/api/run_py.md",
+        "displayText": "api.main:app"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "main_py#lifespan",
+        "relativePath": "source/core/constants_py.md",
+        "cleanLink": "main_py",
+        "displayText": "main.py lifespan()"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "main_py",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "main.py"
+      },
+      {
+        "fileName": "index",
+        "link": "main_py",
+        "relativePath": "index.md",
+        "displayText": "main.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "main_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "main.py"
+      }
+    ]
+  },
+  {
+    "fileName": "live_processing_py",
+    "relativePath": "source/api/live_processing_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "frame-processing",
+      "async",
+      "class",
+      "buffer",
+      "circular-buffer",
+      "function",
+      "producer",
+      "keypoint-extraction"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/live-processing.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Classes",
+        "level": 2
+      },
+      {
+        "heading": "`FrameBuffer`",
+        "level": 3
+      },
+      {
+        "heading": "`__init__(max_size)`",
+        "level": 4
+      },
+      {
+        "heading": "`add_frame(frame)`",
+        "level": 4
+      },
+      {
+        "heading": "`get_frame(idx) -> Optional[np.ndarray]`",
+        "level": 4
+      },
+      {
+        "heading": "`latest_idx` (property)",
+        "level": 4
+      },
+      {
+        "heading": "`oldest_idx` (property)",
+        "level": 4
+      },
+      {
+        "heading": "`clear()`",
+        "level": 4
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`producer_handler(websocket, buffer: FrameBuffer)`",
+        "level": 3
+      },
+      {
+        "heading": "`get_frame_kps(mp_processor, frame, timestamp_ms=-1)`",
+        "level": 3
+      },
+      {
+        "heading": "Thread Pool",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "websocket_py#ws_live_signs",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "websocket_py#ws_live_signs",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "websocket_py#ws_live_signs",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "websocket_py#ws_live_signs",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "#FrameBuffer.add_frame",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "buffer.add_frame()"
+      },
+      {
+        "link": "mediapipe_utils_py#LandmarkerProcessor",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "LandmarkerProcessor",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "websocket_py#ws_live_signs",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py#LandmarkerProcessor.extract_frame_keypoints",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "mp_processor.extract_frame_keypoints()",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "constants_py#MAX_WORKERS",
+        "cleanLink": "constants_py",
+        "displayText": "MAX_WORKERS",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "#get_frame_kps",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "get_frame_kps()"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "live_processing_pipeline",
+        "displayText": "Live Processing Pipeline",
+        "relativePath": "api/live_processing_pipeline.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "live_processing_pipeline",
+        "link": "live_processing_py",
+        "relativePath": "api/live_processing_pipeline.md",
+        "displayText": "live_processing.py Source Code"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#FrameBuffer",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "FrameBuffer"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#get_frame_kps",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "get_frame_kps"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#producer_handler",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "producer_handler"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#FrameBuffer",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "FrameBuffer()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#producer_handler",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "producer_handler()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#get_frame_kps",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "get_frame_kps()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#FrameBuffer.clear",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "frame_buffer.clear()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#FrameBuffer",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "FrameBuffer()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#producer_handler",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "producer_handler()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py#get_frame_kps",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "get_frame_kps()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "live_processing_py",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "live_processing.py"
+      },
+      {
+        "fileName": "draw_kps_py",
+        "link": "live_processing_py",
+        "relativePath": "source/core/draw_kps_py.md",
+        "displayText": "live_processing.py"
+      },
+      {
+        "fileName": "mediapipe_utils_py",
+        "link": "live_processing_py",
+        "relativePath": "source/core/mediapipe_utils_py.md",
+        "displayText": "live_processing.py"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "live_processing_py#Thread Pool",
+        "relativePath": "source/core/constants_py.md",
+        "cleanLink": "live_processing_py",
+        "displayText": "live_processing.py"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "live_processing_py",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "live_processing.py"
+      },
+      {
+        "fileName": "index",
+        "link": "live_processing_py",
+        "relativePath": "index.md",
+        "displayText": "live_processing.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "live_processing_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "live_processing.py"
+      }
+    ]
+  },
+  {
+    "fileName": "cv2_utils_py",
+    "relativePath": "source/api/cv2_utils_py.md",
+    "tags": [
+      "source-code",
+      "api",
+      "opencv",
+      "motion-detection",
+      "class",
+      "computer-vision",
+      "method"
+    ],
+    "headings": [
+      {
+        "heading": "source/api/cv2-utils.py",
+        "level": 1
+      },
+      {
+        "heading": "Classes",
+        "level": 2
+      },
+      {
+        "heading": "`MotionDetector`",
+        "level": 3
+      },
+      {
+        "heading": "`__init__(width=320, height=240, sigma_factor=0.005, thresh_val=20, motion_thresh=0.001)`",
+        "level": 4
+      },
+      {
+        "heading": "`convert_small_gray(frame) -> np.ndarray`",
+        "level": 4
+      },
+      {
+        "heading": "`detect(prev_frame, frame) -> tuple[bool, np.ndarray]`",
+        "level": 4
+      },
+      {
+        "heading": "Algorithm Details",
+        "level": 2
+      },
+      {
+        "heading": "Motion Detection Pipeline",
+        "level": 3
+      },
+      {
+        "heading": "Parameters Tuning",
+        "level": 3
+      },
+      {
+        "heading": "Usage Example",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "#MotionDetector.detect",
+        "relativePath": "source/api/cv2_utils_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "detect()"
+      },
+      {
+        "link": "websocket_py#ws_live_signs",
+        "cleanLink": "websocket_py",
+        "displayText": "ws_live_signs()",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "#MotionDetector.convert_small_gray",
+        "relativePath": "source/api/cv2_utils_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "convert_small_gray()"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "live_processing_pipeline",
+        "displayText": "Live Processing Pipeline",
+        "relativePath": "api/live_processing_pipeline.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "live_processing_pipeline",
+        "link": "cv2_utils_py",
+        "relativePath": "api/live_processing_pipeline.md",
+        "displayText": "cv2_utils.py Source Code"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "cv2_utils_py#MotionDetector",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "MotionDetector"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "cv2_utils_py#MotionDetector",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "MotionDetector()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "cv2_utils_py#MotionDetector.detect",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "motion_detector.detect()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "cv2_utils_py#MotionDetector",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "MotionDetector()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "cv2_utils_py#MotionDetector.detect",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "cv2_utils_py",
+        "displayText": "motion_detector.detect()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "cv2_utils_py",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "cv2_utils.py"
+      },
+      {
+        "fileName": "index",
+        "link": "cv2_utils_py",
+        "relativePath": "index.md",
+        "displayText": "cv2_utils.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "cv2_utils_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "cv2_utils.py"
+      }
+    ]
+  },
+  {
+    "fileName": "draw_kps_py",
+    "relativePath": "source/core/draw_kps_py.md",
+    "tags": [
+      "source",
+      "core",
+      "visualization",
+      "opencv"
+    ],
+    "headings": [
+      {
+        "heading": "draw_kps.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`get_lms_list(...)`",
+        "level": 3
+      },
+      {
+        "heading": "`draw_kps_on_image(...)`",
+        "level": 3
+      },
+      {
+        "heading": "Usage Functions",
+        "level": 3
+      },
+      {
+        "heading": "`draw_all_kps_on_image(rgb_image, frame_kps, ...)`",
+        "level": 3
+      },
+      {
+        "heading": "Execution (`__main__`)",
+        "level": 2
+      },
+      {
+        "heading": "Key Connections",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "live_processing_py",
+        "displayText": "live_processing.py",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "visualization_py",
+        "displayText": "Database Visualization"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "function_index",
+        "link": "draw_kps_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "draw_kps_py",
+        "displayText": "draw_kps.py"
+      },
+      {
+        "fileName": "keypoint_visualization",
+        "link": "draw_kps_py",
+        "relativePath": "core/keypoint_visualization.md",
+        "displayText": "draw_kps.py Source Code"
+      },
+      {
+        "fileName": "index",
+        "link": "draw_kps_py",
+        "relativePath": "index.md",
+        "displayText": "draw_kps.py"
+      }
+    ]
+  },
+  {
+    "fileName": "mediapipe_utils_py",
+    "relativePath": "source/core/mediapipe_utils_py.md",
+    "tags": [
+      "source",
+      "core",
+      "mediapipe",
+      "vision"
+    ],
+    "headings": [
+      {
+        "heading": "mediapipe_utils.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Key Features",
+        "level": 3
+      },
+      {
+        "heading": "Constants",
+        "level": 2
+      },
+      {
+        "heading": "Keypoint Counts",
+        "level": 3
+      },
+      {
+        "heading": "Slicing",
+        "level": 3
+      },
+      {
+        "heading": "Classes",
+        "level": 2
+      },
+      {
+        "heading": "`LandmarkerProcessor`",
+        "level": 3
+      },
+      {
+        "heading": "`__init__`",
+        "level": 4
+      },
+      {
+        "heading": "`create(landmarkers, inference_mode)`",
+        "level": 4
+      },
+      {
+        "heading": "`extract_frame_keypoints(frame_rgb, timestamp_ms=-1, adjusted=False)`",
+        "level": 4
+      },
+      {
+        "heading": "Setup Logic",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "prepare_npz_kps_py",
+        "displayText": "prepare_npz_kps.py",
+        "relativePath": "source/data/prepare_npz_kps_py.md"
+      },
+      {
+        "link": "live_processing_py",
+        "displayText": "live_processing.py",
+        "relativePath": "source/api/live_processing_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "class_index",
+        "link": "mediapipe_utils_py#Classes",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "function_index",
+        "link": "mediapipe_utils_py#Classes",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "keypoint_visualization",
+        "link": "mediapipe_utils_py",
+        "relativePath": "core/keypoint_visualization.md",
+        "displayText": "mediapipe_utils.py Source Code"
+      },
+      {
+        "fileName": "mediapipe_integration",
+        "link": "mediapipe_utils_py",
+        "relativePath": "core/mediapipe_integration.md",
+        "displayText": "mediapipe_utils.py Source Code"
+      },
+      {
+        "fileName": "live_processing_pipeline",
+        "link": "mediapipe_utils_py",
+        "relativePath": "api/live_processing_pipeline.md",
+        "displayText": "mediapipe_utils.py Source Code"
+      },
+      {
+        "fileName": "data_preparation_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/data/data_preparation_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "shared_elements_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/data/shared_elements_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "prepare_npz_kps_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/data/prepare_npz_kps_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "model_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/modelling/model_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "mediapipe_utils_py#LandmarkerProcessor",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "LandmarkerProcessor"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "mediapipe_utils_py#LandmarkerProcessor.create",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "LandmarkerProcessor.create()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "mediapipe_utils_py#LandmarkerProcessor.close",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "mp_processor.close()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "mediapipe_utils_py#LandmarkerProcessor.create",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "LandmarkerProcessor.create()"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "mediapipe_utils_py#LandmarkerProcessor",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "LandmarkerProcessor"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "mediapipe_utils_py#LandmarkerProcessor.extract_frame_keypoints",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "mediapipe_utils_py",
+        "displayText": "mp_processor.extract_frame_keypoints()"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/api/live_processing_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "draw_kps_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/core/draw_kps_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "mediapipe_utils_py",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "index",
+        "link": "mediapipe_utils_py",
+        "relativePath": "index.md",
+        "displayText": "mediapipe_utils.py"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "mediapipe_utils_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "mediapipe_utils.py"
+      }
+    ]
+  },
+  {
+    "fileName": "utils_py",
+    "relativePath": "source/core/utils_py.md",
+    "tags": [
+      "source",
+      "core",
+      "utilities"
+    ],
+    "headings": [
+      {
+        "heading": "utils.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Global Variables",
+        "level": 2
+      },
+      {
+        "heading": "`AR_WORDS` & `EN_WORDS`",
+        "level": 3
+      },
+      {
+        "heading": "Functions",
+        "level": 2
+      },
+      {
+        "heading": "`init_words()`",
+        "level": 3
+      },
+      {
+        "heading": "`extract_num_words_from_checkpoint(checkpoint_path)`",
+        "level": 3
+      },
+      {
+        "heading": "`get_default_logger()`",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "#init_words",
+        "relativePath": "source/core/utils_py.md",
+        "cleanLink": "utils_py",
+        "displayText": "init_words()"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "function_index",
+        "link": "utils_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "utils_py",
+        "displayText": "utils.py"
+      },
+      {
+        "fileName": "function_index",
+        "link": "utils_py#Functions",
+        "relativePath": "indexes/function_index.md",
+        "cleanLink": "utils_py",
+        "displayText": "utils.py"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "utils_py",
+        "relativePath": "source/api/websocket_py.md",
+        "displayText": "core.utils"
+      },
+      {
+        "fileName": "index",
+        "link": "utils_py",
+        "relativePath": "index.md",
+        "displayText": "utils.py"
+      }
+    ]
+  },
+  {
+    "fileName": "constants_py",
+    "relativePath": "source/core/constants_py.md",
+    "tags": [
+      "source",
+      "core",
+      "configuration",
+      "constants",
+      "enum",
+      "dataset"
+    ],
+    "headings": [
+      {
+        "heading": "constants.py",
+        "level": 1
+      },
+      {
+        "heading": "Overview",
+        "level": 2
+      },
+      {
+        "heading": "Environment Variables",
+        "level": 2
+      },
+      {
+        "heading": "`USE_CPU`",
+        "level": 3
+      },
+      {
+        "heading": "`LOCAL_DEV`",
+        "level": 3
+      },
+      {
+        "heading": "Constants",
+        "level": 2
+      },
+      {
+        "heading": "Device Configuration",
+        "level": 3
+      },
+      {
+        "heading": "`DEVICE`",
+        "level": 4
+      },
+      {
+        "heading": "Directory Paths",
+        "level": 3
+      },
+      {
+        "heading": "`PROJECT_ROOT_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "`LOGS_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "`LANDMARKERS_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "`MODELS_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "`TRAIN_CHECKPOINTS_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "`DATA_INPUT_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "`DATA_OUTPUT_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "Dataset Paths",
+        "level": 3
+      },
+      {
+        "heading": "`LABELS_PATH`",
+        "level": 4
+      },
+      {
+        "heading": "`LABELS_JSON_PATH`",
+        "level": 4
+      },
+      {
+        "heading": "`KARSL_DATA_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "`NPZ_KPS_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "`MMAP_PREPROCESSED_DIR`",
+        "level": 4
+      },
+      {
+        "heading": "Model Hyperparameters",
+        "level": 3
+      },
+      {
+        "heading": "`SEQ_LEN`",
+        "level": 4
+      },
+      {
+        "heading": "`FEAT_NUM`",
+        "level": 4
+      },
+      {
+        "heading": "`FEAT_DIM`",
+        "level": 4
+      },
+      {
+        "heading": "Performance",
+        "level": 3
+      },
+      {
+        "heading": "`MAX_WORKERS`",
+        "level": 4
+      },
+      {
+        "heading": "Timing",
+        "level": 3
+      },
+      {
+        "heading": "`MS_30FPS`",
+        "level": 4
+      },
+      {
+        "heading": "`MS_30FPS_INT`",
+        "level": 4
+      },
+      {
+        "heading": "Enumerations",
+        "level": 2
+      },
+      {
+        "heading": "`SplitType`",
+        "level": 3
+      },
+      {
+        "heading": "`DatasetType`",
+        "level": 3
+      },
+      {
+        "heading": "Type Aliases",
+        "level": 2
+      },
+      {
+        "heading": "`KarslDatasetType`",
+        "level": 3
+      },
+      {
+        "heading": "Path Configuration Logic",
+        "level": 2
+      },
+      {
+        "heading": "Usage Examples",
+        "level": 2
+      },
+      {
+        "heading": "Accessing Paths",
+        "level": 3
+      },
+      {
+        "heading": "Device Configuration",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "#DEVICE",
+        "relativePath": "source/core/constants_py.md",
+        "cleanLink": "constants_py",
+        "displayText": "DEVICE"
+      },
+      {
+        "link": "#DATA_INPUT_DIR",
+        "relativePath": "source/core/constants_py.md",
+        "cleanLink": "constants_py",
+        "displayText": "DATA_INPUT_DIR"
+      },
+      {
+        "link": "#DATA_OUTPUT_DIR",
+        "relativePath": "source/core/constants_py.md",
+        "cleanLink": "constants_py",
+        "displayText": "DATA_OUTPUT_DIR"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "main_py#lifespan",
+        "cleanLink": "main_py",
+        "displayText": "main.py lifespan()",
+        "relativePath": "source/api/main_py.md"
+      },
+      {
+        "link": "train_py",
+        "displayText": "train.py",
+        "relativePath": "source/modelling/train_py.md"
+      },
+      {
+        "link": "live_processing_py#Thread Pool",
+        "cleanLink": "live_processing_py",
+        "displayText": "live_processing.py",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "main_py",
+        "displayText": "main.py",
+        "relativePath": "source/api/main_py.md"
+      },
+      {
+        "link": "live_processing_py",
+        "displayText": "live_processing.py",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Configuration",
+        "relativePath": "deployment/environment_configuration.md"
+      },
+      {
+        "link": "dataset_overview",
+        "displayText": "Dataset Overview",
+        "relativePath": "data/dataset_overview.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "class_index",
+        "link": "constants_py#Enumerations",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "constants_py",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "class_index",
+        "link": "constants_py#Enumerations",
+        "relativePath": "indexes/class_index.md",
+        "cleanLink": "constants_py",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "configuration_options",
+        "link": "constants_py",
+        "relativePath": "reference/configuration_options.md",
+        "displayText": "constants.py Source"
+      },
+      {
+        "fileName": "dataset_overview",
+        "link": "constants_py",
+        "relativePath": "data/dataset_overview.md",
+        "displayText": "constants.py Source Code"
+      },
+      {
+        "fileName": "mediapipe_integration",
+        "link": "constants_py",
+        "relativePath": "core/mediapipe_integration.md",
+        "displayText": "constants.py Source Code"
+      },
+      {
+        "fileName": "data_preparation_py",
+        "link": "constants_py",
+        "relativePath": "source/data/data_preparation_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "lazy_dataset_py",
+        "link": "constants_py",
+        "relativePath": "source/data/lazy_dataset_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "prepare_npz_kps_py",
+        "link": "constants_py",
+        "relativePath": "source/data/prepare_npz_kps_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "mmap_dataset_preprocessing_py",
+        "link": "constants_py",
+        "relativePath": "source/data/mmap_dataset_preprocessing_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "mmap_dataset_py",
+        "link": "constants_py",
+        "relativePath": "source/data/mmap_dataset_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "train_py",
+        "link": "constants_py",
+        "relativePath": "source/modelling/train_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "model_py",
+        "link": "constants_py",
+        "relativePath": "source/modelling/model_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "constants_py#SEQ_LEN",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "constants_py",
+        "displayText": "SEQ_LEN"
+      },
+      {
+        "fileName": "websocket_py",
+        "link": "constants_py#SEQ_LEN",
+        "relativePath": "source/api/websocket_py.md",
+        "cleanLink": "constants_py",
+        "displayText": "SEQ_LEN"
+      },
+      {
+        "fileName": "main_py",
+        "link": "constants_py#MODELS_DIR",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "constants_py",
+        "displayText": "MODELS_DIR"
+      },
+      {
+        "fileName": "main_py",
+        "link": "constants_py#MODELS_DIR",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "constants_py",
+        "displayText": "MODELS_DIR"
+      },
+      {
+        "fileName": "main_py",
+        "link": "constants_py",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "live_processing_py",
+        "link": "constants_py#MAX_WORKERS",
+        "relativePath": "source/api/live_processing_py.md",
+        "cleanLink": "constants_py",
+        "displayText": "MAX_WORKERS"
+      },
+      {
+        "fileName": "mediapipe_utils_py",
+        "link": "constants_py",
+        "relativePath": "source/core/mediapipe_utils_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "utils_py",
+        "link": "constants_py",
+        "relativePath": "source/core/utils_py.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "index",
+        "link": "constants_py",
+        "relativePath": "index.md",
+        "displayText": "constants.py"
+      },
+      {
+        "fileName": "environment_configuration",
+        "link": "constants_py",
+        "relativePath": "deployment/environment_configuration.md",
+        "displayText": "constants.py Source Code"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "constants_py",
+        "relativePath": "architecture_overview.md",
+        "displayText": "constants.py"
+      }
+    ]
+  },
+  {
+    "fileName": "README",
+    "relativePath": "README.md",
+    "headings": [
+      {
+        "heading": "Documentation Status & Generation Guide",
+        "level": 1
+      },
+      {
+        "heading": "✅ Completed Documentation",
+        "level": 2
+      },
+      {
+        "heading": "Main Documentation (3/3)",
+        "level": 3
+      },
+      {
+        "heading": "Source Code Documentation - API (5/5)",
+        "level": 3
+      },
+      {
+        "heading": "Source Code Documentation - Core (1/4)",
+        "level": 3
+      },
+      {
+        "heading": "📋 Remaining Documentation Files",
+        "level": 2
+      },
+      {
+        "heading": "Conceptual Documentation (19 files)",
+        "level": 3
+      },
+      {
+        "heading": "API Concepts (3 files)",
+        "level": 4
+      },
+      {
+        "heading": "Core Concepts (2 files)",
+        "level": 4
+      },
+      {
+        "heading": "Data Concepts (3 files)",
+        "level": 4
+      },
+      {
+        "heading": "Model Concepts (3 files)",
+        "level": 4
+      },
+      {
+        "heading": "Frontend Concepts (2 files)",
+        "level": 4
+      },
+      {
+        "heading": "Deployment (2 files)",
+        "level": 4
+      },
+      {
+        "heading": "Development (3 files)",
+        "level": 4
+      },
+      {
+        "heading": "Reference (4 files)",
+        "level": 4
+      },
+      {
+        "heading": "Source Code Documentation (35+ files)",
+        "level": 3
+      },
+      {
+        "heading": "Core (3 files)",
+        "level": 4
+      },
+      {
+        "heading": "Data (9 files)",
+        "level": 4
+      },
+      {
+        "heading": "Modelling (10 files)",
+        "level": 4
+      },
+      {
+        "heading": "Frontend (3 files)",
+        "level": 4
+      },
+      {
+        "heading": "Configuration (4 files)",
+        "level": 4
+      },
+      {
+        "heading": "Cross-Reference Indexes (2 files)",
+        "level": 3
+      },
+      {
+        "heading": "📊 Progress Summary",
+        "level": 2
+      },
+      {
+        "heading": "🔧 How to Complete Documentation",
+        "level": 2
+      },
+      {
+        "heading": "Option 1: Use the Generator Script",
+        "level": 3
+      },
+      {
+        "heading": "Option 2: Manual Creation",
+        "level": 3
+      },
+      {
+        "heading": "For Source Code Documentation:",
+        "level": 4
+      },
+      {
+        "heading": "For Conceptual Documentation:",
+        "level": 4
+      },
+      {
+        "heading": "Option 3: Template-Based Generation",
+        "level": 3
+      },
+      {
+        "heading": "🎯 Priority Files to Create Next",
+        "level": 2
+      },
+      {
+        "heading": "📝 Documentation Standards",
+        "level": 2
+      },
+      {
+        "heading": "Obsidian Features Used",
+        "level": 3
+      },
+      {
+        "heading": "Bidirectional Linking",
+        "level": 3
+      },
+      {
+        "heading": "🚀 Next Steps",
+        "level": 2
+      },
+      {
+        "heading": "📚 Resources",
+        "level": 2
+      }
+    ]
+  },
+  {
+    "fileName": "index",
+    "relativePath": "index.md",
+    "tags": [
+      "documentation",
+      "karsl",
+      "sign-language",
+      "deep-learning"
+    ],
+    "headings": [
+      {
+        "heading": "Arabic Sign Language Recognition - Documentation",
+        "level": 1
+      },
+      {
+        "heading": "🚀 Quick Start",
+        "level": 2
+      },
+      {
+        "heading": "📚 Conceptual Documentation",
+        "level": 2
+      },
+      {
+        "heading": "API & Backend",
+        "level": 3
+      },
+      {
+        "heading": "Core Components",
+        "level": 3
+      },
+      {
+        "heading": "Data Processing",
+        "level": 3
+      },
+      {
+        "heading": "Models",
+        "level": 3
+      },
+      {
+        "heading": "Frontend",
+        "level": 3
+      },
+      {
+        "heading": "Deployment & Development",
+        "level": 3
+      },
+      {
+        "heading": "🔍 Source Code Documentation",
+        "level": 2
+      },
+      {
+        "heading": "API Source Code (`src/api/`)",
+        "level": 3
+      },
+      {
+        "heading": "Core Source Code (`src/core/`)",
+        "level": 3
+      },
+      {
+        "heading": "Data Source Code (`src/data/`)",
+        "level": 3
+      },
+      {
+        "heading": "Modelling Source Code (`src/modelling/`)",
+        "level": 3
+      },
+      {
+        "heading": "Dashboard (`src/modelling/dashboard/`)",
+        "level": 4
+      },
+      {
+        "heading": "Frontend Source Code (`static/`)",
+        "level": 3
+      },
+      {
+        "heading": "Configuration Files",
+        "level": 3
+      },
+      {
+        "heading": "📖 Reference",
+        "level": 2
+      },
+      {
+        "heading": "🏗️ Project Overview",
+        "level": 2
+      },
+      {
+        "heading": "📝 Documentation Conventions",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "getting_started",
+        "displayText": "Getting Started",
+        "relativePath": "getting_started.md"
+      },
+      {
+        "link": "architecture_overview",
+        "displayText": "Architecture Overview",
+        "relativePath": "architecture_overview.md"
+      },
+      {
+        "link": "troubleshooting",
+        "displayText": "Troubleshooting",
+        "relativePath": "reference/troubleshooting.md"
+      },
+      {
+        "link": "fastapi_application",
+        "displayText": "FastAPI Application",
+        "relativePath": "api/fastapi_application.md"
+      },
+      {
+        "link": "websocket_communication",
+        "displayText": "WebSocket Communication",
+        "relativePath": "api/websocket_communication.md"
+      },
+      {
+        "link": "live_processing_pipeline",
+        "displayText": "Live Processing Pipeline",
+        "relativePath": "api/live_processing_pipeline.md"
+      },
+      {
+        "link": "mediapipe_integration",
+        "displayText": "MediaPipe Integration",
+        "relativePath": "core/mediapipe_integration.md"
+      },
+      {
+        "link": "keypoint_visualization",
+        "displayText": "Keypoint Visualization",
+        "relativePath": "core/keypoint_visualization.md"
+      },
+      {
+        "link": "dataset_overview",
+        "displayText": "Dataset Overview",
+        "relativePath": "data/dataset_overview.md"
+      },
+      {
+        "link": "data_preparation_pipeline",
+        "displayText": "Data Preparation Pipeline",
+        "relativePath": "data/data_preparation_pipeline.md"
+      },
+      {
+        "link": "memory_mapped_datasets",
+        "displayText": "Memory-Mapped Datasets",
+        "relativePath": "data/memory_mapped_datasets.md"
+      },
+      {
+        "link": "architecture_design",
+        "displayText": "Architecture Design",
+        "relativePath": "models/architecture_design.md"
+      },
+      {
+        "link": "training_process",
+        "displayText": "Training Process",
+        "relativePath": "models/training_process.md"
+      },
+      {
+        "link": "onnx_export_process",
+        "displayText": "ONNX Export Process",
+        "relativePath": "models/onnx_export_process.md"
+      },
+      {
+        "link": "web_interface_design",
+        "displayText": "Web Interface Design",
+        "relativePath": "frontend/web_interface_design.md"
+      },
+      {
+        "link": "websocket_client_implementation",
+        "displayText": "WebSocket Client",
+        "relativePath": "frontend/websocket_client_implementation.md"
+      },
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Configuration",
+        "relativePath": "deployment/environment_configuration.md"
+      },
+      {
+        "link": "project_structure",
+        "displayText": "Project Structure",
+        "relativePath": "development/project_structure.md"
+      },
+      {
+        "link": "contributing_guide",
+        "displayText": "Contributing Guide",
+        "relativePath": "development/contributing_guide.md"
+      },
+      {
+        "link": "makefile_commands",
+        "displayText": "Makefile Commands",
+        "relativePath": "development/makefile_commands.md"
+      },
+      {
+        "link": "main_py",
+        "displayText": "main.py",
+        "relativePath": "source/api/main_py.md"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "live_processing_py",
+        "displayText": "live_processing.py",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "cv2_utils_py",
+        "displayText": "cv2_utils.py",
+        "relativePath": "source/api/cv2_utils_py.md"
+      },
+      {
+        "link": "run_py",
+        "displayText": "run.py",
+        "relativePath": "source/api/run_py.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "utils_py",
+        "displayText": "utils.py",
+        "relativePath": "source/core/utils_py.md"
+      },
+      {
+        "link": "draw_kps_py",
+        "displayText": "draw_kps.py",
+        "relativePath": "source/core/draw_kps_py.md"
+      },
+      {
+        "link": "data_preparation_py",
+        "displayText": "data_preparation.py",
+        "relativePath": "source/data/data_preparation_py.md"
+      },
+      {
+        "link": "dataloader_py",
+        "displayText": "dataloader.py",
+        "relativePath": "source/data/dataloader_py.md"
+      },
+      {
+        "link": "lazy_dataset_py",
+        "displayText": "lazy_dataset.py",
+        "relativePath": "source/data/lazy_dataset_py.md"
+      },
+      {
+        "link": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py",
+        "relativePath": "source/data/mmap_dataset_py.md"
+      },
+      {
+        "link": "mmap_dataset_preprocessing_py",
+        "displayText": "mmap_dataset_preprocessing.py",
+        "relativePath": "source/data/mmap_dataset_preprocessing_py.md"
+      },
+      {
+        "link": "prepare_npz_kps_py",
+        "displayText": "prepare_npz_kps.py",
+        "relativePath": "source/data/prepare_npz_kps_py.md"
+      },
+      {
+        "link": "shared_elements_py",
+        "displayText": "shared_elements.py",
+        "relativePath": "source/data/shared_elements_py.md"
+      },
+      {
+        "link": "write_signs_to_json_py",
+        "displayText": "write-signs-to-json.py"
+      },
+      {
+        "link": "generate_mediapipe_face_symmetry_map_py",
+        "displayText": "generate_mediapipe_face_symmetry_map.py"
+      },
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "train_py",
+        "displayText": "train.py",
+        "relativePath": "source/modelling/train_py.md"
+      },
+      {
+        "link": "parallel_train_py",
+        "displayText": "parallel_train.py",
+        "relativePath": "source/modelling/parallel_train_py.md"
+      },
+      {
+        "link": "export_py",
+        "displayText": "export.py",
+        "relativePath": "source/modelling/export_py.md"
+      },
+      {
+        "link": "onnx_benchmark_py",
+        "displayText": "onnx_benchmark.py",
+        "relativePath": "source/modelling/onnx_benchmark_py.md"
+      },
+      {
+        "link": "visualize_model_performance_py",
+        "displayText": "visualize_model_performance.py",
+        "relativePath": "source/modelling/visualize_model_performance_py.md"
+      },
+      {
+        "link": "app_py",
+        "displayText": "app.py"
+      },
+      {
+        "link": "loader_py",
+        "displayText": "loader.py"
+      },
+      {
+        "link": "views_py",
+        "displayText": "views.py"
+      },
+      {
+        "link": "visualization_py",
+        "displayText": "visualization.py"
+      },
+      {
+        "link": "live_signs_js",
+        "displayText": "live-signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      },
+      {
+        "link": "index_html",
+        "displayText": "index.html",
+        "relativePath": "source/frontend/index_html.md"
+      },
+      {
+        "link": "styles_css",
+        "displayText": "styles.css",
+        "relativePath": "source/frontend/styles_css.md"
+      },
+      {
+        "link": "dockerfile",
+        "displayText": "Dockerfile",
+        "relativePath": "source/config/dockerfile.md"
+      },
+      {
+        "link": "docker_compose_yml",
+        "displayText": "docker-compose.yml",
+        "relativePath": "source/config/docker_compose_yml.md"
+      },
+      {
+        "link": "makefile",
+        "displayText": "Makefile",
+        "relativePath": "source/config/makefile.md"
+      },
+      {
+        "link": "pyproject_toml",
+        "displayText": "pyproject.toml",
+        "relativePath": "source/config/pyproject_toml.md"
+      },
+      {
+        "link": "function_index",
+        "displayText": "Function Index",
+        "relativePath": "indexes/function_index.md"
+      },
+      {
+        "link": "class_index",
+        "displayText": "Class Index",
+        "relativePath": "indexes/class_index.md"
+      },
+      {
+        "link": "api_endpoints",
+        "displayText": "API Endpoints",
+        "relativePath": "reference/api_endpoints.md"
+      },
+      {
+        "link": "configuration_options",
+        "displayText": "Configuration Options",
+        "relativePath": "reference/configuration_options.md"
+      },
+      {
+        "link": "dataset_citation",
+        "displayText": "Dataset Citation",
+        "relativePath": "reference/dataset_citation.md"
+      }
+    ]
+  },
+  {
+    "fileName": "environment_configuration",
+    "relativePath": "deployment/environment_configuration.md",
+    "tags": [
+      "deployment",
+      "configuration",
+      "env"
+    ],
+    "headings": [
+      {
+        "heading": "Environment Configuration",
+        "level": 1
+      },
+      {
+        "heading": "Variable Reference",
+        "level": 2
+      },
+      {
+        "heading": "Setup",
+        "level": 2
+      },
+      {
+        "heading": "Constants (`src/core/constants.py`)",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "constants_py",
+        "displayText": "constants.py Source Code",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "configuration_options",
+        "link": "environment_configuration",
+        "relativePath": "reference/configuration_options.md",
+        "displayText": "Environment Variables"
+      },
+      {
+        "fileName": "fastapi_application",
+        "link": "environment_configuration",
+        "relativePath": "api/fastapi_application.md",
+        "displayText": "Environment Configuration"
+      },
+      {
+        "fileName": "docker_compose_yml",
+        "link": "environment_configuration",
+        "relativePath": "source/config/docker_compose_yml.md",
+        "displayText": ".env"
+      },
+      {
+        "fileName": "main_py",
+        "link": "environment_configuration#ONNX_CHECKPOINT_FILENAME",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "environment_configuration",
+        "displayText": "ONNX_CHECKPOINT_FILENAME"
+      },
+      {
+        "fileName": "main_py",
+        "link": "environment_configuration#DOMAIN_NAME",
+        "relativePath": "source/api/main_py.md",
+        "cleanLink": "environment_configuration",
+        "displayText": "DOMAIN_NAME"
+      },
+      {
+        "fileName": "main_py",
+        "link": "environment_configuration",
+        "relativePath": "source/api/main_py.md",
+        "displayText": "Environment Configuration"
+      },
+      {
+        "fileName": "constants_py",
+        "link": "environment_configuration",
+        "relativePath": "source/core/constants_py.md",
+        "displayText": "Environment Configuration"
+      },
+      {
+        "fileName": "index",
+        "link": "environment_configuration",
+        "relativePath": "index.md",
+        "displayText": "Environment Configuration"
+      },
+      {
+        "fileName": "docker_setup",
+        "link": "environment_configuration",
+        "relativePath": "deployment/docker_setup.md",
+        "displayText": "Environment Configuration"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "environment_configuration",
+        "relativePath": "getting_started.md",
+        "displayText": "Environment Configuration"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "environment_configuration",
+        "relativePath": "getting_started.md",
+        "displayText": "Environment Configuration"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "environment_configuration",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Environment Configuration"
+      }
+    ]
+  },
+  {
+    "fileName": "docker_setup",
+    "relativePath": "deployment/docker_setup.md",
+    "tags": [
+      "deployment",
+      "docker",
+      "containers"
+    ],
+    "headings": [
+      {
+        "heading": "Docker Setup",
+        "level": 1
+      },
+      {
+        "heading": "Dockerfile Overview",
+        "level": 2
+      },
+      {
+        "heading": "Docker Compose",
+        "level": 2
+      },
+      {
+        "heading": "Commands",
+        "level": 2
+      },
+      {
+        "heading": "Build and Run",
+        "level": 3
+      },
+      {
+        "heading": "Stop",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "dockerfile",
+        "displayText": "Dockerfile Source",
+        "relativePath": "source/config/dockerfile.md"
+      },
+      {
+        "link": "docker_compose_yml",
+        "displayText": "docker-compose.yml Source",
+        "relativePath": "source/config/docker_compose_yml.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Configuration",
+        "relativePath": "deployment/environment_configuration.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "troubleshooting",
+        "link": "docker_setup",
+        "relativePath": "reference/troubleshooting.md",
+        "displayText": "Docker Setup"
+      },
+      {
+        "fileName": "run_py",
+        "link": "docker_setup",
+        "relativePath": "source/api/run_py.md",
+        "displayText": "Docker Setup"
+      },
+      {
+        "fileName": "index",
+        "link": "docker_setup",
+        "relativePath": "index.md",
+        "displayText": "Docker Setup"
+      },
+      {
+        "fileName": "environment_configuration",
+        "link": "docker_setup",
+        "relativePath": "deployment/environment_configuration.md",
+        "displayText": "Docker Setup"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "docker_setup",
+        "relativePath": "getting_started.md",
+        "displayText": "Docker Setup"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "docker_setup",
+        "relativePath": "getting_started.md",
+        "displayText": "Docker Setup"
+      },
+      {
+        "fileName": "makefile_commands",
+        "link": "docker_setup",
+        "relativePath": "development/makefile_commands.md",
+        "displayText": "Docker Setup"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "docker_setup",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Docker Setup"
+      },
+      {
+        "fileName": "architecture_overview",
+        "link": "docker_setup",
+        "relativePath": "architecture_overview.md",
+        "displayText": "Docker Setup"
+      }
+    ]
+  },
+  {
+    "fileName": "getting_started",
+    "relativePath": "getting_started.md",
+    "tags": [
+      "getting-started",
+      "installation",
+      "setup"
+    ],
+    "headings": [
+      {
+        "heading": "Getting Started",
+        "level": 1
+      },
+      {
+        "heading": "Prerequisites",
+        "level": 2
+      },
+      {
+        "heading": "Option 1: Docker (Recommended)",
+        "level": 3
+      },
+      {
+        "heading": "Option 2: Local Development",
+        "level": 3
+      },
+      {
+        "heading": "Installation",
+        "level": 2
+      },
+      {
+        "heading": "1. Clone the Repository",
+        "level": 3
+      },
+      {
+        "heading": "2. Configuration Setup",
+        "level": 3
+      },
+      {
+        "heading": "3. Choose Your Setup Method",
+        "level": 3
+      },
+      {
+        "heading": "Option A: Docker Setup (Recommended)",
+        "level": 4
+      },
+      {
+        "heading": "Option B: Local Development Setup",
+        "level": 4
+      },
+      {
+        "heading": "First Run",
+        "level": 2
+      },
+      {
+        "heading": "1. Access the Web Interface",
+        "level": 3
+      },
+      {
+        "heading": "2. Grant Camera Permissions",
+        "level": 3
+      },
+      {
+        "heading": "3. Start Signing",
+        "level": 3
+      },
+      {
+        "heading": "Project Structure",
+        "level": 2
+      },
+      {
+        "heading": "Available Commands",
+        "level": 2
+      },
+      {
+        "heading": "Using Make",
+        "level": 3
+      },
+      {
+        "heading": "Using Docker",
+        "level": 3
+      },
+      {
+        "heading": "Verification",
+        "level": 2
+      },
+      {
+        "heading": "Test the API",
+        "level": 3
+      },
+      {
+        "heading": "Test WebSocket Connection",
+        "level": 3
+      },
+      {
+        "heading": "Troubleshooting",
+        "level": 2
+      },
+      {
+        "heading": "Common Issues",
+        "level": 3
+      },
+      {
+        "heading": "Port Already in Use",
+        "level": 4
+      },
+      {
+        "heading": "Model Not Found",
+        "level": 4
+      },
+      {
+        "heading": "Camera Not Detected",
+        "level": 4
+      },
+      {
+        "heading": "CORS Errors",
+        "level": 4
+      },
+      {
+        "heading": "Next Steps",
+        "level": 2
+      },
+      {
+        "heading": "Resources",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Configuration",
+        "relativePath": "deployment/environment_configuration.md"
+      },
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      },
+      {
+        "link": "project_structure",
+        "displayText": "Project Structure",
+        "relativePath": "development/project_structure.md"
+      },
+      {
+        "link": "makefile_commands",
+        "displayText": "Makefile Commands",
+        "relativePath": "development/makefile_commands.md"
+      },
+      {
+        "link": "troubleshooting",
+        "displayText": "Troubleshooting",
+        "relativePath": "reference/troubleshooting.md"
+      },
+      {
+        "link": "architecture_overview",
+        "displayText": "Architecture Overview",
+        "relativePath": "architecture_overview.md"
+      },
+      {
+        "link": "fastapi_application",
+        "displayText": "FastAPI Application",
+        "relativePath": "api/fastapi_application.md"
+      },
+      {
+        "link": "architecture_design",
+        "displayText": "Model Architecture",
+        "relativePath": "models/architecture_design.md"
+      },
+      {
+        "link": "training_process",
+        "displayText": "Training Process",
+        "relativePath": "models/training_process.md"
+      },
+      {
+        "link": "web_interface_design",
+        "displayText": "Web Interface Design",
+        "relativePath": "frontend/web_interface_design.md"
+      },
+      {
+        "link": "architecture_overview",
+        "displayText": "Architecture Overview",
+        "relativePath": "architecture_overview.md"
+      },
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Configuration",
+        "relativePath": "deployment/environment_configuration.md"
+      },
+      {
+        "link": "troubleshooting",
+        "displayText": "Troubleshooting",
+        "relativePath": "reference/troubleshooting.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "getting_started",
+        "relativePath": "index.md",
+        "displayText": "Getting Started"
+      }
+    ]
+  },
+  {
+    "fileName": "makefile_commands",
+    "relativePath": "development/makefile_commands.md",
+    "tags": [
+      "development",
+      "automation",
+      "makefile"
+    ],
+    "headings": [
+      {
+        "heading": "Makefile Commands",
+        "level": 1
+      },
+      {
+        "heading": "Primary Commands",
+        "level": 2
+      },
+      {
+        "heading": "Data Processing",
+        "level": 2
+      },
+      {
+        "heading": "Visualization",
+        "level": 2
+      },
+      {
+        "heading": "Parameter Overrides",
+        "level": 2
+      },
+      {
+        "heading": "CPU Mode",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "train_py",
+        "displayText": "train.py",
+        "relativePath": "source/modelling/train_py.md"
+      },
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "makefile_commands",
+        "relativePath": "index.md",
+        "displayText": "Makefile Commands"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "makefile_commands",
+        "relativePath": "getting_started.md",
+        "displayText": "Makefile Commands"
+      },
+      {
+        "fileName": "contributing_guide",
+        "link": "makefile_commands",
+        "relativePath": "development/contributing_guide.md",
+        "displayText": "Makefile Commands"
+      }
+    ]
+  },
+  {
+    "fileName": "contributing_guide",
+    "relativePath": "development/contributing_guide.md",
+    "tags": [
+      "development",
+      "contributing",
+      "standards"
+    ],
+    "headings": [
+      {
+        "heading": "Contributing Guide",
+        "level": 1
+      },
+      {
+        "heading": "Development Setup",
+        "level": 2
+      },
+      {
+        "heading": "Prerequisites",
+        "level": 3
+      },
+      {
+        "heading": "Installation",
+        "level": 3
+      },
+      {
+        "heading": "Development Workflow",
+        "level": 2
+      },
+      {
+        "heading": "Coding Standards",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "project_structure",
+        "displayText": "Project Structure",
+        "relativePath": "development/project_structure.md"
+      },
+      {
+        "link": "makefile_commands",
+        "displayText": "Makefile Commands",
+        "relativePath": "development/makefile_commands.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "contributing_guide",
+        "relativePath": "index.md",
+        "displayText": "Contributing Guide"
+      },
+      {
+        "fileName": "project_structure",
+        "link": "contributing_guide",
+        "relativePath": "development/project_structure.md",
+        "displayText": "Contributing Guide"
+      }
+    ]
+  },
+  {
+    "fileName": "project_structure",
+    "relativePath": "development/project_structure.md",
+    "tags": [
+      "development",
+      "structure",
+      "codebase"
+    ],
+    "headings": [
+      {
+        "heading": "Project Structure",
+        "level": 1
+      },
+      {
+        "heading": "Top-Level Directory",
+        "level": 2
+      },
+      {
+        "heading": "Source Code (`src/`)",
+        "level": 2
+      },
+      {
+        "heading": "Frontend (`static/`)",
+        "level": 2
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "contributing_guide",
+        "displayText": "Contributing Guide",
+        "relativePath": "development/contributing_guide.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "project_structure",
+        "relativePath": "index.md",
+        "displayText": "Project Structure"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "project_structure",
+        "relativePath": "getting_started.md",
+        "displayText": "Project Structure"
+      },
+      {
+        "fileName": "contributing_guide",
+        "link": "project_structure",
+        "relativePath": "development/contributing_guide.md",
+        "displayText": "Project Structure"
+      }
+    ]
+  },
+  {
+    "fileName": "architecture_overview",
+    "relativePath": "architecture_overview.md",
+    "tags": [
+      "architecture",
+      "system-design",
+      "components"
+    ],
+    "headings": [
+      {
+        "heading": "Architecture Overview",
+        "level": 1
+      },
+      {
+        "heading": "System Architecture",
+        "level": 2
+      },
+      {
+        "heading": "Component Overview",
+        "level": 2
+      },
+      {
+        "heading": "1. Frontend Layer",
+        "level": 3
+      },
+      {
+        "heading": "2. API Layer",
+        "level": 3
+      },
+      {
+        "heading": "3. Processing Pipeline",
+        "level": 3
+      },
+      {
+        "heading": "Frame Buffer",
+        "level": 4
+      },
+      {
+        "heading": "Motion Detection",
+        "level": 4
+      },
+      {
+        "heading": "Keypoint Extraction",
+        "level": 4
+      },
+      {
+        "heading": "4. Model Layer",
+        "level": 3
+      },
+      {
+        "heading": "Model Architecture",
+        "level": 4
+      },
+      {
+        "heading": "Inference Engine",
+        "level": 4
+      },
+      {
+        "heading": "5. Data Layer",
+        "level": 3
+      },
+      {
+        "heading": "Dataset Loaders",
+        "level": 4
+      },
+      {
+        "heading": "Data Preparation",
+        "level": 4
+      },
+      {
+        "heading": "Data Flow",
+        "level": 2
+      },
+      {
+        "heading": "Real-Time Recognition Flow",
+        "level": 3
+      },
+      {
+        "heading": "Training Flow",
+        "level": 3
+      },
+      {
+        "heading": "Configuration Management",
+        "level": 2
+      },
+      {
+        "heading": "Environment Variables",
+        "level": 3
+      },
+      {
+        "heading": "Constants",
+        "level": 3
+      },
+      {
+        "heading": "Deployment Architecture",
+        "level": 2
+      },
+      {
+        "heading": "Docker Deployment",
+        "level": 3
+      },
+      {
+        "heading": "Performance Considerations",
+        "level": 2
+      },
+      {
+        "heading": "Optimization Strategies",
+        "level": 3
+      },
+      {
+        "heading": "Bottlenecks",
+        "level": 3
+      },
+      {
+        "heading": "Security Considerations",
+        "level": 2
+      },
+      {
+        "heading": "Scalability",
+        "level": 2
+      },
+      {
+        "heading": "Current Limitations",
+        "level": 3
+      },
+      {
+        "heading": "Future Improvements",
+        "level": 3
+      },
+      {
+        "heading": "Related Documentation",
+        "level": 2
+      }
+    ],
+    "links": [
+      {
+        "link": "live_signs_js",
+        "displayText": "live-signs.js",
+        "relativePath": "source/frontend/live_signs_js.md"
+      },
+      {
+        "link": "index_html",
+        "displayText": "index.html",
+        "relativePath": "source/frontend/index_html.md"
+      },
+      {
+        "link": "styles_css",
+        "displayText": "styles.css",
+        "relativePath": "source/frontend/styles_css.md"
+      },
+      {
+        "link": "web_interface_design",
+        "displayText": "Web Interface Design",
+        "relativePath": "frontend/web_interface_design.md"
+      },
+      {
+        "link": "main_py",
+        "displayText": "main.py",
+        "relativePath": "source/api/main_py.md"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "websocket.py",
+        "relativePath": "source/api/websocket_py.md"
+      },
+      {
+        "link": "run_py",
+        "displayText": "run.py",
+        "relativePath": "source/api/run_py.md"
+      },
+      {
+        "link": "fastapi_application",
+        "displayText": "FastAPI Application",
+        "relativePath": "api/fastapi_application.md"
+      },
+      {
+        "link": "live_processing_py",
+        "displayText": "live_processing.py",
+        "relativePath": "source/api/live_processing_py.md"
+      },
+      {
+        "link": "cv2_utils_py",
+        "displayText": "cv2_utils.py",
+        "relativePath": "source/api/cv2_utils_py.md"
+      },
+      {
+        "link": "mediapipe_utils_py",
+        "displayText": "mediapipe_utils.py",
+        "relativePath": "source/core/mediapipe_utils_py.md"
+      },
+      {
+        "link": "mediapipe_integration",
+        "displayText": "MediaPipe Integration",
+        "relativePath": "core/mediapipe_integration.md"
+      },
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "architecture_design",
+        "displayText": "Model Architecture",
+        "relativePath": "models/architecture_design.md"
+      },
+      {
+        "link": "model_py",
+        "displayText": "model.py",
+        "relativePath": "source/modelling/model_py.md"
+      },
+      {
+        "link": "lazy_dataset_py",
+        "displayText": "lazy_dataset.py",
+        "relativePath": "source/data/lazy_dataset_py.md"
+      },
+      {
+        "link": "mmap_dataset_py",
+        "displayText": "mmap_dataset.py",
+        "relativePath": "source/data/mmap_dataset_py.md"
+      },
+      {
+        "link": "data_preparation_py",
+        "displayText": "data_preparation.py",
+        "relativePath": "source/data/data_preparation_py.md"
+      },
+      {
+        "link": "prepare_npz_kps_py",
+        "displayText": "prepare_npz_kps.py",
+        "relativePath": "source/data/prepare_npz_kps_py.md"
+      },
+      {
+        "link": "data_preparation_pipeline",
+        "displayText": "Data Preparation Pipeline",
+        "relativePath": "data/data_preparation_pipeline.md"
+      },
+      {
+        "link": "environment_configuration",
+        "displayText": "Environment Configuration",
+        "relativePath": "deployment/environment_configuration.md"
+      },
+      {
+        "link": "constants_py",
+        "displayText": "constants.py",
+        "relativePath": "source/core/constants_py.md"
+      },
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      },
+      {
+        "link": "fastapi_application",
+        "displayText": "FastAPI Application",
+        "relativePath": "api/fastapi_application.md"
+      },
+      {
+        "link": "websocket_communication",
+        "displayText": "WebSocket Communication",
+        "relativePath": "api/websocket_communication.md"
+      },
+      {
+        "link": "mediapipe_integration",
+        "displayText": "MediaPipe Integration",
+        "relativePath": "core/mediapipe_integration.md"
+      },
+      {
+        "link": "architecture_design",
+        "displayText": "Model Architecture",
+        "relativePath": "models/architecture_design.md"
+      },
+      {
+        "link": "docker_setup",
+        "displayText": "Docker Setup",
+        "relativePath": "deployment/docker_setup.md"
+      },
+      {
+        "link": "live_processing_pipeline",
+        "displayText": "Live Processing Pipeline",
+        "relativePath": "api/live_processing_pipeline.md"
+      },
+      {
+        "link": "training_process",
+        "displayText": "Training Process",
+        "relativePath": "models/training_process.md"
+      },
+      {
+        "link": "websocket_py",
+        "displayText": "WebSocket Implementation",
+        "relativePath": "source/api/websocket_py.md"
+      }
+    ],
+    "backlinks": [
+      {
+        "fileName": "index",
+        "link": "architecture_overview",
+        "relativePath": "index.md",
+        "displayText": "Architecture Overview"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "architecture_overview",
+        "relativePath": "getting_started.md",
+        "displayText": "Architecture Overview"
+      },
+      {
+        "fileName": "getting_started",
+        "link": "architecture_overview",
+        "relativePath": "getting_started.md",
+        "displayText": "Architecture Overview"
+      }
+    ]
+  }
+]

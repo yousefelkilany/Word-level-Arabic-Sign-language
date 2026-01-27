@@ -122,7 +122,7 @@ class AttentionBiLSTM(nn.Module):
         return logits
 
 
-def get_model_instance(num_words, device="cpu"):
+def get_model_instance(num_words, device="cpu") -> AttentionBiLSTM:
     hidden_size = 384
     num_lstm_blocks = 4
     model = AttentionBiLSTM(
@@ -151,7 +151,12 @@ def save_model(checkpoint_path, model, optimizer, scheduler):
         print(f"[Save model checkpoint - error]: {e = }")
 
 
-def load_model(checkpoint_path, model=None, num_words=None, device="cpu") -> nn.Module:
+def load_model(
+    checkpoint_path,
+    model: Optional[AttentionBiLSTM] = None,
+    num_words=None,
+    device="cpu",
+) -> AttentionBiLSTM:
     num_words = num_words or extract_num_words_from_checkpoint(checkpoint_path)
     assert model or num_words, "Either a model instance or `num_words` must be provided"
 
