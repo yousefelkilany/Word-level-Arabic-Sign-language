@@ -32,12 +32,12 @@ Initializes buffer with maximum size.
 #### `add_frame(frame)`
 Adds frame to buffer, removes oldest if full.
 
-**Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Called By**: [[../../source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 #### `get_frame(idx) -> Optional[np.ndarray]`
 Retrieves frame by index.
 
-**Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Called By**: [[../../source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 #### `latest_idx` (property)
 Returns index of most recent frame.
@@ -48,7 +48,7 @@ Returns index of oldest frame in buffer.
 #### `clear()`
 Clears all frames and resets index.
 
-**Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Called By**: [[../../source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 ## Functions
 
@@ -68,7 +68,7 @@ Clears all frames and resets index.
 - Adds decoded frames to buffer
 - Runs until WebSocket closes or error occurs
 
-**Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Called By**: [[../../source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 **Calls**:
 - `websocket.receive_bytes()` - Receives frame data
@@ -82,7 +82,7 @@ Clears all frames and resets index.
 **Purpose**: Asynchronously extracts keypoints from frame using MediaPipe.
 
 **Parameters**:
-- `mp_processor` ([[source/core/mediapipe_utils_py#LandmarkerProcessor|LandmarkerProcessor]]): MediaPipe processor
+- `mp_processor` ([[../../source/core/mediapipe_utils_py#LandmarkerProcessor|LandmarkerProcessor]]): MediaPipe processor
 - `frame` (np.ndarray): Video frame
 - `timestamp_ms` (int): Frame timestamp
 
@@ -91,7 +91,7 @@ Clears all frames and resets index.
 **Implementation**:
 Uses thread pool executor to run MediaPipe processing off main thread.
 
-**Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Called By**: [[../../source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 **Calls**:
 - [[../../source/core/mediapipe_utils_py#LandmarkerProcessor.extract_frame_keypoints|mp_processor.extract_frame_keypoints()]]
@@ -102,7 +102,7 @@ Uses thread pool executor to run MediaPipe processing off main thread.
 keypoints_detection_executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
 ```
 
-**Configuration**: [[source/core/constants_py#MAX_WORKERS|MAX_WORKERS]] = 4
+**Configuration**: [[../../source/core/constants_py#MAX_WORKERS|MAX_WORKERS]] = 4
 
 **Used By**: [[#get_frame_kps|get_frame_kps()]]
 

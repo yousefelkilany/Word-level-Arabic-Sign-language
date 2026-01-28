@@ -58,19 +58,19 @@ DEVICE = ["cpu", "cuda"][int(use_gpu)]
 **Type**: Path string
 **Value**: `{PROJECT_ROOT_DIR}/landmarkers`
 **Purpose**: MediaPipe model files (.task files)
-**Used By**: [[source/core/mediapipe_utils_py|mediapipe_utils.py]]
+**Used By**: [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]]
 
 #### `MODELS_DIR`
 **Type**: Path string
 **Value**: `{DATA_OUTPUT_DIR}/models`
 **Purpose**: ONNX model storage
-**Used By**: [[source/api/main_py#lifespan|main.py lifespan()]]
+**Used By**: [[../../source/api/main_py#lifespan|main.py lifespan()]]
 
 #### `TRAIN_CHECKPOINTS_DIR`
 **Type**: Path string
 **Value**: `{DATA_OUTPUT_DIR}/checkpoints`
 **Purpose**: PyTorch training checkpoints
-**Used By**: [[source/modelling/train_py|train.py]]
+**Used By**: [[../../source/modelling/train_py|train.py]]
 
 #### `DATA_INPUT_DIR`
 **Type**: Path string
@@ -134,7 +134,7 @@ DEVICE = ["cpu", "cuda"][int(use_gpu)]
 **Type**: int
 **Value**: 4
 **Purpose**: Thread pool size for keypoint extraction
-**Used By**: [[source/api/live_processing_py#Thread Pool|live_processing.py]]
+**Used By**: [[../../source/api/live_processing_py#Thread Pool|live_processing.py]]
 
 ### Timing
 

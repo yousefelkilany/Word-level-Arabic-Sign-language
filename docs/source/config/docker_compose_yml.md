@@ -10,7 +10,7 @@
 
 ### 1. `live-app`
 The main FastAPI Application.
-- **Build**: Context `.` (Uses [[source/config/dockerfile|Dockerfile]]).
+- **Build**: Context `.` (Uses [[../../source/config/dockerfile|Dockerfile]]).
 - **Ports**: Maps `8000:8000`.
 - **Volumes**: Mounts source directories (`src`, `data`, `static`) as Read-Only (`:ro`) for hot-reloading without container pollution.
 - **Resources**:

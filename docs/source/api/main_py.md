@@ -247,7 +247,7 @@ app.include_router(websocket_router)
 
 ## Usage
 
-This module is not run directly. Instead, it's imported by [[source/api/run_py|run.py]]:
+This module is not run directly. Instead, it's imported by [[../../source/api/run_py|run.py]]:
 
 ```python
 # In run.py
@@ -272,7 +272,7 @@ app.state.onnx_model: InferenceSession
 ```
 
 **Set By**: [[#lifespan|lifespan()]]
-**Used By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Used By**: [[../../source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 ## Error Handling
 

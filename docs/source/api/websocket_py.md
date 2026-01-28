@@ -31,10 +31,10 @@ from torch import nn
 
 **Internal Imports**:
 - [[../../source/api/cv2_utils_py#MotionDetector|MotionDetector]] from `api.cv2_utils`
-- [[../../source/api/live_processing_py#FrameBuffer|FrameBuffer]], [[source/api/live_processing_py#get_frame_kps|get_frame_kps]], [[source/api/live_processing_py#producer_handler|producer_handler]] from `api.live_processing`
+- [[../../source/api/live_processing_py#FrameBuffer|FrameBuffer]], [[../../source/api/live_processing_py#get_frame_kps|get_frame_kps]], [[../../source/api/live_processing_py#producer_handler|producer_handler]] from `api.live_processing`
 - [[../../source/core/constants_py#SEQ_LEN|SEQ_LEN]] from `core.constants`
 - [[../../source/core/mediapipe_utils_py#LandmarkerProcessor|LandmarkerProcessor]] from `core.mediapipe_utils`
-- `AR_WORDS`, `EN_WORDS`, `get_default_logger` from [[source/core/utils_py|core.utils]]
+- `AR_WORDS`, `EN_WORDS`, `get_default_logger` from [[../../source/core/utils_py|core.utils]]
 - [[../../source/modelling/model_py#onnx_inference|onnx_inference]] from `modelling.model`
 
 ## Constants
