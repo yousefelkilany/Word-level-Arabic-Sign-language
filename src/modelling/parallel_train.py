@@ -1,4 +1,3 @@
-from data import DataAugmentor
 import os
 
 import torch
@@ -11,8 +10,8 @@ from torch.utils.data import DataLoader, random_split
 from torch.utils.data.distributed import DistributedSampler
 
 from core.constants import DatasetType, SplitType
+from data import DataAugmentor, LazyKArSLDataset
 from data.dataloader import prepare_dataloader
-from data.mmap_dataset import MmapKArSLDataset
 from modelling.model import get_model_instance
 from modelling.train import train, visualize_metrics
 
@@ -40,7 +39,7 @@ def run_training(rank, world_size):
     signs = range(1, num_words + 1)
     batch_size = 64
 
-    dataset = MmapKArSLDataset(
+    dataset = LazyKArSLDataset(
         SplitType.train, signers=signers, signs=signs, transforms=DataAugmentor()
     )
     train_size = int(len(dataset) * 0.8)

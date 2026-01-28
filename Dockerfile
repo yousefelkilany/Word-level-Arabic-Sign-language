@@ -11,7 +11,7 @@ ENV UV_COMPILE_BYTECODE=1 \
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    uv sync --frozen --no-install-project --no-dev --extra torch-cpu
+    uv sync --frozen --no-install-project --no-dev -qq --extra torch-cpu
 
 FROM python:3.12-slim-bookworm AS runtime
 
