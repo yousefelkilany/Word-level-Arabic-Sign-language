@@ -26,12 +26,13 @@ KARSL_DATA_DIR = os_join(DATA_INPUT_DIR, "karsl-502")
 NPZ_KPS_DIR = os_join(
     DATA_INPUT_DIR, "word-level-arabic-sign-language-extrcted-keypoints", "karsl-kps"
 )
+MMAP_PREPROCESSED_DIR = os_join(
+    DATA_INPUT_DIR,
+    "word-level-arabic-sign-language-preprcsd-keypoints",
+    "word-level-arabic-sign-language-preprcsd-keypoints",
+)
 MMAP_OUTPUT_PREPROCESSED_DIR = os_join(
     DATA_OUTPUT_DIR, "word-level-arabic-sign-language-preprcsd-keypoints"
-)
-MMAP_PREPROCESSED_DIR = os_join(
-    MMAP_OUTPUT_PREPROCESSED_DIR,
-    "word-level-arabic-sign-language-preprcsd-keypoints",
 )
 
 MS_30FPS = 1000 / 30
