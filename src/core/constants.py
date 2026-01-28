@@ -21,7 +21,6 @@ KAGGLE_INPUT_DATA_DIR = "/kaggle/input"
 KAGGLE_OUTPUT_DATA_DIR = "/kaggle/working"
 DATA_INPUT_DIR = [KAGGLE_INPUT_DATA_DIR, LOCAL_INPUT_DATA_DIR][LOCAL_DEV]
 DATA_OUTPUT_DIR = [KAGGLE_OUTPUT_DATA_DIR, LOCAL_OUTPUT_DATA_DIR][LOCAL_DEV]
-TRAIN_CHECKPOINTS_DIR = os_join(DATA_OUTPUT_DIR, "checkpoints")
 KARSL_DATA_DIR = os_join(DATA_INPUT_DIR, "karsl-502")
 NPZ_KPS_DIR = os_join(
     DATA_INPUT_DIR, "word-level-arabic-sign-language-extrcted-keypoints", "karsl-kps"
@@ -34,6 +33,7 @@ MMAP_PREPROCESSED_DIR = os_join(
 MMAP_OUTPUT_PREPROCESSED_DIR = os_join(
     DATA_OUTPUT_DIR, "word-level-arabic-sign-language-preprcsd-keypoints"
 )
+TRAIN_CHECKPOINTS_DIR = os_join(DATA_OUTPUT_DIR, "checkpoints")
 
 MS_30FPS = 1000 / 30
 MS_30FPS_INT = 1000 // 30
