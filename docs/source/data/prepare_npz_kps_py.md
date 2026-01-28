@@ -49,7 +49,7 @@ The script parallelizes at the **Sign** level.
 python src/data/prepare_npz_kps.py \
     --splits train test \
     --signers 01 02 03 \
-    --selected_words_from 1 --selected_words_to 10 \
+    --selected_signs_from 1 --selected_signs_to 10 \
     --adjusted
 ```
 

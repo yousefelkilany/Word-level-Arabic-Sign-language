@@ -10,7 +10,7 @@ A comprehensive lookup of all documented functions.
 - **`setupWebcam`**: [[../source/frontend/live_signs_js#Functions|live_signs.js]] - Initializes camera stream.
 
 ## Core
-- **`init_words`**: [[../source/core/utils_py#Functions|utils.py]] - Loads Arabic/English label lists.
+- **`init_signs`**: [[../source/core/utils_py#Functions|utils.py]] - Loads Arabic/English label lists.
 - **`get_default_logger`**: [[../source/core/utils_py#Functions|utils.py]] - Configures application logging.
 - **`extract_frame_keypoints`**: [[../source/core/mediapipe_utils_py#Classes|mediapipe_utils.py]] - Main extraction logic for a single frame.
 - **`draw_all_kps_on_image`**: [[../source/core/draw_kps_py#Functions|draw_kps.py]] - Visualizes full skeleton on a frame.

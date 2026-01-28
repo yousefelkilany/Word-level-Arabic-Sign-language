@@ -35,7 +35,7 @@ Key hyperparameters (defaults):
 ## Checkpointing
 The model is saved only when validation loss improves.
 - **Format**: `.pth` file containing model state, optimizer state, and scheduler state.
-- **Naming**: `checkpoint_{timestamp}-words_{num_words}/{epoch}.pth`
+- **Naming**: `checkpoint_{timestamp}-signs_{num_signs}/{epoch}.pth`
 
 ## Related Documentation
 

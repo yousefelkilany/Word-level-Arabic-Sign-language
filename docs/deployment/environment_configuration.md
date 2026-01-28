@@ -8,7 +8,7 @@ The application behavior is controlled by environment variables, managed via a `
 
 | Variable                   | Description                                                         | Default / Example                    |
 | :------------------------- | :------------------------------------------------------------------ | :----------------------------------- |
-| `ONNX_CHECKPOINT_FILENAME` | Filename of the .onnx model to load from `models/`.                 | `last-checkpoint-words_502.pth.onnx` |
+| `ONNX_CHECKPOINT_FILENAME` | Filename of the .onnx model to load from `models/`.                 | `last-checkpoint-signs_502.pth.onnx` |
 | `DOMAIN_NAME`              | Allowed origin for CORS and WebSocket connections.                  | `http://localhost:8000`              |
 | `LOCAL_DEV`                | Flag to indicate local development environment. Affects data paths. | `1`                                  |
 | `USE_CPU`                  | Force PyTorch/ONNX to use CPU instead of CUDA.                      | `1`                                  |

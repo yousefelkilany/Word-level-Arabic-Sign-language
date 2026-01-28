@@ -33,7 +33,7 @@ Orchestrates the conversion for a specific split (train/test).
 python src/data/mmap_dataset_preprocessing.py \
     --splits train test \
     --signers 01 02 03 \
-    --selected_words_from 1 --selected_words_to 502
+    --selected_signs_from 1 --selected_signs_to 502
 ```
 
 ## Output Structure

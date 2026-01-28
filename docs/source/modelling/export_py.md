@@ -30,7 +30,7 @@ def export_model(checkpoint_path, output_path=None):
 ```
 
 **Steps**:
-1. **Load**: Recreates model structure using `num_words` from filename.
+1. **Load**: Recreates model structure using `num_signs` from filename.
 2. **Dummy Input**: Creates a random tensor `(1, 50, 736)`.
 3. **Export**:
    - **Dynamic Axes**: Allows batch size to vary (e.g., `batch_size: "batch"`).

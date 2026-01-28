@@ -23,7 +23,7 @@ The background element that hosts the video and recognition overlay.
 ### 2. HUD (Heads-Up Display)
 Contains floating elements that provide real-time information.
 - **Prediction Card**: Displays the current sign (Arabic/English) and a confidence bar.
-- **Sentence Bar**: Accumulates recognized words into a sentence.
+- **Sentence Bar**: Accumulates recognized signs into a sentence.
 - **Controls**: Buttons for Text-to-Speech (TTS) and clearing the sentence.
 
 ### 3. Modals & Overlays

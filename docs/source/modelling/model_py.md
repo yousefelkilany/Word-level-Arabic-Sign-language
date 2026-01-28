@@ -56,7 +56,7 @@ graph TD
 ### `get_model_instance(...)`
 Factory function creating a standard model configuration.
 ```python
-def get_model_instance(num_words, device="cpu") -> AttentionBiLSTM:
+def get_model_instance(num_signs, device="cpu") -> AttentionBiLSTM:
 ```
 **Default Params**:
 - `hidden_size`: 384
