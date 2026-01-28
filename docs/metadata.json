@@ -5021,11 +5021,11 @@
         "level": 2
       },
       {
-        "heading": "`init_words()`",
+        "heading": "`init_signs()`",
         "level": 3
       },
       {
-        "heading": "`extract_num_words_from_checkpoint(checkpoint_path)`",
+        "heading": "`extract_num_signs_from_checkpoint(checkpoint_path)`",
         "level": 3
       },
       {
@@ -5039,10 +5039,10 @@
     ],
     "links": [
       {
-        "link": "#init_words",
+        "link": "#init_signs",
         "relativePath": "source/core/utils_py.md",
         "cleanLink": "utils_py",
-        "displayText": "init_words()"
+        "displayText": "init_signs()"
       },
       {
         "link": "constants_py",

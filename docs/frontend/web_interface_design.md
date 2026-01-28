@@ -15,18 +15,23 @@ The frontend provides a modern, responsive user interface for real-time sign lan
 The application is structured into three main layers:
 
 ### 1. Viewport Layer
+
 The background element that hosts the video and recognition overlay.
+
 - `<video id="webcam">`: Displays the raw camera feed.
 - `<canvas id="process-canvas">`: (Hidden) used for capturing frames to send to the server.
 - `.hud-layer`: Transparent overlay containing the prediction card.
 
 ### 2. HUD (Heads-Up Display)
+
 Contains floating elements that provide real-time information.
+
 - **Prediction Card**: Displays the current sign (Arabic/English) and a confidence bar.
-- **Sentence Bar**: Accumulates recognized words into a sentence.
+- **Sentence Bar**: Accumulates recognized signs into a sentence.
 - **Controls**: Buttons for Text-to-Speech (TTS) and clearing the sentence.
 
 ### 3. Modals & Overlays
+
 - **Settings**: Theme selection and TTS language.
 - **History**: Side panel showing a log of recent predictions.
 - **Archives**: Modal for viewing past sessions.

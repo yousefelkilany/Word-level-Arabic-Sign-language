@@ -38,7 +38,7 @@ Edit `.env` with your configuration:
 
 ```env
 # Model Configuration
-ONNX_CHECKPOINT_FILENAME=last-checkpoint-words_502.pth.onnx
+ONNX_CHECKPOINT_FILENAME=last-checkpoint-signs_502.pth.onnx
 
 # CORS Configuration
 DOMAIN_NAME=http://localhost:8000

@@ -36,7 +36,7 @@ Generic drawer.
 ## Execution (`__main__`)
 
 Debug script to visualize a specific sample.
-- **Config**: Hardcoded `signer`, `split`, `word`.
+- **Config**: Hardcoded `signer`, `split`, `sign`.
 - **Logic**: Loads the `.npz` file, reads the corresponding video frames, and saves an annotated side-by-side comparison.
 
 ## Key Connections

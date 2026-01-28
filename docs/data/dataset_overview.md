@@ -6,7 +6,7 @@ The project utilizes the **KArSL-502** (King Saud University Arabic Sign Languag
 
 ## Dataset Characteristics
 
-- **Size**: 502 classes (Arabic words).
+- **Size**: 502 classes (Arabic sign words).
 - **Subjects**: 3 distinct signers (01, 02, 03).
 - **Structure**:
   - **Raw Video**: Folder structure `signer/split/word/video.mp4`.
