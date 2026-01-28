@@ -1,3 +1,4 @@
+from data import DataAugmentor
 import os
 
 import torch
@@ -34,16 +35,13 @@ def run_training(rank, world_size):
 
     torch.manual_seed(42)
 
-    num_words = 30
+    num_words = 5
     signers = ["01", "02", "03"]
     signs = range(1, num_words + 1)
     batch_size = 64
 
     dataset = MmapKArSLDataset(
-        SplitType.train,
-        signers=signers,
-        signs=signs,
-        train_transforms=None,  # AlbumentationsWrapper(),
+        SplitType.train, signers=signers, signs=signs, transforms=DataAugmentor()
     )
     train_size = int(len(dataset) * 0.8)
     val_size = len(dataset) - train_size
@@ -101,7 +99,12 @@ def run_training(rank, world_size):
 
     if rank == 0:
         test_dl = prepare_dataloader(
-            DatasetType.mmap, SplitType.test, signers, signs, batch_size
+            DatasetType.mmap,
+            SplitType.test,
+            signers,
+            signs,
+            batch_size,
+            transforms=DataAugmentor(0, 0),
         )
         visualize_metrics(best_checkpoint, test_dl)
 
@@ -112,6 +115,7 @@ def training_wrapper(rank, world_size):
         run_training(rank, world_size)
     except Exception as e:
         print(f"[Parallel training error]: { e = }")
+        raise
     finally:
         cleanup()
 

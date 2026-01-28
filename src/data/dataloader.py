@@ -14,16 +14,16 @@ def prepare_dataloader(
     batch_size: int = 64,
     shuffle: bool = False,
     num_workers: int = 0,
-    train_transforms: Optional[DataAugmentor] = None,
+    transforms: Optional[DataAugmentor] = None,
 ):
     signers = signers or ["01", "02", "03"]
     signs = signs or range(1, 503)
 
     match dataset_type:
         case DatasetType.lazy:
-            dataset = LazyKArSLDataset(split, signers, signs, train_transforms)
+            dataset = LazyKArSLDataset(split, signers, signs, transforms)
         case DatasetType.mmap:
-            dataset = MmapKArSLDataset(split, signers, signs, train_transforms)
+            dataset = MmapKArSLDataset(split, signers, signs, transforms)
 
     if split == SplitType.test:
         print(f"Test dataset size: {len(dataset)}")
