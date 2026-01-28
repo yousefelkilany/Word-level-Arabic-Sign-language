@@ -151,16 +151,16 @@ if __name__ == "__main__":
     splits = ["train", "test"][-1:]
     signers = ["01", "02", "03"][-1:]
     signs = [f"{502:04}"]
-    for signer, split, word in product(signers, splits, signs):
+    for signer, split, sign in product(signers, splits, signs):
         kps_path = os.path.join(
-            NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{word}.npz"
+            NPZ_KPS_DIR, "all_kps", f"{signer}-{split}", f"{sign}.npz"
         )
 
         video_npz = np.load(kps_path, allow_pickle=True)
         video_idx = 0
         video_name, video_kps = list(video_npz.items())[video_idx]
         video_dir = os.path.join(
-            KARSL_DATA_DIR, signer, signer, split, word, video_name
+            KARSL_DATA_DIR, signer, signer, split, sign, video_name
         )
         video_frames = sorted(os.listdir(video_dir))
 
@@ -175,7 +175,7 @@ if __name__ == "__main__":
         print(f"Annotating frame {frame_path}")
         annotated_frame = draw_all_kps_on_image(frame, video_kps[frame_idx])
         annotated_frame_name = (
-            f"{signer}-{split}-{word}/{video_name}-frame_{frame_idx}-annotated.jpg"
+            f"{signer}-{split}-{sign}/{video_name}-frame_{frame_idx}-annotated.jpg"
         )
         os.makedirs(os.path.dirname(annotated_frame_name), exist_ok=True)
 

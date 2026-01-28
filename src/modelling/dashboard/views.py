@@ -12,7 +12,7 @@ from data.shared_elements import get_visual_controls
 from modelling.dashboard.visualization import plot_3d_animation
 
 
-def render_metrics_view(y_true, y_pred, num_words):
+def render_metrics_view(y_true, y_pred, num_signs):
     acc = (y_true == y_pred).mean()
     st.metric("Overall Accuracy", f"{acc:.2%}")
 
@@ -31,7 +31,7 @@ def render_metrics_view(y_true, y_pred, num_words):
     )
 
     cm = confusion_matrix(y_true, y_pred)
-    labels_text = [f"{i}: {EN_WORDS[i]}" for i in range(num_words)]
+    labels_text = [f"{i}: {EN_WORDS[i]}" for i in range(num_signs)]
     fig_cm = px.imshow(
         cm,
         x=labels_text,

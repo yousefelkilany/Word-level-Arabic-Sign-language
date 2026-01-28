@@ -15,22 +15,13 @@ class MmapKArSLDataset(Dataset):
         split: SplitType,
         signers: list[str],
         signs: range,
-        train_transforms: Optional[DataAugmentor] = None,
-        val_transforms: Optional[DataAugmentor] = None,
-        test_transforms: Optional[DataAugmentor] = None,
+        transforms: Optional[DataAugmentor] = None,
     ):
         super().__init__()
 
         self.split = split
         self.tsn_sampler = TSNSampler(mode=split)
-        self.transform = DataAugmentor()
-        match split:
-            case SplitType.train:
-                self.transform = train_transforms or self.transform
-            case SplitType.val:
-                self.transform = val_transforms or self.transform
-            case SplitType.test:
-                self.transform = test_transforms or self.transform
+        self.transform = transforms or DataAugmentor()
 
         data_path = os_join(MMAP_PREPROCESSED_DIR, f"{split}_X.mmap")
         label_path = os_join(MMAP_PREPROCESSED_DIR, f"{split}_y.npz")

@@ -16,38 +16,29 @@ class LazyKArSLDataset(Dataset):
         split: SplitType,
         signers: list[str],
         signs: range,
-        train_transforms: Optional[DataAugmentor] = None,
-        val_transforms: Optional[DataAugmentor] = None,
-        test_transforms: Optional[DataAugmentor] = None,
+        transforms: Optional[DataAugmentor] = None,
     ):
         super().__init__()
 
         self.split = split
         self.tsn_sampler = TSNSampler(mode=split)
-        self.transform = DataAugmentor()
-        match split:
-            case SplitType.train:
-                self.transform = train_transforms or self.transform
-            case SplitType.val:
-                self.transform = val_transforms or self.transform
-            case SplitType.test:
-                self.transform = test_transforms or self.transform
+        self.transform = transforms or DataAugmentor()
 
         self.samples = []
         print(f"Building index map for {split} split...")
-        for word in tqdm(signs, desc=f"Words - {split}"):
+        for sign in tqdm(signs, desc=f"Signs - {split}"):
             for signer in signers:
-                word_kps_path = os_join(
-                    NPZ_KPS_DIR, f"{signer}-{split}", f"{word:04}.npz"
+                sign_kps_path = os_join(
+                    NPZ_KPS_DIR, f"{signer}-{split}", f"{sign:04}.npz"
                 )
 
                 try:
-                    word_kps_data = np.load(word_kps_path, allow_pickle=True)
+                    sign_kps_data = np.load(sign_kps_path, allow_pickle=True)
                 except FileNotFoundError:
                     continue
 
                 self.samples.extend(
-                    [(signer, vid, word - 1) for vid in word_kps_data.keys()]
+                    [(signer, vid, sign - 1) for vid in sign_kps_data.keys()]
                 )
 
     def __len__(self):

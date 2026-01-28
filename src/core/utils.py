@@ -6,27 +6,27 @@ from typing import Optional
 from core.constants import LABELS_JSON_PATH, LOGS_DIR, os_join
 
 
-def init_words() -> tuple[list[str], list[str]]:
+def init_signs() -> tuple[list[str], list[str]]:
     with open(LABELS_JSON_PATH, "r", encoding="utf-8") as f:
         signs = json.load(f)
     return signs["AR_WORDS"], signs["EN_WORDS"]
 
 
-AR_WORDS, EN_WORDS = init_words()
+AR_WORDS, EN_WORDS = init_signs()
 
 
-def extract_num_words_from_checkpoint(checkpoint_path) -> Optional[int]:
+def extract_num_signs_from_checkpoint(checkpoint_path) -> Optional[int]:
     import re
 
-    matches = re.search(r".*?words_(\d+).*?", checkpoint_path)
+    matches = re.search(r".*?signs_(\d+).*?", checkpoint_path)
     if not matches:
         raise ValueError(
-            f"Couldn't find number of words in checkpoint path: {checkpoint_path}"
+            f"Couldn't find number of signs in checkpoint path: {checkpoint_path}"
         )
 
-    num_words = int(matches.groups()[0])
-    print(f"Number of words in checkpoint: {num_words}")
-    return num_words
+    num_signs = int(matches.groups()[0])
+    print(f"Number of signs in checkpoint: {num_signs}")
+    return num_signs
 
 
 default_logger = None

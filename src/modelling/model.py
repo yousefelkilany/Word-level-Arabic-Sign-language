@@ -8,7 +8,7 @@ from torch import nn
 
 from core.constants import FEAT_DIM, SEQ_LEN
 from core.mediapipe_utils import FACE_NUM, HAND_NUM, POSE_NUM
-from core.utils import extract_num_words_from_checkpoint
+from core.utils import extract_num_signs_from_checkpoint
 
 
 class ResidualBiLSTMBlock(nn.Module):
@@ -122,13 +122,13 @@ class AttentionBiLSTM(nn.Module):
         return logits
 
 
-def get_model_instance(num_words, device="cpu") -> AttentionBiLSTM:
-    hidden_size = 384
+def get_model_instance(num_signs, device="cpu") -> AttentionBiLSTM:
+    hidden_size = 384  # must be multiple of 48
     num_lstm_blocks = 4
     model = AttentionBiLSTM(
         hidden_size,
         num_lstm_blocks,
-        num_words,
+        num_signs,
         lstm_dropout_prob=0.5,
         attn_dropout_prob=0.5,
         network_dropout_prob=0.5,
@@ -154,13 +154,13 @@ def save_model(checkpoint_path, model, optimizer, scheduler):
 def load_model(
     checkpoint_path,
     model: Optional[AttentionBiLSTM] = None,
-    num_words=None,
+    num_signs=None,
     device="cpu",
 ) -> AttentionBiLSTM:
-    num_words = num_words or extract_num_words_from_checkpoint(checkpoint_path)
-    assert model or num_words, "Either a model instance or `num_words` must be provided"
+    num_signs = num_signs or extract_num_signs_from_checkpoint(checkpoint_path)
+    assert model or num_signs, "Either a model instance or `num_signs` must be provided"
 
-    model = model or get_model_instance(num_words, device)
+    model = model or get_model_instance(num_signs, device)
     model.load_state_dict(
         torch.load(checkpoint_path, map_location=torch.device(device))["model"]
     )

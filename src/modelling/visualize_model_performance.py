@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
 
 from core.constants import DEVICE, DatasetType, SplitType
-from core.utils import extract_num_words_from_checkpoint
+from core.utils import extract_num_signs_from_checkpoint
 from data.dataloader import prepare_dataloader
 from modelling.model import load_model
 
@@ -122,11 +122,11 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint_path", type=str, required=True)
     args = parser.parse_args()
 
-    num_words = extract_num_words_from_checkpoint(args.checkpoint_path)
-    if not num_words:
-        raise ValueError("Number of words not found in checkpoint path")
+    num_signs = extract_num_signs_from_checkpoint(args.checkpoint_path)
+    if not num_signs:
+        raise ValueError("Number of signs not found in checkpoint path")
 
     test_dl = prepare_dataloader(
-        DatasetType.lazy, SplitType.test, signs=range(1, 1 + num_words)
+        DatasetType.lazy, SplitType.test, signs=range(1, 1 + num_signs)
     )
     visualize_metrics(args.checkpoint_path, test_dl)

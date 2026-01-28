@@ -1,3 +1,4 @@
+import argparse
 import gc
 import os
 from contextlib import nullcontext
@@ -36,9 +37,9 @@ def train(
         best_val_loss = float("inf")
         best_checkpoint = ""
         timestamp = datetime.now().strftime("%b%d_%H-%M-%S")
-        num_words = model.module.num_classes if rank >= 0 else model.num_classes
+        num_signs = model.module.num_classes if rank >= 0 else model.num_classes
         checkpoint_root = (
-            f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-words_{num_words}"
+            f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-signs_{num_signs}"
         )
         os.makedirs(checkpoint_root, exist_ok=True)
     if rank >= 0:
@@ -116,26 +117,48 @@ def train(
 
         scheduler.step(val_loss)
 
-    return best_checkpoint
+    return best_checkpoint if rank <= 0 else None
+
+
+def train_cli():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--signers", nargs="+", default=["01", "02", "03"])
+    parser.add_argument("--selected_signs_from", type=int, default=1)
+    parser.add_argument("--selected_signs_to", type=int, default=1)
+    parser.add_argument("--num_epochs", type=int, default=1)
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    num_words = 2
+    cli_args = train_cli()
     train_dl, val_dl, test_dl = prepare_dataloaders(
-        DatasetType.lazy, signs=range(1, num_words + 1)
+        DatasetType.mmap,
+        signers=cli_args.signers,
+        signs=range(cli_args.selected_signs_from, cli_args.selected_signs_to + 1),
     )
 
-    num_epochs = 1
+    num_signs = cli_args.selected_signs_to - cli_args.selected_signs_from + 1
     lr = 1e-3
     weight_decay = 1e-4
-    model = get_model_instance(num_words, DEVICE)
+    model = get_model_instance(num_signs, DEVICE)
     loss = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = ReduceLROnPlateau(optimizer, "min", factor=0.2, patience=3)
 
+    print(
+        f"Training signs {cli_args.selected_signs_from} to {cli_args.selected_signs_to}, for {cli_args.num_epochs} epochs"
+    )
+
     try:
         best_checkpoint = train(
-            model, loss, optimizer, scheduler, train_dl, val_dl, num_epochs, DEVICE
+            model,
+            loss,
+            optimizer,
+            scheduler,
+            train_dl,
+            val_dl,
+            cli_args.num_epochs,
+            DEVICE,
         )
         print(f"Best model checkpoint: {best_checkpoint}")
 
