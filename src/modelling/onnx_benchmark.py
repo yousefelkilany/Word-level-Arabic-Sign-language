@@ -3,25 +3,28 @@ import torch
 from sklearn.metrics import accuracy_score, f1_score
 from tqdm import tqdm
 
-from dataloader import prepare_dataloader
-from export import cli
-from model import load_onnx_model, onnx_inference
-from utils import DEVICE, extract_num_words_from_checkpoint
+from core.constants import DEVICE, DatasetType, SplitType
+from core.utils import extract_num_signs_from_checkpoint
+from data.dataloader import prepare_dataloader
+from modelling.export import checkpoint_cli
+from modelling.model import load_onnx_model, onnx_inference
 
 if __name__ == "__main__":
-    args = cli()
-    checkpoint_path = args.checkpoint_path
-    onnx_model_path = args.onnx_model_path
+    cli_args = checkpoint_cli()
+    checkpoint_path = cli_args.checkpoint_path
+    onnx_model_path = cli_args.onnx_model_path
     assert checkpoint_path is not None or onnx_model_path is not None, (
         "at least one of --checkpoint_path and --onnx_model_path must be passed"
     )
     onnx_model_path = onnx_model_path or f"{checkpoint_path}.onnx"
 
-    num_words = extract_num_words_from_checkpoint(checkpoint_path)
-    if not num_words:
-        raise ValueError("Couldn't determine `num_words` for loading dataset")
+    num_signs = extract_num_signs_from_checkpoint(checkpoint_path)
+    if not num_signs:
+        raise ValueError("Couldn't determine `num_signs` for loading dataset")
 
-    test_dl = prepare_dataloader("test", range(1, num_words + 1))
+    test_dl = prepare_dataloader(
+        DatasetType.lazy, SplitType.test, ["01", "02", "03"], range(1, num_signs + 1)
+    )
 
     ort_session = load_onnx_model(onnx_model_path, device=DEVICE)
 

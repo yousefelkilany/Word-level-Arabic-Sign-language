@@ -8,7 +8,7 @@ from modelling.model import load_model, load_onnx_model, onnx_inference
 from core.constants import DEVICE, FEAT_NUM, SEQ_LEN, FEAT_DIM
 
 
-def cli():
+def checkpoint_cli():
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint_path", type=str, required=True)
     parser.add_argument("--onnx_model_path", type=str, default=None)
@@ -16,8 +16,8 @@ def cli():
 
 
 if __name__ == "__main__":
-    args = cli()
-    checkpoint_path = args.checkpoint_path
+    cli_args = checkpoint_cli()
+    checkpoint_path = cli_args.checkpoint_path
     assert checkpoint_path is not None, "--checkpoint_path is required"
 
     model = load_model(checkpoint_path, device=DEVICE)
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     torch_input = (torch.rand(1, SEQ_LEN, FEAT_NUM * FEAT_DIM, device=DEVICE),)
     torch_output = model(*torch_input)
 
-    onnx_model_path = args.onnx_model_path or f"{checkpoint_path}.onnx"
+    onnx_model_path = cli_args.onnx_model_path or f"{checkpoint_path}.onnx"
     # batch_dim = torch.export.Dim("batch_size")
     onnx_model = torch.onnx.export(
         model,

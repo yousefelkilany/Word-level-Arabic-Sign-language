@@ -13,7 +13,7 @@ from core.constants import DatasetType, SplitType
 from data import DataAugmentor, LazyKArSLDataset
 from data.dataloader import prepare_dataloader
 from modelling.model import get_model_instance
-from modelling.train import train, visualize_metrics
+from modelling.train import train, train_cli, visualize_metrics
 
 
 def setup(rank, world_size):
@@ -28,17 +28,13 @@ def cleanup():
     dist.destroy_process_group()
 
 
-def run_training(rank, world_size):
+def run_training(rank, world_size, signers, signs, num_epochs):
     torch.cuda.set_device(rank)
     device = torch.device(f"cuda:{rank}")
 
     torch.manual_seed(42)
 
-    num_words = 502
-    signers = ["01", "02", "03"]
-    signs = range(1, num_words + 1)
     batch_size = 64
-
     dataset = LazyKArSLDataset(
         SplitType.train, signers=signers, signs=signs, transforms=DataAugmentor()
     )
@@ -68,11 +64,10 @@ def run_training(rank, world_size):
         num_workers=4,
     )
 
-    model = get_model_instance(num_words, device=device)
+    model = get_model_instance(signs, device=device)
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
     model = DDP(model, device_ids=[rank])
 
-    num_epochs = 20
     lr = 1e-3 * torch.sqrt(torch.tensor(world_size)).item()
     weight_decay = 1e-4
     loss = nn.CrossEntropyLoss()
@@ -108,10 +103,10 @@ def run_training(rank, world_size):
         visualize_metrics(best_checkpoint, test_dl)
 
 
-def training_wrapper(rank, world_size):
+def training_wrapper(rank, world_size, signers, signs, num_epochs):
     try:
         setup(rank, world_size)
-        run_training(rank, world_size)
+        run_training(rank, world_size, signers, signs, num_epochs)
     except Exception as e:
         print(f"[Parallel training error]: { e = }")
         raise
@@ -120,7 +115,16 @@ def training_wrapper(rank, world_size):
 
 
 if __name__ == "__main__":
+    cli_args = train_cli()
     world_size = torch.cuda.device_count()
     print(f"Using {world_size} GPUs!")
 
-    mp.spawn(training_wrapper, args=(world_size,), nprocs=world_size, join=True)
+    signers = cli_args.signers
+    signs = range(cli_args.selected_signs_from, cli_args.selected_signs_to + 1)
+    num_epochs = cli_args.num_epochs
+    print(
+        f"Training signs {cli_args.selected_signs_from} to {cli_args.selected_signs_to}, for {num_epochs} epochs"
+    )
+
+    args = (world_size, signers, signs, num_epochs)
+    mp.spawn(training_wrapper, args=args, nprocs=world_size, join=True)

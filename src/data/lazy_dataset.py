@@ -26,19 +26,19 @@ class LazyKArSLDataset(Dataset):
 
         self.samples = []
         print(f"Building index map for {split} split...")
-        for word in tqdm(signs, desc=f"Words - {split}"):
+        for sign in tqdm(signs, desc=f"Signs - {split}"):
             for signer in signers:
-                word_kps_path = os_join(
-                    NPZ_KPS_DIR, f"{signer}-{split}", f"{word:04}.npz"
+                sign_kps_path = os_join(
+                    NPZ_KPS_DIR, f"{signer}-{split}", f"{sign:04}.npz"
                 )
 
                 try:
-                    word_kps_data = np.load(word_kps_path, allow_pickle=True)
+                    sign_kps_data = np.load(sign_kps_path, allow_pickle=True)
                 except FileNotFoundError:
                     continue
 
                 self.samples.extend(
-                    [(signer, vid, word - 1) for vid in word_kps_data.keys()]
+                    [(signer, vid, sign - 1) for vid in sign_kps_data.keys()]
                 )
 
     def __len__(self):

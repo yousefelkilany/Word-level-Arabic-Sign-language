@@ -19,15 +19,15 @@ def load_raw_kps(
     for sign, signer in tqdm(
         product(signs, signers), desc=f"Loading Raw KPS - {split}"
     ):
-        word_kps_path = os_join(NPZ_KPS_DIR, f"{signer}-{split}", f"{sign:04}.npz")
+        sign_kps_path = os_join(NPZ_KPS_DIR, f"{signer}-{split}", f"{sign:04}.npz")
         try:
-            word_kps = np.load(word_kps_path, allow_pickle=True)
-            X.extend([kps.astype(np.float16) for kps in word_kps.values()])
-            y.extend([sign] * len(word_kps))
+            sign_kps = np.load(sign_kps_path, allow_pickle=True)
+            X.extend([kps.astype(np.float16) for kps in sign_kps.values()])
+            y.extend([sign] * len(sign_kps))
             if X_map_samples_lens.get(sign) is None:
                 X_map_samples_lens[sign] = dict()
             X_map_samples_lens[sign][int(signer)] = [
-                kps.shape[0] for kps in word_kps.values()
+                kps.shape[0] for kps in sign_kps.values()
             ]
         except FileNotFoundError as e:
             print(f"[ERROR] NO NPZ FOUND. error: {e}")
@@ -71,26 +71,22 @@ def mmap_process_and_save_split(
     print(f"--- Finished processing split: {split} ---\n")
 
 
-def cli():
+def mmap_dataset_cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--splits", nargs="+", required=False, default=["train", "test"]
-    )
-    parser.add_argument(
-        "--signers", nargs="+", required=False, default=["01", "02", "03"]
-    )
-    parser.add_argument("--selected_words_from", required=False, type=int, default=1)
-    parser.add_argument("--selected_words_to", required=False, type=int, default=1)
+    parser.add_argument("--splits", nargs="+", default=["train", "test"])
+    parser.add_argument("--signers", nargs="+", default=["01", "02", "03"])
+    parser.add_argument("--selected_signs_from", type=int, default=1)
+    parser.add_argument("--selected_signs_to", type=int, default=1)
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    cli_args = cli()
+    cli_args = mmap_dataset_cli()
     print("Extracting keypoints from frames...")
     print("Arguments:", cli_args)
     for split in cli_args.splits:
         mmap_process_and_save_split(
             split=split,
             signers=cli_args.signers,
-            signs=range(cli_args.selected_words_from, cli_args.selected_words_to + 1),
+            signs=range(cli_args.selected_signs_from, cli_args.selected_signs_to + 1),
         )

@@ -112,27 +112,23 @@ def extract_keypoints_from_frames(
         )
 
 
-def cli():
+def npz_kps_cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--splits", nargs="*", required=False, default=["train", "test"]
-    )
-    parser.add_argument(
-        "--signers", nargs="*", required=False, default=["01", "02", "03"]
-    )
-    parser.add_argument("--selected_words_from", required=False, default=1, type=int)
-    parser.add_argument("--selected_words_to", required=False, default=1, type=int)
+    parser.add_argument("--splits", nargs="*", default=["train", "test"])
+    parser.add_argument("--signers", nargs="*", default=["01", "02", "03"])
+    parser.add_argument("--selected_signs_from", default=1, type=int)
+    parser.add_argument("--selected_signs_to", default=1, type=int)
     parser.add_argument("--adjusted", required=False, action="store_true")
     return parser.parse_args()
 
 
 if __name__ == "__main__":
-    cli_args = cli()
+    cli_args = npz_kps_cli()
     print("Extracting keypoints from frames, then storing as NPZ files...")
     print("Arguments:", cli_args)
     extract_keypoints_from_frames(
         splits=cli_args.splits,
         signers=cli_args.signers,
-        signs=range(cli_args.selected_words_from, cli_args.selected_words_to + 1),
+        signs=range(cli_args.selected_signs_from, cli_args.selected_signs_to + 1),
         adjusted=cli_args.adjusted,
     )

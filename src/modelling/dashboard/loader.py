@@ -5,14 +5,14 @@ import streamlit as st
 import torch
 
 from core.constants import DEVICE, DatasetType, SplitType
-from core.utils import extract_num_words_from_checkpoint
+from core.utils import extract_num_signs_from_checkpoint
 from data.dataloader import prepare_dataloaders
 from modelling.model import load_model
 
 
 @st.cache_data
-def get_checkpoints_num_words(checkpoint_path):
-    return extract_num_words_from_checkpoint(checkpoint_path)
+def get_checkpoints_num_signs(checkpoint_path):
+    return extract_num_signs_from_checkpoint(checkpoint_path)
 
 
 @st.cache_data
@@ -29,22 +29,22 @@ def load_cached_checkpoints(checkpoints_dir: str):
 
 
 @st.cache_resource
-def load_cached_model(checkpoint_path: str, num_words: int):
-    model = load_model(checkpoint_path, num_words=num_words, device=DEVICE)
+def load_cached_model(checkpoint_path: str, num_signs: int):
+    model = load_model(checkpoint_path, num_signs=num_signs, device=DEVICE)
     model.eval()
     return model
 
 
 @st.cache_resource
-def get_cached_dataloaders(num_words: int):
+def get_cached_dataloaders(num_signs: int):
     train_dl, val_dl, test_dl = prepare_dataloaders(
-        DatasetType.lazy, signs=range(1, num_words + 1), shuffle_train=False
+        DatasetType.lazy, signs=range(1, num_signs + 1), shuffle_train=False
     )
     return {"train": train_dl, "val": val_dl, "test": test_dl}
 
 
-def get_split_dataloader(num_words: int, split_name: SplitType):
-    return get_cached_dataloaders(num_words).get(split_name, None)
+def get_split_dataloader(num_signs: int, split_name: SplitType):
+    return get_cached_dataloaders(num_signs).get(split_name, None)
 
 
 @st.cache_data

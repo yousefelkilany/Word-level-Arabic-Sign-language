@@ -5,7 +5,7 @@ import streamlit as st
 
 from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, SplitType
 from modelling.dashboard.loader import (
-    get_checkpoints_num_words,
+    get_checkpoints_num_signs,
     get_split_dataloader,
     load_cached_checkpoints,
     load_cached_model,
@@ -38,7 +38,7 @@ def main():
     if ckpt_files is None:
         st.sidebar.error(f"Checkpoints dir not found: {TRAIN_CHECKPOINTS_DIR}")
 
-    selected_ckpt, num_words, model = None, 502, None
+    selected_ckpt, num_signs, model = None, 502, None
     if len(ckpt_files) == 0:
         st.sidebar.info("No checkpoints found.")
     else:
@@ -47,11 +47,11 @@ def main():
             st.sidebar.info("Select a checkpoint")
         else:
             selected_ckpt = os.path.join(TRAIN_CHECKPOINTS_DIR, selected_ckpt)
-            num_words = get_checkpoints_num_words(selected_ckpt)
-            model = load_cached_model(selected_ckpt, num_words)
+            num_signs = get_checkpoints_num_signs(selected_ckpt)
+            model = load_cached_model(selected_ckpt, num_signs)
 
     split_select: SplitType = st.sidebar.radio("Split", map(str, SplitType), index=0)
-    dataloader = get_split_dataloader(num_words, split_select)
+    dataloader = get_split_dataloader(num_signs, split_select)
 
     if "current_view" not in st.session_state:
         st.session_state.current_view = None
@@ -88,7 +88,7 @@ def main():
     if y_true is not None and y_pred is not None and y_probs is not None:
         metrics_tab, errors_tab = tabs[:2]
         with metrics_tab:
-            render_metrics_view(y_true, y_pred, num_words)
+            render_metrics_view(y_true, y_pred, num_signs)
         with errors_tab:
             render_error_view(y_true, y_pred, y_probs)
 
