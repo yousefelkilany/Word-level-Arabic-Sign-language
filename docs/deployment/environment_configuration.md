@@ -17,9 +17,11 @@ The application behavior is controlled by environment variables, managed via a `
 ## Setup
 
 1.  Copy the example file:
+
     ```bash
     cp .env.example .env
     ```
+
 2.  Edit `.env` to match your local setup.
 
 ## Constants (`src/core/constants.py`)

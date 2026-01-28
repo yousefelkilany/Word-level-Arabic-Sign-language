@@ -1,6 +1,6 @@
 # prepare_npz_kps.py
 
-# source #data #script #mediapipe
+#source #data #script #mediapipe
 
 **File Path**: `src/data/prepare_npz_kps.py`
 

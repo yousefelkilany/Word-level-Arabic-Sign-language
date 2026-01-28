@@ -30,6 +30,7 @@ def export_model(checkpoint_path, output_path=None):
 ```
 
 **Steps**:
+
 1. **Load**: Recreates model structure using `num_signs` from filename.
 2. **Dummy Input**: Creates a random tensor `(1, 50, 736)`.
 3. **Export**:
@@ -56,7 +57,9 @@ python -m modelling.export --checkpoint_path "..."
 ## Related Documentation
 
 **Depends On**:
+
 - [[../../source/modelling/model_py|model.py]] - `load_model`
 
 **Produces**:
+
 - Artifacts used by [[../../source/api/main_py|main.py]] (FastAPI).
