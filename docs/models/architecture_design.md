@@ -1,3 +1,9 @@
+---
+title: Model Architecture Design
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Model Architecture Design
 
 #model #architecture #deep-learning

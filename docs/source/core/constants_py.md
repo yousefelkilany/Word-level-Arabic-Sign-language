@@ -1,3 +1,9 @@
+---
+title: constants.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # constants.py
 
 #source #core #configuration #constants

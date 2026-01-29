@@ -1,3 +1,9 @@
+---
+title: pyproject.toml
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # pyproject.toml
 
 #source #config #python

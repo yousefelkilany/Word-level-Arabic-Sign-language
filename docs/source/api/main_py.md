@@ -1,3 +1,9 @@
+---
+title: source/api/main.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # source/api/main.py
 
 #source-code #api #fastapi #application
@@ -321,7 +327,7 @@ graph TD
 
 ---
 
-**File Location**: `../../../src/api/main.py`
+**File Location**: `src/api/main.py`
 
 **Lines of Code**: 61
 

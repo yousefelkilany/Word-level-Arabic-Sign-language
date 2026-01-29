@@ -1,3 +1,9 @@
+---
+title: WebSocket Client Implementation
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # WebSocket Client Implementation
 
 #frontend #websocket #javascript

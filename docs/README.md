@@ -1,3 +1,9 @@
+---
+title: Documentation Status & Generation Guide
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Documentation Status & Generation Guide
 
 This document tracks the documentation generation progress and provides instructions for completing the remaining files.

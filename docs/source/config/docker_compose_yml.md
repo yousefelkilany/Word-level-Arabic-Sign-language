@@ -1,3 +1,9 @@
+---
+title: docker-compose.yml
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # docker-compose.yml
 
 #source #config #docker

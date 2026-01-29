@@ -1,3 +1,9 @@
+---
+title: API Endpoints
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # API Endpoints
 
 #api #reference #http #websocket

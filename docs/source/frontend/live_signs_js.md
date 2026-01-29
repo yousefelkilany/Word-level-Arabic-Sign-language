@@ -1,3 +1,9 @@
+---
+title: live_signs.js
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # live_signs.js
 
 #source #frontend #javascript #websocket

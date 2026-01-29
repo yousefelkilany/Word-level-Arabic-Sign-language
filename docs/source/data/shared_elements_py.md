@@ -1,3 +1,9 @@
+---
+title: shared_elements.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # shared_elements.py
 
 #source #data #streamlit

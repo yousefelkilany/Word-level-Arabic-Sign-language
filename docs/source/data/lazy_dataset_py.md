@@ -1,3 +1,9 @@
+---
+title: lazy_dataset.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # lazy_dataset.py
 
 #source #data #pytorch #dataloader

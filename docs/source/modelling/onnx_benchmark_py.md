@@ -1,3 +1,9 @@
+---
+title: onnx_benchmark.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # onnx_benchmark.py
 
 #source #modelling #profiling

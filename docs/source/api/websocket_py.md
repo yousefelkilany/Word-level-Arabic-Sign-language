@@ -1,3 +1,9 @@
+---
+title: source/api/websocket.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # source/api/websocket.py
 
 #source-code #api #websocket #real-time
@@ -447,7 +453,7 @@ stateDiagram-v2
 
 ---
 
-**File Location**: `../../../src/api/websocket.py`
+**File Location**: `src/api/websocket.py`
 
 **Lines of Code**: 182
 

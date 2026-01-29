@@ -1,3 +1,9 @@
+---
+title: Training Process
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Training Process
 
 #model #training #pytorch

@@ -1,3 +1,9 @@
+---
+title: Live Processing Pipeline
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Live Processing Pipeline
 
 #api #pipeline #processing #cv

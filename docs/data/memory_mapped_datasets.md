@@ -1,3 +1,9 @@
+---
+title: Memory-Mapped Datasets
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Memory-Mapped Datasets
 
 #data #optimization #performance

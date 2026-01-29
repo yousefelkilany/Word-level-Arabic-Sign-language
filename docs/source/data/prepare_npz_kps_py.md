@@ -1,3 +1,9 @@
+---
+title: prepare_npz_kps.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # prepare_npz_kps.py
 
 #source #data #script #mediapipe

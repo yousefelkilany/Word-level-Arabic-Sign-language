@@ -1,3 +1,9 @@
+---
+title: FastAPI Application Structure
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # FastAPI Application Structure
 
 #api #fastapi #architecture

@@ -1,3 +1,9 @@
+---
+title: Makefile Commands
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Makefile Commands
 
 #development #automation #makefile

@@ -1,3 +1,9 @@
+---
+title: source/api/cv2-utils.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # source/api/cv2-utils.py
 
 #source-code #api #opencv #motion-detection
@@ -131,4 +137,4 @@ for frame in video_frames:
 
 ---
 
-**File Location**: `../../../src/api/cv2_utils.py`
+**File Location**: `src/api/cv2_utils.py`

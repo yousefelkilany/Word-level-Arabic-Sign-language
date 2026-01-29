@@ -1,3 +1,9 @@
+---
+title: Keypoint Visualization
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Keypoint Visualization
 
 #core #visualization #debugging
