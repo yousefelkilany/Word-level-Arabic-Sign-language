@@ -1,8 +1,26 @@
+---
+title: Data Preparation Pipeline
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Data Preparation Pipeline
 
 #data #pipeline #preprocessing
 
 The data preparation pipeline transforms raw video data into a format suitable for training deep learning models. It involves landmark extraction, normalization, augmentation, and storage optimization.
+
+## Flowchart
+
+```mermaid
+graph LR
+    A[Raw Video] -->|MediaPipe| B[Raw Keypoints .npz]
+    B -->|Normalize| C[Normalized Keypoints]
+    C -->|TSN Sampling| D[Fixed Sequence]
+    D -->|Augment| E[Training Batch]
+    C -->|Memory Map| F[mmap Dataset]
+    F -->|Load| E
+```
 
 ## Pipeline Steps
 
@@ -27,18 +45,6 @@ To improve model generalization, we apply valid geometric transformations during
 - **Rotation**: Random rotation ±15 degrees.
 - **Scaling**: Random scaling ±15%.
 - **Translation**: Random shift in X/Y.
-
-## Flowchart
-
-```mermaid
-graph LR
-    A[Raw Video] -->|MediaPipe| B[Raw Keypoints .npz]
-    B -->|Normalize| C[Normalized Keypoints]
-    C -->|TSN Sampling| D[Fixed Sequence]
-    D -->|Augment| E[Training Batch]
-    C -->|Memory Map| F[mmap Dataset]
-    F -->|Load| E
-```
 
 ## Related Documentation
 

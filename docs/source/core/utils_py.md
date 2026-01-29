@@ -1,3 +1,9 @@
+---
+title: utils.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # utils.py
 
 #source #core #utilities

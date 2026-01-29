@@ -1,3 +1,9 @@
+---
+title: source/api/cv2-utils.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # source/api/cv2-utils.py
 
 #source-code #api #opencv #motion-detection
@@ -5,6 +11,22 @@
 **File Path**: `src/api/cv2_utils.py`
 
 **Purpose**: OpenCV utilities for motion detection in video frames.
+
+### Motion Detection Pipeline
+
+```mermaid
+graph LR
+    A[Previous Frame] --> B[Convert to Gray]
+    C[Current Frame] --> D[Convert to Gray]
+    B --> E[Absolute Difference]
+    D --> E
+    E --> F[Gaussian Blur]
+    F --> G[Binary Threshold]
+    G --> H[Count Non-Zero]
+    H --> I{Ratio > Threshold?}
+    I -->|Yes| J[Motion Detected]
+    I -->|No| K[No Motion]
+```
 
 ## Classes
 
@@ -79,22 +101,6 @@ Converts frame to grayscale and resizes to target dimensions.
 
 ## Algorithm Details
 
-### Motion Detection Pipeline
-
-```mermaid
-graph LR
-    A[Previous Frame] --> B[Convert to Gray]
-    C[Current Frame] --> D[Convert to Gray]
-    B --> E[Absolute Difference]
-    D --> E
-    E --> F[Gaussian Blur]
-    F --> G[Binary Threshold]
-    G --> H[Count Non-Zero]
-    H --> I{Ratio > Threshold?}
-    I -->|Yes| J[Motion Detected]
-    I -->|No| K[No Motion]
-```
-
 ### Parameters Tuning
 
 | Parameter       | Default | Purpose         | Effect                         |
@@ -131,4 +137,4 @@ for frame in video_frames:
 
 ---
 
-**File Location**: `../../../src/api/cv2_utils.py`
+**File Location**: `src/api/cv2_utils.py`

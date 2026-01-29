@@ -1,3 +1,9 @@
+---
+title: source/api/live-processing.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # source/api/live-processing.py
 
 #source-code #api #frame-processing #async
@@ -114,4 +120,4 @@ keypoints_detection_executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
 
 ---
 
-**File Location**: `../../../src/api/live_processing.py`
+**File Location**: `src/api/live_processing.py`

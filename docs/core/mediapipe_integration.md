@@ -1,3 +1,9 @@
+---
+title: MediaPipe Integration
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # MediaPipe Integration
 
 #core #mediapipe #computer-vision

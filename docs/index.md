@@ -1,3 +1,9 @@
+---
+title: Arabic Sign Language Recognition - Documentation
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Arabic Sign Language Recognition - Documentation
 
 Welcome to the comprehensive documentation for the **Word-Level Arabic Sign Language Recognition** project. This documentation is organized as an Obsidian vault with interconnected pages covering both high-level concepts and detailed source code documentation.

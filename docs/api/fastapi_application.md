@@ -1,3 +1,9 @@
+---
+title: FastAPI Application Structure
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # FastAPI Application Structure
 
 #api #fastapi #architecture
@@ -7,6 +13,25 @@ The backend of the Arabic Sign Language Recognition system is built using **Fast
 ## Overview
 
 The application is structured to serve both a RESTful API and a WebSocket interface for real-time communication. It is designed to be lightweight, asynchronous, and easily deployable via Docker.
+
+## Call Graph
+
+```mermaid
+graph TD
+    Client[Web Client]
+    App[FastAPI App]
+    Lifespan[Lifespan Manager]
+    Model[ONNX Model]
+    Static[Static Files]
+    WS[WebSocket Router]
+
+    Client -->|HTTP GET /| App
+    Client -->|WS Connect| WS
+    App -->|Startup| Lifespan
+    Lifespan -->|Load| Model
+    App -->|Serve| Static
+    App -->|Include| WS
+```
 
 ## Key Components
 
@@ -40,25 +65,6 @@ The application defines several types of routes:
     - A dedicated router is included for `ws_live_signs` to handle real-time inference.
 - **Utility**:
     - Endpoints for `favicon.ico` and Chrome DevTools configuration.
-
-## Call Graph
-
-```mermaid
-graph TD
-    Client[Web Client]
-    App[FastAPI App]
-    Lifespan[Lifespan Manager]
-    Model[ONNX Model]
-    Static[Static Files]
-    WS[WebSocket Router]
-
-    Client -->|HTTP GET /| App
-    Client -->|WS Connect| WS
-    App -->|Startup| Lifespan
-    Lifespan -->|Load| Model
-    App -->|Serve| Static
-    App -->|Include| WS
-```
 
 ## Related Documentation
 

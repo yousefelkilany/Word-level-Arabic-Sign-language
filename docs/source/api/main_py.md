@@ -1,3 +1,9 @@
+---
+title: source/api/main.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # source/api/main.py
 
 #source-code #api #fastapi #application
@@ -13,6 +19,28 @@ This module serves as the main entry point for the FastAPI application. It handl
 - CORS middleware configuration
 - Static file serving
 - Route definitions for the web interface
+
+## Call Graph
+
+```mermaid
+graph TD
+    A[FastAPI Framework] --> B[lifespan]
+    B --> C[load_onnx_model]
+    
+    D[Browser GET /] --> E[live_signs_ui]
+    E --> F[FileResponse]
+    
+    G[Browser GET /favicon.ico] --> H[favicon]
+    H --> F
+    
+    I[Chrome DevTools] --> J[chrome_devtools]
+    J --> K[JSONResponse]
+    
+    style B fill:#e1f5ff
+    style E fill:#e1f5ff
+    style H fill:#e1f5ff
+    style J fill:#e1f5ff
+```
 
 ## Dependencies
 
@@ -297,31 +325,9 @@ app.state.onnx_model: InferenceSession
 - [[../../source/frontend/index_html|index.html]] - Main HTML interface
 - [[../../source/frontend/live_signs_js|live-signs.js]] - Client-side logic
 
-## Call Graph
-
-```mermaid
-graph TD
-    A[FastAPI Framework] --> B[lifespan]
-    B --> C[load_onnx_model]
-    
-    D[Browser GET /] --> E[live_signs_ui]
-    E --> F[FileResponse]
-    
-    G[Browser GET /favicon.ico] --> H[favicon]
-    H --> F
-    
-    I[Chrome DevTools] --> J[chrome_devtools]
-    J --> K[JSONResponse]
-    
-    style B fill:#e1f5ff
-    style E fill:#e1f5ff
-    style H fill:#e1f5ff
-    style J fill:#e1f5ff
-```
-
 ---
 
-**File Location**: `../../../src/api/main.py`
+**File Location**: `src/api/main.py`
 
 **Lines of Code**: 61
 

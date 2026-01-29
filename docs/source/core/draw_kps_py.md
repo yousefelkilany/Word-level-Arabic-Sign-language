@@ -1,3 +1,9 @@
+---
+title: draw_kps.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # draw_kps.py
 
 #source #core #visualization #opencv

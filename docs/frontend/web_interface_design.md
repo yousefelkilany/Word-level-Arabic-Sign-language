@@ -1,3 +1,9 @@
+---
+title: Web Interface Design
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Web Interface Design
 
 #frontend #ui #ux #html #css

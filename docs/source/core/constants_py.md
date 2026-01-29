@@ -1,3 +1,9 @@
+---
+title: constants.py
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # constants.py
 
 #source #core #configuration #constants
@@ -14,6 +20,26 @@ Central configuration module that defines:
 - Model hyperparameters
 - Dataset parameters
 - Enumerations for data types
+
+## Path Configuration Logic
+
+```mermaid
+graph TD
+    A[LOCAL_DEV env var] --> B{LOCAL_DEV == 1?}
+    B -->|Yes| C[Use local paths]
+    B -->|No| D[Use Kaggle paths]
+    
+    C --> E[DATA_INPUT_DIR = ./data]
+    C --> F[DATA_OUTPUT_DIR = ./data]
+    
+    D --> G[DATA_INPUT_DIR = /kaggle/input]
+    D --> H[DATA_OUTPUT_DIR = /kaggle/working]
+    
+    E --> I[MODELS_DIR = ./data/models]
+    F --> I
+    G --> J[MODELS_DIR = /kaggle/working/models]
+    H --> J
+```
 
 ## Environment Variables
 
@@ -195,26 +221,6 @@ type KarslDatasetType = "LazyKArSLDataset" | "MmapKArSLDataset"
 ```
 
 **Purpose**: Type hint for dataset classes
-
-## Path Configuration Logic
-
-```mermaid
-graph TD
-    A[LOCAL_DEV env var] --> B{LOCAL_DEV == 1?}
-    B -->|Yes| C[Use local paths]
-    B -->|No| D[Use Kaggle paths]
-    
-    C --> E[DATA_INPUT_DIR = ./data]
-    C --> F[DATA_OUTPUT_DIR = ./data]
-    
-    D --> G[DATA_INPUT_DIR = /kaggle/input]
-    D --> H[DATA_OUTPUT_DIR = /kaggle/working]
-    
-    E --> I[MODELS_DIR = ./data/models]
-    F --> I
-    G --> J[MODELS_DIR = /kaggle/working/models]
-    H --> J
-```
 
 ## Usage Examples
 

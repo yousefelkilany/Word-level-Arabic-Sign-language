@@ -1,3 +1,9 @@
+---
+title: index.html
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # index.html
 
 #source #frontend #html #ui

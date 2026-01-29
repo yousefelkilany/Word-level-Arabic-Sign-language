@@ -1,3 +1,9 @@
+---
+title: Configuration Options (Constants)
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Configuration Options (Constants)
 
 #reference #configuration #constants

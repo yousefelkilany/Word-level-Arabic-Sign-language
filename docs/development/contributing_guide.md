@@ -1,3 +1,9 @@
+---
+title: Contributing Guide
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Contributing Guide
 
 #development #contributing #standards

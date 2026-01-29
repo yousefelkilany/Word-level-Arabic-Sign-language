@@ -1,3 +1,9 @@
+---
+title: Model Architecture Design
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Model Architecture Design
 
 #model #architecture #deep-learning
@@ -7,6 +13,21 @@ The core of the recognition system is a custom **Attention-based Bidirectional L
 ## Architecture Overview
 
 The model takes a sequence of spatial keypoints and outputs a probability distribution over the sign classes.
+
+## Diagram
+
+```mermaid
+graph TD
+    Input["Input Sequence (T,F)"] --> SGE[Spatial Group Embedding]
+    SGE --> L1[ResBiLSTM Block 1]
+    L1 --> L2[ResBiLSTM Block 2]
+    L2 --> L3[ResBiLSTM Block 3]
+    L3 --> L4[ResBiLSTM Block 4]
+    L4 --> Attn[Multihead Attention]
+    Attn --> Pool[Attention Pooling]
+    Pool --> FC[Classifier Head]
+    FC --> Softmax[Softmax Probabilities]
+```
 
 ### 1. Spatial Group Embedding (SGE)
 Before temporal processing, we independently project distinct body parts into a shared latent space. This allows the model to learn part-specific features.
@@ -32,21 +53,6 @@ Instead of simply taking the last hidden state (which loses early context) or av
 ### 4. Classification Head
 - **Dropout**: For regularization.
 - **Linear Layer**: Maps the pooled representation to `num_classes` logits.
-
-## Diagram
-
-```mermaid
-graph TD
-    Input[Input Sequence (T, F)] --> SGE[Spatial Group Embedding]
-    SGE --> L1[ResBiLSTM Block 1]
-    L1 --> L2[ResBiLSTM Block 2]
-    L2 --> L3[ResBiLSTM Block 3]
-    L3 --> L4[ResBiLSTM Block 4]
-    L4 --> Attn[Multihead Attention]
-    Attn --> Pool[Attention Pooling]
-    Pool --> FC[Classifier Head]
-    FC --> Softmax[Softmax Probabilities]
-```
 
 ## Related Documentation
 

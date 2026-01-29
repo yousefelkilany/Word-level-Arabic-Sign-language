@@ -1,3 +1,9 @@
+---
+title: Troubleshooting
+date: 2026-01-28
+lastmod: 2026-01-28
+---
+
 # Troubleshooting
 
 #reference #debug #troubleshooting
