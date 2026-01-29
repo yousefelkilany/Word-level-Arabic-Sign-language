@@ -20,6 +20,28 @@ This module serves as the main entry point for the FastAPI application. It handl
 - Static file serving
 - Route definitions for the web interface
 
+## Call Graph
+
+```mermaid
+graph TD
+    A[FastAPI Framework] --> B[lifespan]
+    B --> C[load_onnx_model]
+    
+    D[Browser GET /] --> E[live_signs_ui]
+    E --> F[FileResponse]
+    
+    G[Browser GET /favicon.ico] --> H[favicon]
+    H --> F
+    
+    I[Chrome DevTools] --> J[chrome_devtools]
+    J --> K[JSONResponse]
+    
+    style B fill:#e1f5ff
+    style E fill:#e1f5ff
+    style H fill:#e1f5ff
+    style J fill:#e1f5ff
+```
+
 ## Dependencies
 
 ```python
@@ -302,28 +324,6 @@ app.state.onnx_model: InferenceSession
 **Frontend**:
 - [[../../source/frontend/index_html|index.html]] - Main HTML interface
 - [[../../source/frontend/live_signs_js|live-signs.js]] - Client-side logic
-
-## Call Graph
-
-```mermaid
-graph TD
-    A[FastAPI Framework] --> B[lifespan]
-    B --> C[load_onnx_model]
-    
-    D[Browser GET /] --> E[live_signs_ui]
-    E --> F[FileResponse]
-    
-    G[Browser GET /favicon.ico] --> H[favicon]
-    H --> F
-    
-    I[Chrome DevTools] --> J[chrome_devtools]
-    J --> K[JSONResponse]
-    
-    style B fill:#e1f5ff
-    style E fill:#e1f5ff
-    style H fill:#e1f5ff
-    style J fill:#e1f5ff
-```
 
 ---
 

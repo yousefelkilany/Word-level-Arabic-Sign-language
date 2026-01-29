@@ -22,6 +22,25 @@ This module implements the core real-time recognition pipeline:
 5. Runs ONNX inference for sign classification
 6. Sends predictions back to client
 
+## State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Connected: WebSocket Accept
+    Connected --> Idle: No Motion (15 frames)
+    Idle --> Active: Motion Detected
+    Active --> Buffering: Keypoints Extracted
+    Buffering --> Inferring: Buffer >= 15 frames
+    Inferring --> Buffering: Continue Collecting
+    Inferring --> Sending: Consensus Reached
+    Sending --> Buffering: Prediction Sent
+    Buffering --> Idle: No Motion (15 frames)
+    Active --> Idle: No Motion (15 frames)
+    Idle --> [*]: Disconnect
+    Active --> [*]: Disconnect
+    Buffering --> [*]: Disconnect
+```
+
 ## Dependencies
 
 ```python
@@ -124,7 +143,9 @@ def get_default_state():
 @websocket_router.websocket("/live-signs")
 ```
 
-**Implementation Overview**:
+## Implementation Overview
+
+### **Flowchart**
 
 ```mermaid
 graph TD
@@ -415,25 +436,6 @@ try:
     await producer_task
 except asyncio.CancelledError:
     ...  # Expected when cancelling
-```
-
-## State Machine
-
-```mermaid
-stateDiagram-v2
-    [*] --> Connected: WebSocket Accept
-    Connected --> Idle: No Motion (15 frames)
-    Idle --> Active: Motion Detected
-    Active --> Buffering: Keypoints Extracted
-    Buffering --> Inferring: Buffer >= 15 frames
-    Inferring --> Buffering: Continue Collecting
-    Inferring --> Sending: Consensus Reached
-    Sending --> Buffering: Prediction Sent
-    Buffering --> Idle: No Motion (15 frames)
-    Active --> Idle: No Motion (15 frames)
-    Idle --> [*]: Disconnect
-    Active --> [*]: Disconnect
-    Buffering --> [*]: Disconnect
 ```
 
 ## Related Documentation

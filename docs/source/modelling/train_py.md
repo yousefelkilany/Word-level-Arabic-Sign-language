@@ -22,22 +22,27 @@ lastmod: 2026-01-28
 
 ```mermaid
 sequenceDiagram
-    participant Loop as Epoch Loop
-    participant Train as Training Step
-    participant Valid as Validation Step
+    participant Train as Model (Train)
+    participant Valid as Model (Eval)
     participant Check as Checkpointer
-    
-    Loop->>Train: Batch
-    Train->>Train: Forward (Autocast)
-    Train->>Train: Backward (Scaled)
-    Train->>Train: Optimizer Step
-    
-    Loop->>Valid: Batch (No Grad)
-    Valid->>Valid: Forward
-    Valid->>Loop: Val Loss
-    
-    Loop->>Check: Is Val Loss Best?
-    Check-->>Loop: Save Checkpoint
+
+    loop Every Epoch
+        rect rgb(20, 20, 30) %% Optional: Dark background for Training
+            Note over Train: Training Phase
+            Train->>Train: Forward (Autocast)
+            Train->>Train: Backward (Scaled)
+            Train->>Train: Optimizer Step
+        end
+
+        rect rgb(30, 20, 20) %% Optional: Dark background for Validation
+            Note over Valid: Validation Phase
+            Valid->>Valid: Forward (No Grad)
+        end
+        
+        opt Val Loss < Best Loss
+            Check-->>Check: Save State Dict
+        end
+    end
 ```
 
 ## Functions

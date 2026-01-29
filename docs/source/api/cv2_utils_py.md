@@ -12,6 +12,22 @@ lastmod: 2026-01-28
 
 **Purpose**: OpenCV utilities for motion detection in video frames.
 
+### Motion Detection Pipeline
+
+```mermaid
+graph LR
+    A[Previous Frame] --> B[Convert to Gray]
+    C[Current Frame] --> D[Convert to Gray]
+    B --> E[Absolute Difference]
+    D --> E
+    E --> F[Gaussian Blur]
+    F --> G[Binary Threshold]
+    G --> H[Count Non-Zero]
+    H --> I{Ratio > Threshold?}
+    I -->|Yes| J[Motion Detected]
+    I -->|No| K[No Motion]
+```
+
 ## Classes
 
 ### `MotionDetector`
@@ -84,22 +100,6 @@ Converts frame to grayscale and resizes to target dimensions.
 **Performance**: ~5-10ms per frame pair
 
 ## Algorithm Details
-
-### Motion Detection Pipeline
-
-```mermaid
-graph LR
-    A[Previous Frame] --> B[Convert to Gray]
-    C[Current Frame] --> D[Convert to Gray]
-    B --> E[Absolute Difference]
-    D --> E
-    E --> F[Gaussian Blur]
-    F --> G[Binary Threshold]
-    G --> H[Count Non-Zero]
-    H --> I{Ratio > Threshold?}
-    I -->|Yes| J[Motion Detected]
-    I -->|No| K[No Motion]
-```
 
 ### Parameters Tuning
 

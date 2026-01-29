@@ -14,6 +14,30 @@ Real-time sign language recognition relies on a persistent, low-latency communic
 
 The communication is bidirectional but primarily driven by the client sending video frames and the server responding with inference results.
 
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant C as Client (Browser)
+    participant S as Server (FastAPI)
+    participant M as Model (ONNX)
+
+    C->>S: WebSocket Connect
+    S-->>C: Accept
+    loop Video Stream
+        C->>S: Binary Frame (JPEG)
+        S->>S: Decode & Analyze Motion
+        alt Motion Detected
+            S->>S: Buffer Frame
+            alt Buffer Full / Sequence Ready
+                S->>M: Run Inference (Async)
+                M-->>S: Sign ID
+                S-->>C: JSON Prediction "SignName"
+            end
+        end
+    end
+```
+
 ### Connection Lifecycle
 
 1.  **Handshake**: The client initiates a connection to `/live-signs`.
@@ -63,30 +87,6 @@ To maintain real-time performance, the server utilizes **asynchronous programmin
 
 - **Async/Await**: Used for handling WebSocket I/O (receiving frames, sending responses) without blocking the event loop.
 - **Thread Pool (`run_in_executor`)**: CPU-intensive tasks like image decoding (`cv2.imdecode`), preprocessing, and model inference are offloaded to a thread pool. This prevents the main event loop from freezing, ensuring the server remains responsive to ping/pong frames and other connections.
-
-## Sequence Diagram
-
-```mermaid
-sequenceDiagram
-    participant C as Client (Browser)
-    participant S as Server (FastAPI)
-    participant M as Model (ONNX)
-
-    C->>S: WebSocket Connect
-    S-->>C: Accept
-    loop Video Stream
-        C->>S: Binary Frame (JPEG)
-        S->>S: Decode & Analyze Motion
-        alt Motion Detected
-            S->>S: Buffer Frame
-            alt Buffer Full / Sequence Ready
-                S->>M: Run Inference (Async)
-                M-->>S: Sign ID
-                S-->>C: JSON Prediction "SignName"
-            end
-        end
-    end
-```
 
 ## Related Documentation
 

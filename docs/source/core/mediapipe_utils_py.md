@@ -16,6 +16,18 @@ lastmod: 2026-01-28
 
 Handles the initialization and concurrent execution of MediaPipe's `PoseLandmarker`, `FaceLandmarker`, and `HandLandmarker`. It normalizes the extraction process across different input types (Image vs Video).
 
+## Setup Logic
+
+```mermaid
+graph TD
+    A[Init] --> B{Inference Mode?}
+    B -->|True| C[RunningMode.VIDEO]
+    B -->|False| D[RunningMode.IMAGE]
+    C --> E[Load Task Files]
+    D --> E
+    E --> F[Create Landmarkers]
+```
+
 ### Key Features
 - **Concurrent Extraction**: Uses `ThreadPoolExecutor` to run landmarkers in parallel.
 - **Normalization**: Indices mapping for specific body parts.
@@ -57,18 +69,6 @@ Initializes logger and definition references.
 3. Waits for all results.
 4. Aggregates results into a single `(N, 4)` numpy array `[x, y, z, visibility]`.
 5. **Adjusted Mode**: If `True`, normalizes points relative to a reference (e.g., Nose) and scales by a body-part metric (e.g., Shoulder width).
-
-## Setup Logic
-
-```mermaid
-graph TD
-    A[Init] --> B{Inference Mode?}
-    B -->|True| C[RunningMode.VIDEO]
-    B -->|False| D[RunningMode.IMAGE]
-    C --> E[Load Task Files]
-    D --> E
-    E --> F[Create Landmarkers]
-```
 
 ## Related Documentation
 

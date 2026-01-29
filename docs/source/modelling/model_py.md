@@ -18,7 +18,7 @@ The model uses a **Spatial-Temporal** architecture combining embeddings for body
 
 ```mermaid
 graph TD
-    Input[Input Tensor\n(Batch, Seq, Feat)] --> Embed[Spatial Group Embedding]
+    Input["Input Tensor (Batch, Seq, Feat)"] --> Embed[Spatial Group Embedding]
     Embed --> BiLSTM[Residual BiLSTM Blocks]
     BiLSTM --> Attn[Multi-Head Self Attention]
     Attn --> Pool[Attention Pooling]

@@ -12,6 +12,20 @@ lastmod: 2026-01-28
 
 **Purpose**: Manages the client-side logic for frame capture, WebSocket communication, UI updates, and session management.
 
+## Frame Processing Loop Diagram
+
+```mermaid
+graph TD
+    A[RequestAnimationFrame] --> B{Elapsed > Interval?}
+    B -->|No| A
+    B -->|Yes| C{Socket Open & Ready?}
+    C -->|No| A
+    C -->|Yes| D[Draw Video to Canvas]
+    D --> E[Canvas.toBlob]
+    E --> F["Socket.send(blob)"]
+    F --> A
+```
+
 ## State Management
 
 Maintains the application state in a global object:
@@ -33,22 +47,6 @@ let state = {
 - **`fps`**: Target frame rate (30).
 - **`processWidth`**: Canvas width for resizing frames before sending (320px).
 - **`jpgQuality`**: JPEG compression level (0.7).
-
-## Component Diagrams
-
-### Frame Processing Loop
-
-```mermaid
-graph TD
-    A[RequestAnimationFrame] --> B{Elapsed > Interval?}
-    B -->|No| A
-    B -->|Yes| C{Socket Open & Ready?}
-    C -->|No| A
-    C -->|Yes| D[Draw Video to Canvas]
-    D --> E[Canvas.toBlob]
-    E --> F[Socket.send(blob)]
-    F --> A
-```
 
 ## Functions
 

@@ -10,6 +10,27 @@ lastmod: 2026-01-28
 
 Visualizing the extracted keypoints is essential for debugging the pipeline, validating model input, and providing user feedback (e.g., "Skeleton" overlay on the video feed).
 
+## Structure
+
+```mermaid
+graph TD
+    A[Keypoints Vector] -->|Slice| B[Pose Kps]
+    A -->|Slice| C[Face Kps]
+    A -->|Slice| D[Hand Kps]
+    
+    B -->|Proto Convert| E[MP Landmarks]
+    C -->|Proto Convert| F[MP Landmarks]
+    D -->|Proto Convert| G[MP Landmarks]
+    
+    H[Raw Image] --> I[Draw Pose]
+    E --> I
+    I --> J[Draw Face]
+    F --> J
+    J --> K[Draw Hands]
+    G --> K
+    K --> L[Annotated Image]
+```
+
 ## Visualization Strategy
 
 The `draw_kps.py` module provides utilities to draw landmarks and their connections directly onto OpenCV images.
@@ -47,27 +68,6 @@ This is used in:
 - **Training Visualization**: To inspect the data being fed into the model.
 - **Data Preparation**: To verify the correctness of the dataset creation logic.
 - **Frontend Debugging**: Optionally sent back to the client to visualize what the server "sees".
-
-## Structure
-
-```mermaid
-graph TD
-    A[Keypoints Vector] -->|Slice| B[Pose Kps]
-    A -->|Slice| C[Face Kps]
-    A -->|Slice| D[Hand Kps]
-    
-    B -->|Proto Convert| E[MP Landmarks]
-    C -->|Proto Convert| F[MP Landmarks]
-    D -->|Proto Convert| G[MP Landmarks]
-    
-    H[Raw Image] --> I[Draw Pose]
-    E --> I
-    I --> J[Draw Face]
-    F --> J
-    J --> K[Draw Hands]
-    G --> K
-    K --> L[Annotated Image]
-```
 
 ## Related Documentation
 

@@ -10,6 +10,21 @@ lastmod: 2026-01-28
 
 The **Live Processing Pipeline** is the engine that converts a stream of raw video frames into meaningful sign language predictions. It orchestrates frame decoding, motion detection, buffering, keypoint extraction, and model inference.
 
+## Processing Flow
+
+```mermaid
+graph LR
+    A[Raw Bytes] -->|Decode| B[BGR Image]
+    B -->|Check| C{Motion?}
+    C -- No --> D[Discard/Reset]
+    C -- Yes --> E[Frame Buffer]
+    E -->|Full?| F{Ready?}
+    F -- No --> B
+    F -- Yes --> G[MediaPipe]
+    G -->|Keypoints| H[ONNX Model]
+    H -->|Probabilities| I[Prediction]
+```
+
 ## Pipeline Stages
 
 ### 1. Frame Acquisition
@@ -52,21 +67,6 @@ The extracted keypoints are formatted into a tensor and passed to the **ONNX Run
 ### 6. Post-Processing
 - **Decoding**: The class index with the highest probability is mapped to its text label (e.g., "HELLO").
 - **Confidence Threshold**: Predictions below a certain confidence score (e.g., 0.6) are discarded or marked as "Unknown".
-
-## Processing Flow
-
-```mermaid
-graph LR
-    A[Raw Bytes] -->|Decode| B[BGR Image]
-    B -->|Check| C{Motion?}
-    C -- No --> D[Discard/Reset]
-    C -- Yes --> E[Frame Buffer]
-    E -->|Full?| F{Ready?}
-    F -- No --> B
-    F -- Yes --> G[MediaPipe]
-    G -->|Keypoints| H[ONNX Model]
-    H -->|Probabilities| I[Prediction]
-```
 
 ## Related Documentation
 
