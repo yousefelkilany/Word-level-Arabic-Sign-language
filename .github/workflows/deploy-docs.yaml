@@ -1,0 +1,77 @@
+name: Deploy Docs to Cloudflare
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/**"
+      - "quartz-config/**"
+      - ".github/workflows/deploy-docs.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v4
+
+      - name: Clone quartz-fork
+        run: git clone -b main https://github.com/yousefelkilany/quartz-fork quartz
+
+      - name: Copy docs and config to quartz
+        run: |
+          rm -rf quartz/content/*
+          cp -r docs/* quartz/content/
+          cp quartz-config/quartz.config.ts quartz/
+          cp quartz-config/quartz.layout.ts quartz/
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: quartz/node_modules
+          key: ${{ runner.os }}-quartz-${{ hashFiles('quartz/package-lock.json') }}
+
+      - name: Install dependencies
+        working-directory: quartz
+        run: npm ci
+
+      - name: Build Quartz
+        working-directory: quartz
+        run: npx quartz build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: quartz/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: public
+
+      - name: Deploy to Cloudflare Pages
+        uses: AdrianGonz97/refined-cf-pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          projectName: quartz
+          directory: public
