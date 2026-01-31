@@ -51,3 +51,22 @@ def get_default_logger() -> logging.Logger:
     default_logger.setLevel(logging.DEBUG)
 
     return default_logger
+
+
+def is_git_lfs_pointer(filepath):
+    """
+    Checks if a file is a Git LFS pointer file based on its content signature.
+    """
+    LFS_POINTER_PREFIX = b"version https://git-lfs.github.com"
+
+    if not os.path.exists(filepath):
+        print(f"File not found: {filepath}")
+        return False
+
+    try:
+        with open(filepath, "rb") as f:
+            initial_bytes = f.read(50)
+        return initial_bytes.startswith(LFS_POINTER_PREFIX)
+    except IOError as e:
+        print(f"Error reading file {filepath}: {e}")
+        return False

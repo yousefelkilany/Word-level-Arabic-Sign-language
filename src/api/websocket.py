@@ -9,7 +9,7 @@ import torch
 from torch import nn
 
 from api.cv2_utils import MotionDetector
-from api.live_processing import FrameBuffer, get_frame_kps, producer_handler
+from api.live_processing import get_frame_kps, producer_handler
 from core.constants import SEQ_LEN
 from core.mediapipe_utils import LandmarkerProcessor
 from core.utils import AR_WORDS, EN_WORDS, get_default_logger
@@ -19,10 +19,10 @@ logger = get_default_logger()
 
 NUM_IDLE_FRAMES = 15
 HISTORY_LEN = 5
-HISTORY_THRESHOLD = 4
+HISTORY_THRESHOLD = 2
 MIN_SIGN_FRAMES = 15
 MAX_SIGN_FRAMES = SEQ_LEN
-CONFIDENCE_THRESHOLD = 0.4
+CONFIDENCE_THRESHOLD = 0.7
 EXT_FRAME = ".jpg"
 
 websocket_router = fastapi.APIRouter()
@@ -46,33 +46,19 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
     client_buffer = []
     client_state = get_default_state()
 
-    frame_buffer = FrameBuffer(MAX_SIGN_FRAMES)
+    frame_buffer = asyncio.Queue(MAX_SIGN_FRAMES)
     producer_task = asyncio.create_task(producer_handler(websocket, frame_buffer))
 
     motion_detector = MotionDetector()
-    mp_processor: LandmarkerProcessor = await LandmarkerProcessor.create(True)
+    mp_processor = await LandmarkerProcessor.create_async(None, True)
 
     start_time = int(time.time())
     last_processed_ts = start_time
     prev_gray = np.array([])
-    current_proc_idx = 0
 
     try:
         while True:
-            if producer_task.done():
-                break
-
-            if frame_buffer.latest_idx < current_proc_idx:
-                await asyncio.sleep(0.001)
-                continue
-
-            oldest_avail = frame_buffer.oldest_idx
-            if current_proc_idx < oldest_avail:
-                current_proc_idx = oldest_avail
-
-            frame = frame_buffer.get_frame(current_proc_idx)
-            current_proc_idx += 1
-
+            frame = await frame_buffer.get()
             if frame is None or frame.size == 0:
                 continue
 
@@ -134,7 +120,6 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
                     if confidence > CONFIDENCE_THRESHOLD:
                         client_state["sign_history"].append(pred_idx)
 
-                    if len(client_state["sign_history"]) == HISTORY_LEN:
                         most_common_sign, sign_count = Counter(
                             client_state["sign_history"]
                         ).most_common(1)[0]
@@ -175,7 +160,6 @@ async def ws_live_signs(websocket: fastapi.WebSocket):
         except asyncio.CancelledError:
             ...
 
-        frame_buffer.clear()
         mp_processor.close()
 
         gc.collect()

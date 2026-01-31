@@ -113,7 +113,7 @@ class LandmarkerProcessor:
     @classmethod
     async def create_async(
         cls, landmarkers: Optional[list[str]] = None, inference_mode: bool = False
-    ):
+    ) -> "LandmarkerProcessor":
         self = cls()
         self.landmarkers = landmarkers or ["pose", "face", "hands"]
         await asyncio.to_thread(self.init_mediapipe_landmarkers, inference_mode)

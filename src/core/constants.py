@@ -7,7 +7,7 @@ from torch.cuda import is_available as cuda_is_available
 
 use_gpu = os.environ.get("USE_CPU", "0") == "0" and cuda_is_available()
 DEVICE = ["cpu", "cuda"][int(use_gpu)]
-LOCAL_DEV = int(os.environ.get("LOCAL_DEV", 0))
+LOCAL_DEV = int(os.environ.get("LOCAL_DEV", 1))
 PROJECT_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 LOGS_DIR = os_join(PROJECT_ROOT_DIR, "logs")
 LANDMARKERS_DIR = os_join(PROJECT_ROOT_DIR, "landmarkers")

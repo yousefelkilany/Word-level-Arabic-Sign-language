@@ -18,7 +18,10 @@ ARGS_NPZ += $(if $(filter 1,$(adjusted)),--adjusted)
 
 ARGS_TRAIN += $(if $(epochs),--epochs $(epochs))
 
-.PHONY: train parallel_train export_onnx onnx_benchmark visualize_metrics prepare_npz_kps preprocess_mmap_data visualization_dashboard generate_face_map
+.PHONY: download_lfs_files prepare_npz_kps preprocess_mmap_data train parallel_train export_onnx onnx_benchmark visualize_metrics visualization_dashboard generate_face_map
+
+download_lfs_files: # models, landmarkers
+	git lfs pull
 
 prepare_npz_kps:
 	$(RUN_CMD) data.prepare_npz_kps $(ARGS_NPZ)

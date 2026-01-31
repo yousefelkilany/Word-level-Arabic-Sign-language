@@ -1,7 +1,6 @@
 import asyncio
 import time
 from concurrent.futures import ThreadPoolExecutor
-from typing import Optional
 
 import cv2
 import numpy as np
@@ -11,41 +10,9 @@ from core.mediapipe_utils import LandmarkerProcessor
 from core.utils import get_default_logger
 
 
-class FrameBuffer:
-    def __init__(self, max_size):
-        self._frames: dict[int, np.ndarray] = {}
-        self._max_size = max_size
-        self._latest_idx = -1
-        self.logger = get_default_logger()
-
-    def add_frame(self, frame):
-        self._latest_idx += 1
-        self._frames[self._latest_idx] = frame
-        if len(self._frames) > self._max_size:
-            oldest = self.oldest_idx
-            if oldest != -1 and oldest in self._frames:
-                del self._frames[oldest]
-
-    def get_frame(self, idx) -> Optional[np.ndarray]:
-        return self._frames.get(idx)
-
-    @property
-    def latest_idx(self):
-        return self._latest_idx
-
-    @property
-    def oldest_idx(self):
-        if not self._frames:
-            return -1
-        return min(self._frames.keys())
-
-    def clear(self):
-        self._frames.clear()
-        self._latest_idx = -1
-
-
-async def producer_handler(websocket, buffer: FrameBuffer):
-    buffer.logger.info(f"Producer: Started at {time.time()}")
+async def producer_handler(websocket, buffer: asyncio.Queue):
+    logger = get_default_logger()
+    logger.info(f"Producer started at {time.time()}")
     try:
         while True:
             data = await websocket.receive_bytes()
@@ -55,12 +22,22 @@ async def producer_handler(websocket, buffer: FrameBuffer):
                 cv2.IMREAD_COLOR,  # type: ignore
             )
             if frame is not None:
-                buffer.add_frame(frame)
+                if buffer.full():
+                    try:
+                        buffer.get_nowait()
+                    except asyncio.QueueEmpty:
+                        ...
+
+                await buffer.put(frame)
             else:
-                buffer.logger.error(f"new bad frame recieved at {time.time()}")
+                logger.error(f"new bad frame recieved at {time.time()}")
 
     except Exception as e:
-        buffer.logger.error(f"Producer stopped: {e}")
+        logger.error(f"Producer stopped: {e}")
+
+    finally:
+        await buffer.put(None)
+        logger.info(f"Producer stopped normally at {time.time()}")
 
 
 keypoints_detection_executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
