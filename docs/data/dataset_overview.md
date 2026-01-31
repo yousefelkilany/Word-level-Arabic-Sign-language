@@ -2,6 +2,7 @@
 title: Dataset Overview
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["KArSL Dataset Info", "Data Source Description"]
 ---
 
 # Dataset Overview

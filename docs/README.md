@@ -2,6 +2,7 @@
 title: Documentation Overview
 date: 2026-01-28
 lastmod: 2026-01-29
+aliases: ["Project Overview", "Main Readme"]
 ---
 
 # KArSL-502 Documentation

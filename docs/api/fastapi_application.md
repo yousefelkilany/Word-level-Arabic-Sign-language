@@ -2,6 +2,7 @@
 title: FastAPI Application Structure
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Backend Web Framework", "Server Structure"]
 ---
 
 # FastAPI Application Structure

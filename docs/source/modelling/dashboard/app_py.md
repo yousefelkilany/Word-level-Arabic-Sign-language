@@ -2,6 +2,7 @@
 title: source/modelling/dashboard/app.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Dashboard Entry Point", "Streamlit App Main"]
 ---
 
 # source/modelling/dashboard/app.py

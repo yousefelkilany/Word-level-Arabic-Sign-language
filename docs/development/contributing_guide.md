@@ -2,6 +2,7 @@
 title: Contributing Guide
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Developer Onboarding", "Contribution Standards"]
 ---
 
 # Contributing Guide

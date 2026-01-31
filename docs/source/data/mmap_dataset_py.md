@@ -2,11 +2,12 @@
 title: mmap_dataset.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Memory-mapped Dataset", "High-performance PyTorch Dataset"]
 ---
 
 # mmap_dataset.py
 
-# source #data #pytorch #performance
+#source #data #pytorch #performance
 
 **File Path**: `src/data/mmap_dataset.py`
 

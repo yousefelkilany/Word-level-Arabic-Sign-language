@@ -2,6 +2,7 @@
 title: parallel_train.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Distributed Training Launcher", "Multi-GPU Training Script"]
 ---
 
 # parallel_train.py

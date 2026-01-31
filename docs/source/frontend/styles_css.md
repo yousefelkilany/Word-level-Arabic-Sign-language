@@ -2,6 +2,7 @@
 title: styles.css
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["App Look and Feel", "CSS Design Tokens"]
 ---
 
 # styles.css

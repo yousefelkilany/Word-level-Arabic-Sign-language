@@ -2,6 +2,7 @@
 title: Class Index
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Classes Reference", "OOP Index"]
 ---
 
 # Class Index

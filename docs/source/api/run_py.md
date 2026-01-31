@@ -2,6 +2,7 @@
 title: run.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Application Server Entry", "Uvicorn Runner"]
 ---
 
 # run.py

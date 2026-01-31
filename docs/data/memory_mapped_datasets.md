@@ -2,6 +2,7 @@
 title: Memory-Mapped Datasets
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Memory Mapping Guide", "Optimized Data Loading"]
 ---
 
 # Memory-Mapped Datasets

@@ -2,6 +2,7 @@
 title: utils.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["General Utilities", "Logger Configuration"]
 ---
 
 # utils.py

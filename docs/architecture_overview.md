@@ -2,6 +2,7 @@
 title: Architecture Overview
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["System Design", "Technical Architecture"]
 ---
 
 # Architecture Overview

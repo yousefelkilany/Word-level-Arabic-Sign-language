@@ -2,6 +2,7 @@
 title: Configuration Options (Constants)
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["System Constants", "Application Settings"]
 ---
 
 # Configuration Options (Constants)

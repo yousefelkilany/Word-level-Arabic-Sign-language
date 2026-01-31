@@ -2,6 +2,7 @@
 title: docker-compose.yml
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Docker Orchestration", "Service Configuration"]
 ---
 
 # docker-compose.yml

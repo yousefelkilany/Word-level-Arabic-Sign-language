@@ -2,6 +2,7 @@
 title: Web Interface Design
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Frontend UI/UX", "Web Application View"]
 ---
 
 # Web Interface Design

@@ -2,6 +2,7 @@
 title: source/modelling/dashboard/visualization.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["3D Skeleton Plotting", "Interactive Plotly Visualizer"]
 ---
 
 # source/modelling/dashboard/visualization.py

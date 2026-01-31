@@ -2,6 +2,7 @@
 title: Arabic Sign Language Recognition - Documentation
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Documentation Home", "Obsidian Vault Entry"]
 ---
 
 # Arabic Sign Language Recognition - Documentation

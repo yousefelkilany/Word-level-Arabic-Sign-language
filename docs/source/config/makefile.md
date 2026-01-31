@@ -2,6 +2,7 @@
 title: Makefile
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Task Runner", "Development Shortcuts"]
 ---
 
 # Makefile

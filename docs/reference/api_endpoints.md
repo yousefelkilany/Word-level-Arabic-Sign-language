@@ -2,6 +2,7 @@
 title: API Endpoints
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["API Reference", "System Endpoints"]
 ---
 
 # API Endpoints

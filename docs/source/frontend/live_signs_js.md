@@ -2,6 +2,7 @@
 title: live_signs.js
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Frontend Interaction Logic", "Client-side WebSocket Client"]
 ---
 
 # live_signs.js

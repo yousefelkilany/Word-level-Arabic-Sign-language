@@ -2,6 +2,7 @@
 title: draw_kps.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Landmark Visualization", "Keypoint Drawing Utilities"]
 ---
 
 # draw_kps.py

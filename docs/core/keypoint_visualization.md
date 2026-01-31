@@ -2,6 +2,7 @@
 title: Keypoint Visualization
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Skeleton Drawing", "Debug Visuals"]
 ---
 
 # Keypoint Visualization

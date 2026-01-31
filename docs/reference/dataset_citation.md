@@ -2,6 +2,7 @@
 title: Dataset Citation
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Cite KArSL", "Dataset Attribution"]
 ---
 
 # Dataset Citation

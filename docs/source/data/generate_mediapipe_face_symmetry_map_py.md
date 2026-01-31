@@ -2,6 +2,7 @@
 title: source/data/generate_mediapipe_face_symmetry_map.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Face Symmetry Mapping", "Horizontal Flip Mapping Generator"]
 ---
 
 # source/data/generate_mediapipe_face_symmetry_map.py

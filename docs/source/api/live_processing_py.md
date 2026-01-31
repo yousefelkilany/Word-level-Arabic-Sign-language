@@ -2,6 +2,7 @@
 title: source/api/live-processing.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Frame Buffer Management", "Asynchronous Keypoint Extraction"]
 ---
 
 # source/api/live-processing.py

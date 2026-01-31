@@ -2,6 +2,7 @@
 title: Getting Started
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Installation Guide", "Quick Start Setup"]
 ---
 
 # Getting Started

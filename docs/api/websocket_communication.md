@@ -2,6 +2,7 @@
 title: WebSocket Communication Protocol
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["WebSocket API", "Real-time Protocol"]
 ---
 
 # WebSocket Communication Protocol

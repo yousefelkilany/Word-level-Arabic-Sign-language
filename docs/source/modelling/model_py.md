@@ -2,6 +2,7 @@
 title: model.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Deep Learning Architecture", "Spatial-Temporal Model Definition"]
 ---
 
 # model.py

@@ -2,6 +2,7 @@
 title: Function Index
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Functions Reference", "API Methods Index"]
 ---
 
 # Function Index

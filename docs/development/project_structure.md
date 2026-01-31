@@ -2,6 +2,7 @@
 title: Project Structure
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Codebase Layout", "Directory Organization"]
 ---
 
 # Project Structure

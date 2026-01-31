@@ -2,6 +2,7 @@
 title: WebSocket Client Implementation
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Client-side WebSocket", "Frontend Communications"]
 ---
 
 # WebSocket Client Implementation

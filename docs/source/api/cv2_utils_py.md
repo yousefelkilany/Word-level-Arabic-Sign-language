@@ -2,6 +2,7 @@
 title: source/api/cv2-utils.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["OpenCV Utilities", "Motion Detection Utilities"]
 ---
 
 # source/api/cv2-utils.py

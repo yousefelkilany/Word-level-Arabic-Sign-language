@@ -2,6 +2,7 @@
 title: Environment Configuration
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Env Vars Settings", "App Configuration"]
 ---
 
 # Environment Configuration

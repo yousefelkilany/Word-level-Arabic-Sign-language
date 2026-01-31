@@ -2,6 +2,7 @@
 title: MediaPipe Integration
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Feature Extraction Engine", "Landmark Detection"]
 ---
 
 # MediaPipe Integration

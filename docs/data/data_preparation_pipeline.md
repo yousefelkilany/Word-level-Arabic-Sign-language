@@ -2,6 +2,7 @@
 title: Data Preparation Pipeline
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Preprocessing Workflow", "Data Transformation Stage"]
 ---
 
 # Data Preparation Pipeline

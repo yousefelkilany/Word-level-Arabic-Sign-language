@@ -2,6 +2,7 @@
 title: index.html
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Main Application Layout", "SPA Structure"]
 ---
 
 # index.html

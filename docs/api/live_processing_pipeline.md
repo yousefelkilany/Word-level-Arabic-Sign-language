@@ -2,6 +2,7 @@
 title: Live Processing Pipeline
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Inference Pipeline", "Frame Processing Workflow"]
 ---
 
 # Live Processing Pipeline

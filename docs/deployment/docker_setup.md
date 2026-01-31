@@ -2,6 +2,7 @@
 title: Docker Setup
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Containerization Guide", "Docker Deployment"]
 ---
 
 # Docker Setup

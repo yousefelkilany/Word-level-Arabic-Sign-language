@@ -2,6 +2,7 @@
 title: source/api/websocket.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Real-time WebSocket Handler", "Sign Recognition Pipeline"]
 ---
 
 # source/api/websocket.py
@@ -148,7 +149,7 @@ def get_default_state():
 ### **Flowchart**
 
 ```mermaid
-graph TD
+graph LR
     A[Accept Connection] --> B[Initialize State]
     B --> C[Create Frame Buffer]
     C --> D[Start Producer Task]

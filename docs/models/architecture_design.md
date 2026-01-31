@@ -2,6 +2,7 @@
 title: Model Architecture Design
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Neural Network Design", "BiLSTM Model Structure"]
 ---
 
 # Model Architecture Design

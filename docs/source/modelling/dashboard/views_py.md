@@ -2,6 +2,7 @@
 title: source/modelling/dashboard/views.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Dashboard Tabs Rendering", "UI View Components"]
 ---
 
 # source/modelling/dashboard/views.py

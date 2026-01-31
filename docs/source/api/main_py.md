@@ -2,6 +2,7 @@
 title: source/api/main.py
 date: 2026-01-28
 lastmod: 2026-01-28
+aliases: ["Application Entry Point", "Lifespan Manager"]
 ---
 
 # source/api/main.py
