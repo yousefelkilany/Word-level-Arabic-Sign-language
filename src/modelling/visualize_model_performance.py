@@ -1,4 +1,3 @@
-import argparse
 import os
 
 import matplotlib.pyplot as plt
@@ -9,13 +8,16 @@ import torch
 from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
 
-from core.constants import DEVICE, DatasetType, SplitType
-from core.utils import extract_num_signs_from_checkpoint
+from core.constants import DEVICE, DatasetType, SplitType, get_model_size
+from core.utils import extract_metadata_from_checkpoint
 from data.dataloader import prepare_dataloader
 from modelling.model import load_model
+from modelling.onnx_benchmark import onnx_cli
 
 
-def visualize_metrics(checkpoint_path, test_dl, device=DEVICE, top_k_errors=20):
+def visualize_metrics(
+    checkpoint_path, num_signs, model_metadata, test_dl, device=DEVICE, top_k_errors=20
+):
     """
     Generates a 3-part dashboard:
     1. A clean Heatmap (no text) to see overall diagonal sharpness.
@@ -25,7 +27,12 @@ def visualize_metrics(checkpoint_path, test_dl, device=DEVICE, top_k_errors=20):
 
     print("Generating predictions for metrics...")
 
-    model = load_model(checkpoint_path, device=device)
+    model = load_model(
+        checkpoint_path,
+        num_signs=num_signs,
+        model_size=get_model_size(model_metadata),
+        device=device,
+    )
     model.eval()
 
     y_true, y_pred = [], []
@@ -104,7 +111,7 @@ def visualize_metrics(checkpoint_path, test_dl, device=DEVICE, top_k_errors=20):
     plt.tight_layout()
     checkpoint_dir = os.path.dirname(checkpoint_path)
     save_path = os.path.join(
-        checkpoint_dir, f"{os.path.basename(checkpoint_path)} - Model_Diagnostics.jpg"
+        checkpoint_dir, f"{os.path.basename(checkpoint_path)}-Model_Diagnostics.jpg"
     )
     plt.savefig(save_path, dpi=150)
     print(f"✅ Saved visual diagnostics to {save_path}")
@@ -118,15 +125,18 @@ def visualize_metrics(checkpoint_path, test_dl, device=DEVICE, top_k_errors=20):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--checkpoint_path", type=str, required=True)
-    args = parser.parse_args()
+    cli_args = onnx_cli()
+    metadata = extract_metadata_from_checkpoint(cli_args.checkpoint_path)
+    if metadata:
+        num_signs, model_metadata = metadata
 
-    num_signs = extract_num_signs_from_checkpoint(args.checkpoint_path)
-    if not num_signs:
-        raise ValueError("Number of signs not found in checkpoint path")
+    num_signs = num_signs or cli_args.num_signs
+    model_metadata = model_metadata or cli_args.model_metadata
+
+    if not (num_signs and model_metadata):
+        raise ValueError("Metadata not found in checkpoint path")
 
     test_dl = prepare_dataloader(
         DatasetType.lazy, SplitType.test, signs=range(1, 1 + num_signs)
     )
-    visualize_metrics(args.checkpoint_path, test_dl)
+    visualize_metrics(cli_args.checkpoint_path, num_signs, model_metadata, test_dl)

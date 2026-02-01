@@ -3,7 +3,13 @@ import json
 import logging
 from typing import Optional
 
-from core.constants import LABELS_JSON_PATH, LOGS_DIR, os_join
+from core.constants import (
+    LABELS_JSON_PATH,
+    LOGS_DIR,
+    os_join,
+    ModelSize,
+    get_model_size,
+)
 
 
 def init_signs() -> tuple[list[str], list[str]]:
@@ -15,18 +21,22 @@ def init_signs() -> tuple[list[str], list[str]]:
 AR_WORDS, EN_WORDS = init_signs()
 
 
-def extract_num_signs_from_checkpoint(checkpoint_path) -> Optional[int]:
+def extract_metadata_from_checkpoint(
+    checkpoint_path,
+) -> Optional[tuple[int, ModelSize]]:
     import re
 
-    matches = re.search(r".*?signs_(\d+).*?", checkpoint_path)
-    if not matches:
+    matches = re.search(r".*?signs_(\d+)_(\w_\d_\d).*?", checkpoint_path)
+    if not matches or len(matches.groups()) != 2:
         raise ValueError(
-            f"Couldn't find number of signs in checkpoint path: {checkpoint_path}"
+            f"Couldn't find number of signs or model size in checkpoint path: {checkpoint_path}"
         )
 
     num_signs = int(matches.groups()[0])
+    model_metadata = get_model_size(matches.groups()[1])
     print(f"Number of signs in checkpoint: {num_signs}")
-    return num_signs
+    print(f"Model size in checkpoint: {model_metadata}")
+    return num_signs, model_metadata
 
 
 default_logger = None

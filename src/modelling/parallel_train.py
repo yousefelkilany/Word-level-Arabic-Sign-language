@@ -9,8 +9,8 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader, random_split
 from torch.utils.data.distributed import DistributedSampler
 
-from core.constants import DatasetType, SplitType
-from data import DataAugmentor, LazyKArSLDataset
+from core.constants import DatasetType, SplitType, get_model_size
+from data import DataAugmentor, MmapKArSLDataset
 from data.dataloader import prepare_dataloader
 from modelling.model import get_model_instance
 from modelling.train import train, train_cli, visualize_metrics
@@ -28,14 +28,14 @@ def cleanup():
     dist.destroy_process_group()
 
 
-def run_training(rank, world_size, signers, signs, num_epochs):
+def run_training(rank, world_size, signers, signs, num_epochs, model_size):
     torch.cuda.set_device(rank)
     device = torch.device(f"cuda:{rank}")
 
     torch.manual_seed(42)
 
     batch_size = 64
-    dataset = LazyKArSLDataset(
+    dataset = MmapKArSLDataset(
         SplitType.train, signers=signers, signs=signs, transforms=DataAugmentor()
     )
     train_size = int(len(dataset) * 0.8)
@@ -64,7 +64,7 @@ def run_training(rank, world_size, signers, signs, num_epochs):
         num_workers=4,
     )
 
-    model = get_model_instance(signs, device=device)
+    model = get_model_instance(signs, model_size, device=device)
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
     model = DDP(model, device_ids=[rank])
 
@@ -100,13 +100,14 @@ def run_training(rank, world_size, signers, signs, num_epochs):
             batch_size,
             transforms=DataAugmentor(0, 0),
         )
-        visualize_metrics(best_checkpoint, test_dl)
+        num_signs = len(signs)
+        visualize_metrics(best_checkpoint, num_signs, model_size, test_dl)
 
 
-def training_wrapper(rank, world_size, signers, signs, num_epochs):
+def training_wrapper(rank, world_size, signers, signs, num_epochs, model_size):
     try:
         setup(rank, world_size)
-        run_training(rank, world_size, signers, signs, num_epochs)
+        run_training(rank, world_size, signers, signs, num_epochs, model_size)
     except Exception as e:
         print(f"[Parallel training error]: { e = }")
         raise
@@ -121,10 +122,11 @@ if __name__ == "__main__":
 
     signers = cli_args.signers
     signs = range(cli_args.selected_signs_from, cli_args.selected_signs_to + 1)
-    num_epochs = cli_args.num_epochs
+    num_epochs = int(cli_args.num_epochs)
+    model_size = get_model_size(cli_args.model_size)
     print(
         f"Training signs {cli_args.selected_signs_from} to {cli_args.selected_signs_to}, for {num_epochs} epochs"
     )
 
-    args = (world_size, signers, signs, num_epochs)
+    args = (world_size, signers, signs, num_epochs, model_size)
     mp.spawn(training_wrapper, args=args, nprocs=world_size, join=True)

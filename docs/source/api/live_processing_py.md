@@ -61,7 +61,7 @@ Clears all frames and resets index.
 
 ### `producer_handler(websocket, buffer: FrameBuffer)`
 
-#function #async #producer
+#async #producer
 
 **Purpose**: Asynchronously receives and decodes frames from WebSocket.
 
@@ -84,7 +84,7 @@ Clears all frames and resets index.
 
 ### `get_frame_kps(mp_processor, frame, timestamp_ms=-1)`
 
-#function #async #keypoint-extraction
+#async #keypoint-extraction
 
 **Purpose**: Asynchronously extracts keypoints from frame using MediaPipe.
 

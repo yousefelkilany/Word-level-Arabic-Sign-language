@@ -1,7 +1,7 @@
 ---
 title: constants.py
 date: 2026-01-28
-lastmod: 2026-01-31
+lastmod: 2026-02-01
 aliases: ["System-wide Constants", "Path Configuration"]
 ---
 
@@ -16,245 +16,106 @@ aliases: ["System-wide Constants", "Path Configuration"]
 ## Overview
 
 Central configuration module that defines:
+
 - Device configuration (CPU/GPU)
-- Directory paths (local vs Kaggle)
-- Model hyperparameters
-- Dataset parameters
-- Enumerations for data types
+- Comprehensive directory structure (local vs Kaggle)
+- Dataset parameters and split types
+- Advanced model architecture logic (`ModelSize`, `HeadSize`)
 
-## Path Configuration Logic
+## Environment & Device
 
-```mermaid
-graph TD
-    A[LOCAL_DEV env var] --> B{LOCAL_DEV == 1?}
-    B -->|Yes| C[Use local paths]
-    B -->|No| D[Use Kaggle paths]
-    
-    C --> E[DATA_INPUT_DIR = ./data]
-    C --> F[DATA_OUTPUT_DIR = ./data]
-    
-    D --> G[DATA_INPUT_DIR = /kaggle/input]
-    D --> H[DATA_OUTPUT_DIR = /kaggle/working]
-    
-    E --> I[MODELS_DIR = ./data/models]
-    F --> I
-    G --> J[MODELS_DIR = /kaggle/working/models]
-    H --> J
-```
+- `DEVICE`: Execution device for PyTorch/ONNX. Automatically selects `"cuda"` if available and `USE_CPU` is "0".
+- `LOCAL_DEV`: (int) Toggles between Kaggle (0) and Local (1) environments.
 
-## Environment Variables
+## Directory Structure
 
-### `USE_CPU`
-**Type**: String ("0" or "1")
-**Default**: "0"
-**Purpose**: Force CPU execution even if GPU available
-**Used By**: [[#DEVICE|DEVICE]] constant
+### Base Directories
 
-### `LOCAL_DEV`
-**Type**: String ("0" or "1")
-**Default**: "0"
-**Purpose**: Switch between local and Kaggle paths
-**Used By**: [[#DATA_INPUT_DIR|DATA_INPUT_DIR]], [[#DATA_OUTPUT_DIR|DATA_OUTPUT_DIR]]
+- `PROJECT_ROOT_DIR`: Root folder containing the `src/` directory.
+- `MODELS_DIR`: `{PROJECT_ROOT_DIR}/models`.
+- `LOGS_DIR`: `{PROJECT_ROOT_DIR}/logs`.
+- `LANDMARKERS_DIR`: Folder containing MediaPipe `.task` files.
+- `PROJECT_DATA_DIR`: `{PROJECT_ROOT_DIR}/data`.
 
-## Constants
+### Dataset Root Paths
 
-### Device Configuration
+- `DATA_INPUT_DIR`: Input path (e.g., `/kaggle/input` or `./data`).
+- `DATA_OUTPUT_DIR`: Output path (e.g., `/kaggle/working` or `./data`).
+- `KARSL_DATA_DIR`: `{DATA_INPUT_DIR}/karsl-502`.
+- `TRAIN_CHECKPOINTS_DIR`: `{DATA_OUTPUT_DIR}/checkpoints`.
 
-#### `DEVICE`
-```python
-use_gpu = os.environ.get("USE_CPU", "0") == "0" and cuda_is_available()
-DEVICE = ["cpu", "cuda"][int(use_gpu)]
-```
-**Type**: str ("cpu" or "cuda")
-**Purpose**: Execution device for PyTorch/ONNX
-**Used By**: All model loading and training functions
+### Specialized Data Paths (KAGGLE/LOCAL)
 
-### Directory Paths
+- `NPZ_KPS_DIR`: Extracted keypoints in NPZ format.
+- `MMAP_PREPROCESSED_DIR`: Local/Input directory for preprocessed memory-mapped files.
+- `MMAP_OUTPUT_PREPROCESSED_DIR`: Output directory for generated memory-mapped files.
 
-#### `PROJECT_ROOT_DIR`
-**Type**: Path string
-**Value**: Parent directory of `src/`
-**Purpose**: Base directory for all relative paths
+## Data Files & Assets
 
-#### `LOGS_DIR`
-**Type**: Path string
-**Value**: `{PROJECT_ROOT_DIR}/logs`
-**Purpose**: Application logs storage
+- `LABELS_PATH`: Path to the `KARSL-502_Labels.xlsx` file.
+- `LABELS_JSON_PATH`: Path to the `KARSL-502_Labels.json` file.
+- `FACE_SYMMETRY_MAP_PATH`: Path to the `.npy` symmetry map used for face mesh processing.
 
-#### `LANDMARKERS_DIR`
-**Type**: Path string
-**Value**: `{PROJECT_ROOT_DIR}/landmarkers`
-**Purpose**: MediaPipe model files (.task files)
-**Used By**: [[source/core/mediapipe_utils_py|mediapipe_utils.py]]
+---
 
-#### `MODELS_DIR`
-**Type**: Path string
-**Value**: `{DATA_OUTPUT_DIR}/models`
-**Purpose**: ONNX model storage
-**Used By**: [[source/api/main_py#lifespan|main.py lifespan()]]
+## Model Architecture Definitions
 
-#### `TRAIN_CHECKPOINTS_DIR`
-**Type**: Path string
-**Value**: `{DATA_OUTPUT_DIR}/checkpoints`
-**Purpose**: PyTorch training checkpoints
-**Used By**: [[source/modelling/train_py|train.py]]
+### `HeadSize` (StrEnum)
 
-#### `DATA_INPUT_DIR`
-**Type**: Path string
-**Value**: `/kaggle/input` or `{PROJECT_ROOT_DIR}/data` (based on LOCAL_DEV)
-**Purpose**: Input data directory
+Defines supported attention head sizes and their corresponding feature dimensions.
 
-#### `DATA_OUTPUT_DIR`
-**Type**: Path string
-**Value**: `/kaggle/working` or `{PROJECT_ROOT_DIR}/data` (based on LOCAL_DEV)
-**Purpose**: Output data directory
+- `tiny` ('t'): 16 dimensions
+- `small` ('s'): 32 dimensions
+- `medium` ('m'): 64 dimensions
+- `large` ('l'): 128 dimensions
 
-### Dataset Paths
+### `ModelSize` (Class)
 
-#### `LABELS_PATH`
-**Type**: Path string
-**Value**: `{PROJECT_DATA_DIR}/KARSL-502_Labels.xlsx`
-**Purpose**: Excel file with sign labels
+Manages the complexity of the transformer model (heads and layers) based on the chosen `HeadSize`.
 
-#### `LABELS_JSON_PATH`
-**Type**: Path string
-**Value**: `{PROJECT_DATA_DIR}/KARSL-502_Labels.json`
-**Purpose**: JSON version of labels
+| HeadSize | Num Heads | Num Layers |
+| :------- | :-------- | :--------- |
+| Tiny     | 4         | 2          |
+| Small    | 4         | 4          |
+| Medium   | 4         | 6          |
+| Large    | 6         | 8          |
 
-#### `KARSL_DATA_DIR`
-**Type**: Path string
-**Value**: `{DATA_INPUT_DIR}/karsl-502`
-**Purpose**: Raw video dataset directory
+---
 
-#### `NPZ_KPS_DIR`
-**Type**: Path string
-**Value**: `{DATA_INPUT_DIR}/word-level-arabic-sign-language-extrcted-keypoints/karsl-kps`
-**Purpose**: Extracted keypoints in NPZ format
+## Configuration & Performance
 
-#### `MMAP_PREPROCESSED_DIR`
-**Type**: Path string
-**Value**: `{DATA_INPUT_DIR}/word-level-arabic-sign-language-preprcsd-keypoints`
-**Purpose**: Memory-mapped preprocessed keypoints
+### Feature Configuration
 
-### Model Hyperparameters
+- `SEQ_LEN`: 50 (Temporal window size).
+- `FEAT_NUM`: 184 (Total keypoints: POSE + FACE + 2*HANDS).
+- `FEAT_DIM`: 4 (x, y, z, visibility).
 
-#### `SEQ_LEN`
-**Type**: int
-**Value**: 50
-**Purpose**: Maximum sequence length for model input
-**Used By**: All model and dataset code
+### Timing & Performance
 
-#### `FEAT_NUM`
-**Type**: int
-**Value**: 184
-**Purpose**: Number of keypoint features (pose + face + hands)
-**Calculation**: POSE_NUM + FACE_NUM + 2 * HAND_NUM
+- `MAX_WORKERS`: 4 (Thread pool size for extraction).
+- `MS_30FPS`: ~33.33ms (Float interval for 30 FPS).
+- `MS_30FPS_INT`: 33ms (Integer interval for 30 FPS).
 
-#### `FEAT_DIM`
-**Type**: int
-**Value**: 4
-**Purpose**: Dimensions per keypoint (x, y, z, visibility)
+---
 
-### Performance
-
-#### `MAX_WORKERS`
-**Type**: int
-**Value**: 4
-**Purpose**: Thread pool size for keypoint extraction
-**Used By**: [[source/api/live_processing_py#Thread Pool|live_processing.py]]
-
-### Timing
-
-#### `MS_30FPS`
-**Type**: float
-**Value**: 1000 / 30 ≈ 33.33
-**Purpose**: Milliseconds per frame at 30 FPS
-
-#### `MS_30FPS_INT`
-**Type**: int
-**Value**: 1000 // 30 = 33
-**Purpose**: Integer milliseconds per frame
-
-## Enumerations
+## Enumerations & Types
 
 ### `SplitType`
 
-#enum #dataset
-
-**Purpose**: Dataset split types
-
-**Values**:
-- `train`: Training split
-- `val`: Validation split
-- `test`: Test split
-
-**Usage**:
-```python
-from core.constants import SplitType
-
-split = SplitType.train
-```
+- `train`, `val`, `test`
 
 ### `DatasetType`
 
-#enum #dataset
-
-**Purpose**: Dataset implementation types
-
-**Values**:
-- `lazy`: Lazy loading dataset
-- `mmap`: Memory-mapped dataset
-
-**Usage**:
-```python
-from core.constants import DatasetType
-
-dataset_type = DatasetType.mmap
-```
-
-## Type Aliases
+- `lazy`, `mmap`
 
 ### `KarslDatasetType`
 
-**Definition**:
-```python
-type KarslDatasetType = "LazyKArSLDataset" | "MmapKArSLDataset"
-```
-
-**Purpose**: Type hint for dataset classes
-
-## Usage Examples
-
-### Accessing Paths
-```python
-from core.constants import MODELS_DIR, LABELS_PATH
-
-# Load model
-model_path = os.path.join(MODELS_DIR, "model.onnx")
-
-# Load labels
-labels_df = pd.read_excel(LABELS_PATH)
-```
-
-### Device Configuration
-```python
-from core.constants import DEVICE
-import torch
-
-# Create tensor on configured device
-tensor = torch.zeros(10, 10).to(DEVICE)
-```
+- Union of `LazyKArSLDataset` and `MmapKArSLDataset`.
 
 ## Related Documentation
 
 **Used By**:
-- [[../api/main_py|main.py]] - MODELS_DIR
-- [[../api/live_processing_py|live_processing.py]] - MAX_WORKERS
-- [[../api/websocket_py|websocket.py]] - SEQ_LEN
-- [[mediapipe_utils_py|mediapipe_utils.py]] - LANDMARKERS_DIR
-- [[../modelling/model_py|model.py]] - DEVICE, SEQ_LEN, FEAT_DIM
-- All data modules - Dataset paths and constants
 
-**Conceptual**:
-- [[../../deployment/environment_configuration|Environment Configuration]]
-- [[../../data/dataset_overview|Dataset Overview]]
+- [[source/modelling/model_py|model.py]] - Model architecture constants.
+- [[source/data/dataloader_py|dataloader.py]] - Dataset paths and split types.
+- [[source/modelling/train_py|train.py]] - Checkpoint paths and device config.

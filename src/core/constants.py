@@ -1,7 +1,7 @@
 import os
 from enum import StrEnum, auto
 from os.path import join as os_join
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from torch.cuda import is_available as cuda_is_available
 
@@ -42,6 +42,92 @@ FEAT_NUM = 184
 FEAT_DIM = 4  # x, y, z, v (visibility)
 
 MAX_WORKERS = 4
+
+
+class HeadSize(StrEnum):
+    tiny = "t"
+    small = "s"
+    medium = "m"
+    large = "l"
+
+    @classmethod
+    def from_str(cls, head_size_letter: str) -> "HeadSize":
+        return {h.value: h for h in HeadSize}[head_size_letter]
+
+    @classmethod
+    def get_val(cls, head_size: "HeadSize") -> int:
+        match head_size:
+            case HeadSize.tiny:
+                return 16
+            case HeadSize.small:
+                return 32
+            case HeadSize.medium:
+                return 64
+            case HeadSize.large:
+                return 128
+            case _:
+                raise ValueError(f"Unknown head size: {head_size}")
+
+
+class ModelSize:
+    def __init__(
+        self,
+        head_size: HeadSize,
+        num_heads: Optional[int] = None,
+        num_layers: Optional[int] = None,
+    ):
+        self.head_size = head_size
+        self.num_heads = num_heads
+        self.num_layers = num_layers
+
+        match head_size:
+            case HeadSize.tiny:
+                self.num_heads = 4
+                self.num_layers = 2
+            case HeadSize.small:
+                self.num_heads = 4
+                self.num_layers = 4
+            case HeadSize.medium:
+                self.num_heads = 4
+                self.num_layers = 6
+            case HeadSize.large:
+                self.num_heads = 6
+                self.num_layers = 8
+            case _:
+                raise ValueError(f"Unknown head size: {head_size}")
+
+    def __str__(self):
+        return f"ModelSize({self.head_size}={HeadSize.get_val(self.head_size)}, {self.num_heads}, {self.num_layers})"
+
+    @property
+    def params(self):
+        return (
+            HeadSize.get_val(self.head_size),
+            self.num_heads,
+            self.num_layers,
+        )
+
+    def to_str(self) -> str:
+        return f"{self.head_size.value}_{self.num_heads}_{self.num_layers}"
+
+    @classmethod
+    def from_str(cls, model_metadata: str) -> "ModelSize":
+        if not model_metadata or len(model_metadata) != 5:
+            raise ValueError(f"Invalid model metadata: {model_metadata}")
+
+        return cls(
+            head_size=HeadSize.from_str(model_metadata[0]),
+            num_heads=int(model_metadata[2]),
+            num_layers=int(model_metadata[4]),
+        )
+
+    @classmethod
+    def get_default(cls) -> "ModelSize":
+        return cls(head_size=HeadSize.small, num_heads=4, num_layers=2)
+
+
+def get_model_size(model_metadata: str) -> ModelSize:
+    return ModelSize.from_str(model_metadata)
 
 
 class SplitType(StrEnum):

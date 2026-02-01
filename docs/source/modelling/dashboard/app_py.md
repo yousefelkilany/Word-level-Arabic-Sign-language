@@ -1,57 +1,52 @@
 ---
 title: app.py
 date: 2026-01-28
-lastmod: 2026-01-29
+lastmod: 2026-02-01
 aliases: ["Dashboard Entry Point", "Streamlit App Main"]
 ---
 
-# source/modelling/dashboard/app.py
+# app.py
 
-#source-code #dashboard #streamlit #analytics
+#source #dashboard #streamlit #analytics
 
 **File Path**: `src/modelling/dashboard/app.py`
 
-**Purpose**: Entry point for the Streamlit Analytics Dashboard. Manage layout, state, and view navigation.
+**Purpose**: Entry point for the Streamlit-based KArSL Analytics Dashboard.
 
 ## Overview
 
-Initializes the Streamlit application, handles sidebar inputs (checkpoints, splits), manages session state for caching inference results, and renders different tabs based on user selection.
+The dashboard provides a visual interface to explore model performance, inspect specific data samples, and experiment with data augmentations. It uses a sidebar for global configuration and a tabbed interface for focused analysis.
 
-## Functions
+## Dashboard Structure
 
-### `main()`
+### Sidebar Configuration
+- **Checkpoint Selector**: Lists all `.pth` files found in `TRAIN_CHECKPOINTS_DIR`.
+- **Split Selector**: Choice between `train`, `val`, and `test` splits.
+- **Run Evaluation**: Triggers the inference pipeline for the selected model and split.
 
-#function #entry-point
+### Analysis Tabs
 
-**Purpose**: Main execution function for the dashboard.
-
-**Logic**:
-1. **Sidebar**:
-   - Loads cached checkpoints via [[loader_py#load_cached_checkpoints|load_cached_checkpoints]].
-   - Selects Data Split using `SplitType`.
-   - Button "Run Evaluation" triggers inference.
-2. **State Management**:
-   - Initializes `results`, `inspector_rnd_key`, etc.
-3. **Routing**:
-   - if `results` exist: Shows Global Metrics, Error Analysis.
-   - Always shows: Sample Inspector, Augmentation Lab.
-4. **Rendering**:
-   - Calls view functions from [[views_py|views.py]].
-
-**Calls**:
-- [[loader_py#load_cached_checkpoints|loader.load_cached_checkpoints()]]
-- [[loader_py#load_cached_model|loader.load_cached_model()]]
-- [[loader_py#run_inference|loader.run_inference()]]
-- [[views_py#render_metrics_view|views.render_metrics_view()]]
-- [[views_py#render_error_view|views.render_error_view()]]
-- [[views_py#render_inspector_view|views.render_inspector_view()]]
-
-## Related Documentation
-
-- [[../../../models/training_process|Training Process]]
-- [[views_py|views.py]] - UI Components
-- [[loader_py|loader.py]] - Data Access
+1. **Global Metrics**: (Conditional) Displays confusion matrices and per-class performance plots.
+2. **Error Analysis**: (Conditional) Detailed view of prediction probabilities and specific misclassification instances.
+3. **Sample Inspector**: Explores the raw keypoints and labels of the dataset.
+4. **Augmentation Lab**: Interactive playground for testing `DataAugmentor` transformations.
 
 ---
 
-**File Location**: `src/modelling/dashboard/app.py`
+## Workflow
+
+1. **State Management**: Uses `st.session_state` to persist evaluation results and random visualization keys.
+2. **Caching**: Leverages `st.cache_data` and `st.cache_resource` (via `loader.py`) for efficient model/data loading across reruns.
+3. **Dynamic Tabs**: The "Global Metrics" and "Error Analysis" tabs only appear after an evaluation has been successfully run.
+
+## Key Functions
+
+### `main()`
+
+Orchestrates the sidebar logic, state initialization, and tab rendering.
+
+## Related Documentation
+
+- [[loader_py|loader.py]] - Backend logic for data and model caching.
+- [[views_py|views.py]] - UI components for each dashboard tab.
+- [[../train_py|train.py]] - Source of the training checkpoints.

@@ -1,22 +1,47 @@
 ---
 title: onnx_benchmark.py
 date: 2026-01-28
-lastmod: 2026-01-29
+lastmod: 2026-02-01
 aliases: ["Performance Profiling", "Inference Speed Benchmark"]
 ---
 
 # onnx_benchmark.py
 
-#source #modelling #profiling
+#source #modelling #profiling #onnx
 
-Benchmarks the inference speed of the exported ONNX model.
+**File Path**: `src/modelling/onnx_benchmark.py`
 
-## Metrics
-- **Latency**: Average time per inference.
-- **Throughput**: Inferences per second.
-- **CPU vs GPU**: Compares execution providers if available.
+**Purpose**: Evaluates the performance of exported ONNX models on the test dataset.
+
+## Overview
+
+This script loads an ONNX model and runs inference on the test split of the KArSL-502 dataset to calculate classification metrics. It uses the `onnxruntime` for execution.
+
+## Metrics Calculated
+
+- **Accuracy**: Overall classification accuracy.
+- **Weighted F1 Score**: F1 score accounting for class imbalance.
+
+## Workflow
+
+1. **CLI Parsing**: Accepts `--onnx_model_path`, `--num_signs`, and `--model_metadata`.
+2. **Metadata Discovery**: Automatically attempts to extract `num_signs` and `model_size` from the filename if not provided.
+3. **Data Loading**: Prepares a lazy dataloader for the test split (`SplitType.test`).
+4. **Inference Loop**:
+   - Converts PyTorch tensors to NumPy for ONNX.
+   - Runs `onnx_inference` via `onnxruntime`.
+   - Aggregates predictions and true labels.
+5. **Evaluation**: Uses `sklearn.metrics` to compute the final scores.
 
 ## Usage
+
 ```bash
-make onnx_benchmark
+# Example command
+python src/modelling/onnx_benchmark.py --onnx_model_path models/checkpoint_signs_502_s_4_4.pth.onnx
 ```
+
+## Related Documentation
+
+- [[model_py|model.py]] - `load_onnx_model`, `onnx_inference` logic.
+- [[../core/utils_py|utils.py]] - `extract_metadata_from_checkpoint`.
+- [[../data/dataloader_py|dataloader.py]] - `prepare_dataloader`.

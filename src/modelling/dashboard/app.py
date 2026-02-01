@@ -5,7 +5,7 @@ import streamlit as st
 
 from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, SplitType
 from modelling.dashboard.loader import (
-    get_checkpoints_num_signs,
+    get_checkpoints_metadata,
     get_split_dataloader,
     load_cached_checkpoints,
     load_cached_model,
@@ -47,11 +47,11 @@ def main():
             st.sidebar.info("Select a checkpoint")
         else:
             selected_ckpt = os.path.join(TRAIN_CHECKPOINTS_DIR, selected_ckpt)
-            num_signs = get_checkpoints_num_signs(selected_ckpt)
-            model = load_cached_model(selected_ckpt, num_signs)
+            metadata = get_checkpoints_metadata(selected_ckpt)
+            model = load_cached_model(selected_ckpt, metadata)
 
     split_select: SplitType = st.sidebar.radio("Split", map(str, SplitType), index=0)
-    dataloader = get_split_dataloader(num_signs, split_select)
+    dataloader = get_split_dataloader(metadata[0], split_select)
 
     if "current_view" not in st.session_state:
         st.session_state.current_view = None

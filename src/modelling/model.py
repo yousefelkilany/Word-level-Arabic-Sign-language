@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 
 import numpy as np
@@ -6,62 +7,115 @@ import torch
 from onnxruntime.capi.onnxruntime_inference_collection import InferenceSession
 from torch import nn
 
-from core.constants import FEAT_DIM, SEQ_LEN
+from core.constants import FEAT_DIM, SEQ_LEN, ModelSize
 from core.mediapipe_utils import FACE_NUM, HAND_NUM, POSE_NUM
-from core.utils import extract_num_signs_from_checkpoint
+from core.utils import extract_metadata_from_checkpoint
 
 
-class ResidualBiLSTMBlock(nn.Module):
-    def __init__(self, hidden_size, dropout_prob=0.3):
+class STTransformerBlock(nn.Module):
+    def __init__(self, embed_dim, num_heads, dropout_prob=0.3):
         super().__init__()
 
-        self.lstm = nn.LSTM(
-            hidden_size, hidden_size // 2, batch_first=True, bidirectional=True
+        self.spatial_attention = nn.MultiheadAttention(
+            embed_dim, num_heads=num_heads, batch_first=True, dropout=dropout_prob
         )
-        self.layer_norm = nn.LayerNorm(hidden_size)
-        self.dropout = nn.Dropout(dropout_prob)
+        self.spatial_norm = nn.LayerNorm(embed_dim)
+
+        self.temporal_attention = nn.MultiheadAttention(
+            embed_dim, num_heads=num_heads, batch_first=True, dropout=dropout_prob
+        )
+        self.temporal_norm = nn.LayerNorm(embed_dim)
+
+        self.mlp = nn.Sequential(
+            nn.Linear(embed_dim, embed_dim * 4),
+            nn.GELU(),
+            nn.Dropout(dropout_prob),
+            nn.Linear(embed_dim * 4, embed_dim),
+            nn.Dropout(dropout_prob),
+        )
+        self.mlp_norm = nn.LayerNorm(embed_dim)
 
     def forward(self, x):
-        return self.layer_norm(x + self.dropout(self.lstm(x)[0]))
+        B, T, G, D = x.shape
+
+        x_s = x.contiguous().view(B * T, G, D)
+        x_s = self.spatial_norm(x_s)
+        attn_out, _ = self.spatial_attention(x_s, x_s, x_s)
+        x_s = x_s + attn_out
+        x = x_s.view(B, T, G, D)
+
+        x_t = x.permute(0, 2, 1, 3).contiguous().view(B * G, T, D)
+        x_t = self.temporal_norm(x_t)
+        attn_out, _ = self.temporal_attention(x_t, x_t, x_t)
+        x_t = x_t + attn_out
+        x = x_t.view(B, G, T, D).permute(0, 2, 1, 3)
+
+        return x + self.mlp(self.mlp_norm(x))
 
 
-class SpatialGroupEmbedding(nn.Module):
-    def __init__(self, hidden_size):
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len=SEQ_LEN):
+        super().__init__()
+
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.arange(0, d_model, 2, dtype=torch.float)
+        div_term = torch.exp(div_term * (-math.log(1e5) / d_model))
+
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        self.register_buffer("pe", pe.unsqueeze(0).unsqueeze(2))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return x + self.pe[:, : x.size(1), :, :]  # type: ignore[non-subscriptable]
+
+
+class GroupTokenEmbedding(nn.Module):
+    def __init__(self, token_dim: int):
         super().__init__()
 
         self.pose_num = POSE_NUM * FEAT_DIM  # type: ignore
         self.face_num = FACE_NUM * FEAT_DIM  # type: ignore
         self.rh_num = self.lh_num = HAND_NUM * FEAT_DIM  # type: ignore
 
-        # hs = 384, hs/48 = 8
-        self.pose_proj = nn.Linear(self.pose_num, hidden_size * 5 // 48)  # 40
-        self.face_proj = nn.Linear(self.face_num, hidden_size * 11 // 48)  # 88
-        self.rh_proj = nn.Linear(self.rh_num, int(hidden_size * 16 // 48))  # 128
-        self.lh_proj = nn.Linear(self.lh_num, int(hidden_size * 16 // 48))  # 128
+        self.pose_proj = nn.Linear(self.pose_num, token_dim)
+        self.face_proj = nn.Linear(self.face_num, token_dim)
+        self.rh_proj = nn.Linear(self.rh_num, token_dim)
+        self.lh_proj = nn.Linear(self.lh_num, token_dim)
 
+        self.layer_norm = nn.LayerNorm(token_dim)
         self.activation = nn.GELU()
-        self.bn = nn.BatchNorm1d(hidden_size)
+
+        self.part_embed = nn.Parameter(torch.zeros(1, 1, 4, token_dim))
+        nn.init.trunc_normal_(self.part_embed, std=0.02)
+
+        total_features = self.pose_num + self.face_num + self.rh_num + self.lh_num
+        self.input_bn = nn.BatchNorm1d(total_features)
 
     def forward(self, x):
         offset = self.pose_num + self.face_num
+
+        x = x.permute(0, 2, 1)
+        x = self.input_bn(x)
+        x = x.permute(0, 2, 1)
 
         pose = self.pose_proj(x[:, :, : self.pose_num])
         face = self.face_proj(x[:, :, self.pose_num : offset])
         rh = self.rh_proj(x[:, :, offset : offset + self.rh_num])
         lh = self.lh_proj(x[:, :, offset + self.rh_num :])
 
-        x = self.activation(torch.cat((pose, face, rh, lh), dim=2))
-        x = self.bn(x.permute(0, 2, 1)).permute(0, 2, 1)
-        return x
+        tokens = torch.stack((pose, face, rh, lh), dim=2)
+        x = self.layer_norm(tokens + self.part_embed)
+        return self.activation(x)
 
 
 class AttentionPooling(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self, embed_dim: int):
         super().__init__()
         self.attention_weights = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size // 2),
+            nn.Linear(embed_dim, embed_dim // 2),
             nn.Tanh(),
-            nn.Linear(hidden_size // 2, 1),
+            nn.Linear(embed_dim // 2, 1),
             nn.Softmax(dim=1),
         )
 
@@ -69,70 +123,52 @@ class AttentionPooling(nn.Module):
         return torch.sum(x * self.attention_weights(x), dim=1)
 
 
-class AttentionBiLSTM(nn.Module):
+class STTransformer(nn.Module):
     def __init__(
         self,
-        hidden_size,
-        num_lstm_blocks,
-        num_classes,
-        lstm_dropout_prob=0.3,
-        attn_dropout_prob=0.3,
-        network_dropout_prob=0.3,
+        num_classes: int,
+        model_size: ModelSize,
+        dropout: float = 0.3,
     ):
         super().__init__()
+        self.num_classes = num_classes  # ty:ignore[unresolved-attribute]
 
-        self.num_classes = num_classes
+        self.model_size = model_size  # ty:ignore[unresolved-attribute]
+        head_size, num_heads, num_layers = self.model_size.params
+        embed_dim = head_size * num_heads
 
-        self.embedding = SpatialGroupEmbedding(hidden_size)
+        self.embedding = GroupTokenEmbedding(embed_dim)
 
-        self.lstms = nn.Sequential(
+        self.pos_encoder = PositionalEncoding(embed_dim)
+        self.dropout = nn.Dropout(dropout)
+
+        self.blocks = nn.Sequential(
             *[
-                ResidualBiLSTMBlock(hidden_size, lstm_dropout_prob)
-                for _ in range(num_lstm_blocks)
+                STTransformerBlock(embed_dim, num_heads, dropout)
+                for _ in range(num_layers)
             ]
         )
 
-        self.attention = nn.MultiheadAttention(
-            embed_dim=hidden_size,
-            num_heads=8,
-            dropout=attn_dropout_prob,
-            batch_first=True,
-        )
-
-        self.attn_layer_norm = nn.LayerNorm(hidden_size)
-
-        self.pool = AttentionPooling(hidden_size)
-
-        self.dropout = nn.Dropout(network_dropout_prob)
-
-        self.fc = nn.Linear(hidden_size, num_classes)
+        self.attention_pool = AttentionPooling(embed_dim)
+        self.fc = nn.Linear(embed_dim, num_classes)
 
     def forward(self, x):
         x = self.embedding(x)
-
-        for lstm_block in self.lstms:
-            x = lstm_block(x)
-
-        x = self.attn_layer_norm(x + self.attention(x, x, x)[0])
-
-        x = self.pool(x)
-
+        x = self.pos_encoder(x)
         x = self.dropout(x)
+
+        for block in self.blocks:
+            x = block(x)
+
+        x = x.mean(dim=2)
+
+        x = self.attention_pool(x)
         logits = self.fc(x)
         return logits
 
 
-def get_model_instance(num_signs, device="cpu") -> AttentionBiLSTM:
-    hidden_size = 384  # must be multiple of 48
-    num_lstm_blocks = 4
-    model = AttentionBiLSTM(
-        hidden_size,
-        num_lstm_blocks,
-        num_signs,
-        lstm_dropout_prob=0.5,
-        attn_dropout_prob=0.5,
-        network_dropout_prob=0.5,
-    )
+def get_model_instance(num_signs, model_size: ModelSize, device="cpu") -> STTransformer:
+    model = STTransformer(num_signs, model_size, 0.2)
     return model.to(device)
 
 
@@ -153,14 +189,22 @@ def save_model(checkpoint_path, model, optimizer, scheduler):
 
 def load_model(
     checkpoint_path,
-    model: Optional[AttentionBiLSTM] = None,
-    num_signs=None,
-    device="cpu",
-) -> AttentionBiLSTM:
-    num_signs = num_signs or extract_num_signs_from_checkpoint(checkpoint_path)
-    assert model or num_signs, "Either a model instance or `num_signs` must be provided"
+    model: Optional[STTransformer] = None,
+    num_signs: Optional[int] = None,
+    model_size: Optional[ModelSize] = None,
+    device: str = "cpu",
+) -> STTransformer:
+    metadata = extract_metadata_from_checkpoint(checkpoint_path)
+    if metadata:
+        num_signs = num_signs or metadata[0]
+        model_size = model_size or metadata[1]
 
-    model = model or get_model_instance(num_signs, device)
+    if not model:
+        assert num_signs and model_size, (
+            "Model metadata, num signs and model metadata(head_size, num_heads, num_layers) must be provided"
+        )
+        model = get_model_instance(num_signs, model_size, device=device)
+
     model.load_state_dict(
         torch.load(checkpoint_path, map_location=torch.device(device))["model"]
     )

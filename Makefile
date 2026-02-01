@@ -7,11 +7,14 @@ RUN_CMD = cd $(SRC_DIR) && uv run -m
 ARGS_CHECKPOINT :=
 ARGS_CHECKPOINT += $(if $(checkpoint_path),--checkpoint_path $(checkpoint_path))
 ARGS_CHECKPOINT += $(if $(onnx_model_path),--onnx_model_path $(onnx_model_path))
+ARGS_CHECKPOINT += $(if $(num_signs),--num_signs $(num_signs))
+ARGS_CHECKPOINT += $(if $(model_size),--model_size $(model_size))
 
 ARGS_TRAIN :=
 ARGS_TRAIN += $(if $(selected_signs_from),--selected_signs_from $(selected_signs_from))
 ARGS_TRAIN += $(if $(selected_signs_to),--selected_signs_to $(selected_signs_to))
 ARGS_TRAIN += $(if $(signers),--signers $(signers))
+ARGS_TRAIN += $(if $(model_size),--model_size $(model_size))
 
 ARGS_MMAP := $(ARGS_TRAIN)
 ARGS_MMAP += $(if $(splits),--splits $(splits))
@@ -19,7 +22,7 @@ ARGS_MMAP += $(if $(splits),--splits $(splits))
 ARGS_NPZ := $(ARGS_MMAP)
 ARGS_NPZ += $(if $(filter 1,$(adjusted)),--adjusted)
 
-ARGS_TRAIN += $(if $(epochs),--epochs $(epochs))
+ARGS_TRAIN += $(if $(num_epochs),--num_epochs $(num_epochs))
 
 .PHONY: download_lfs_files prepare_npz_kps preprocess_mmap_data train parallel_train export_onnx onnx_benchmark visualize_metrics visualization_dashboard generate_face_map run docker_run docker_run_force_build
 

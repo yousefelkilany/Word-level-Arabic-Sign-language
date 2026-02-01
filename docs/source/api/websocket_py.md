@@ -91,7 +91,7 @@ websocket_router = fastapi.APIRouter()
 
 ### `get_default_state()`
 
-#function #state-management
+#state-management
 
 **Purpose**: Creates initial state dictionary for WebSocket client.
 
@@ -126,7 +126,7 @@ def get_default_state():
 
 ### `ws_live_signs(websocket: fastapi.WebSocket)`
 
-#function #websocket #async #main-handler
+#websocket #async #main-handler
 
 **Type**: WebSocket route handler
 

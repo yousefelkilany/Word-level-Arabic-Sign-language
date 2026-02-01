@@ -4,15 +4,15 @@ import numpy as np
 import streamlit as st
 import torch
 
-from core.constants import DEVICE, DatasetType, SplitType
-from core.utils import extract_num_signs_from_checkpoint
+from core.constants import DEVICE, DatasetType, ModelSize, SplitType
+from core.utils import extract_metadata_from_checkpoint
 from data.dataloader import prepare_dataloaders
 from modelling.model import load_model
 
 
 @st.cache_data
-def get_checkpoints_num_signs(checkpoint_path):
-    return extract_num_signs_from_checkpoint(checkpoint_path)
+def get_checkpoints_metadata(checkpoint_path):
+    return extract_metadata_from_checkpoint(checkpoint_path)
 
 
 @st.cache_data
@@ -29,8 +29,10 @@ def load_cached_checkpoints(checkpoints_dir: str):
 
 
 @st.cache_resource
-def load_cached_model(checkpoint_path: str, num_signs: int):
-    model = load_model(checkpoint_path, num_signs=num_signs, device=DEVICE)
+def load_cached_model(checkpoint_path: str, _metadata: tuple[int, ModelSize]):
+    model = load_model(
+        checkpoint_path, num_signs=_metadata[0], model_size=_metadata[1], device=DEVICE
+    )
     model.eval()
     return model
 

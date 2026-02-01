@@ -13,7 +13,13 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DistributedSampler
 from tqdm import tqdm
 
-from core.constants import DEVICE, TRAIN_CHECKPOINTS_DIR, DatasetType
+from core.constants import (
+    DEVICE,
+    TRAIN_CHECKPOINTS_DIR,
+    DatasetType,
+    ModelSize,
+    get_model_size,
+)
 from data.dataloader import prepare_dataloaders
 from modelling.model import get_model_instance, save_model
 from modelling.visualize_model_performance import visualize_metrics
@@ -38,9 +44,8 @@ def train(
         best_checkpoint = ""
         timestamp = datetime.now().strftime("%b%d_%H-%M-%S")
         num_signs = model.module.num_classes if rank >= 0 else model.num_classes
-        checkpoint_root = (
-            f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-signs_{num_signs}"
-        )
+        model_size = model.module.model_size if rank >= 0 else model.model_size
+        checkpoint_root = f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-signs_{num_signs}_{model_size.to_str()}"
         os.makedirs(checkpoint_root, exist_ok=True)
     if rank >= 0:
         autocast_ctx = autocast(device_type="cuda", dtype=torch.bfloat16)
@@ -126,6 +131,9 @@ def train_cli():
     parser.add_argument("--selected_signs_from", type=int, default=1)
     parser.add_argument("--selected_signs_to", type=int, default=1)
     parser.add_argument("--num_epochs", type=int, default=1)
+    parser.add_argument(
+        "--model_metadata", type=str, default=ModelSize.get_default().to_str()
+    )
     return parser.parse_args()
 
 
@@ -138,9 +146,10 @@ if __name__ == "__main__":
     )
 
     num_signs = cli_args.selected_signs_to - cli_args.selected_signs_from + 1
+    model_size = get_model_size(cli_args.model_metadata)
     lr = 1e-3
     weight_decay = 1e-4
-    model = get_model_instance(num_signs, DEVICE)
+    model = get_model_instance(num_signs, model_size, device=DEVICE)
     loss = nn.CrossEntropyLoss()
     optimizer = optim.Adam(params=model.parameters(), lr=lr, weight_decay=weight_decay)
     scheduler = ReduceLROnPlateau(optimizer, "min", factor=0.2, patience=3)
@@ -165,4 +174,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"[training error]: { e = }")
 
-    visualize_metrics(best_checkpoint, test_dl)
+    visualize_metrics(best_checkpoint, num_signs, cli_args.model_metadata, test_dl)

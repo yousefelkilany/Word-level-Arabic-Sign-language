@@ -64,7 +64,7 @@ from fastapi.staticfiles import StaticFiles
 
 ### `lifespan(app: fastapi.FastAPI)`
 
-#function #async #context-manager
+#async #context-manager
 
 **Type**: Async context manager
 
@@ -111,7 +111,7 @@ async def lifespan(app: fastapi.FastAPI):
 
 ### `live_signs_ui()`
 
-#function #route #get
+#route #get
 
 **Type**: FastAPI route handler
 
@@ -148,7 +148,7 @@ async def live_signs_ui():
 
 ### `favicon()`
 
-#function #route #get
+#route #get
 
 **Type**: FastAPI route handler
 
@@ -184,7 +184,7 @@ async def favicon():
 
 ### `chrome_devtools()`
 
-#function #route #get
+#route #get
 
 **Type**: FastAPI route handler
 
