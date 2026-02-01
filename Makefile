@@ -1,3 +1,6 @@
+include .env
+export
+
 SRC_DIR = src
 RUN_CMD = cd $(SRC_DIR) && uv run -m
 
@@ -18,7 +21,7 @@ ARGS_NPZ += $(if $(filter 1,$(adjusted)),--adjusted)
 
 ARGS_TRAIN += $(if $(epochs),--epochs $(epochs))
 
-.PHONY: download_lfs_files prepare_npz_kps preprocess_mmap_data train parallel_train export_onnx onnx_benchmark visualize_metrics visualization_dashboard generate_face_map
+.PHONY: download_lfs_files prepare_npz_kps preprocess_mmap_data train parallel_train export_onnx onnx_benchmark visualize_metrics visualization_dashboard generate_face_map run docker_run docker_run_force_build
 
 download_lfs_files: # models, landmarkers
 	git lfs pull
@@ -49,6 +52,15 @@ visualization_dashboard:
 
 generate_face_map:
 	$(RUN_CMD) data.generate_mediapipe_face_symmetry_map
+
+run:
+	$(RUN_CMD) api.run
+
+docker_run:
+	docker compose up
+
+docker_run_force_build:
+	docker compose up --build --force-recreate
 
 cpu_%: export USE_CPU=1
 cpu_%: %

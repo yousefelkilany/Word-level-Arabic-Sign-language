@@ -1,4 +1,3 @@
-from core.mediapipe_utils import LandmarkerProcessor
 import argparse
 import os
 from concurrent.futures import ProcessPoolExecutor
@@ -8,11 +7,11 @@ import cv2
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import DATA_OUTPUT_DIR, KARSL_DATA_DIR
+from core.constants import DATA_OUTPUT_DIR, KARSL_DATA_DIR, os_join
+from core.mediapipe_utils import LandmarkerProcessor
 
 # os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-os_join = os.path.join
 
 _worker_processor = None
 

@@ -2,12 +2,11 @@ import argparse
 import gc as garbage_collect
 import os
 from itertools import product
-from os.path import join as os_join
 
 import numpy as np
 from tqdm import tqdm
 
-from core.constants import MMAP_OUTPUT_PREPROCESSED_DIR, NPZ_KPS_DIR, SplitType
+from core.constants import MMAP_OUTPUT_PREPROCESSED_DIR, NPZ_KPS_DIR, SplitType, os_join
 
 
 def load_raw_kps(

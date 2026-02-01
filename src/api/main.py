@@ -2,13 +2,12 @@ import os
 from contextlib import asynccontextmanager
 
 import fastapi
-import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from api.websocket import websocket_router
-from core.constants import MODELS_DIR
+from core.constants import MODELS_DIR, PROJECT_ROOT_DIR, os_join
 from modelling.model import load_onnx_model
 
 
@@ -29,7 +28,7 @@ async def lifespan(app: fastapi.FastAPI):
 
 origins = [os.environ.get("DOMAIN_NAME") or "DOMAIN_NAME"]
 app = fastapi.FastAPI(lifespan=lifespan)
-static_assets_dir = "./static"
+static_assets_dir = os_join(PROJECT_ROOT_DIR, "static")
 app.mount("/static", StaticFiles(directory=static_assets_dir, html=True), name="static")
 app.add_middleware(
     CORSMiddleware,  # type: ignore

@@ -1,12 +1,11 @@
 from functools import lru_cache
-from os.path import join as os_join
 from typing import Optional
 
 import numpy as np
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from core.constants import FEAT_DIM, NPZ_KPS_DIR, SplitType
+from core.constants import FEAT_DIM, NPZ_KPS_DIR, SplitType, os_join
 from data.data_preparation import DataAugmentor, TSNSampler
 
 

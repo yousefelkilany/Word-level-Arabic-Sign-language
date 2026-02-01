@@ -1,11 +1,10 @@
 from itertools import product
-from os.path import join as os_join
 from typing import Optional
 
 import numpy as np
 from torch.utils.data import Dataset
 
-from core.constants import FEAT_DIM, MMAP_PREPROCESSED_DIR, SplitType
+from core.constants import FEAT_DIM, MMAP_PREPROCESSED_DIR, SplitType, os_join
 from data.data_preparation import DataAugmentor, TSNSampler
 
 
