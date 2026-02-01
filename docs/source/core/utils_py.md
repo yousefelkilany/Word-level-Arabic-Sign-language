@@ -80,9 +80,9 @@ def get_default_logger() -> logging.Logger:
 
 **Depends On**:
 
-- [[../../source/core/constants_py|constants.py]] - `LABELS_JSON_PATH`, `LOGS_DIR`
+- [[constants_py|constants.py]] - `LABELS_JSON_PATH`, `LOGS_DIR`
 
 **Used By**:
 
-- [[../../source/api/websocket_py|websocket.py]] - Logging connection events
-- [[../../source/modelling/model_py|model.py]] - Loading checkpoints
+- [[../api/websocket_py|websocket.py]] - Logging connection events
+- [[../modelling/model_py|model.py]] - Loading checkpoints

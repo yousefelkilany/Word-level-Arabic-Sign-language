@@ -74,8 +74,8 @@ Initializes logger and definition references.
 ## Related Documentation
 
 **Depends On**:
-- [[../../source/core/constants_py|constants.py]] - `LANDMARKERS_DIR`.
+- [[constants_py|constants.py]] - `LANDMARKERS_DIR`.
 
 **Used By**:
-- [[../../source/data/prepare_npz_kps_py|prepare_npz_kps.py]] - Data ingestion.
-- [[../../source/api/live_processing_py|live_processing.py]] - Real-time inference.
+- [[../data/prepare_npz_kps_py|prepare_npz_kps.py]] - Data ingestion.
+- [[../api/live_processing_py|live_processing.py]] - Real-time inference.

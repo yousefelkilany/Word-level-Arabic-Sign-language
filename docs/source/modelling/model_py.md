@@ -84,9 +84,9 @@ Runs inference on a sequence using the ONNX session.
 ## Related Documentation
 
 **Depends On**:
-- [[../../source/core/constants_py|constants.py]] - `FEAT_DIM`, `SEQ_LEN`
-- [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]] - Body part indices
+- [[../core/constants_py|constants.py]] - `FEAT_DIM`, `SEQ_LEN`
+- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - Body part indices
 
 **Used By**:
-- [[../../source/modelling/train_py|train.py]] - Instantiates model for training
-- [[../../source/api/websocket_py|websocket.py]] - Inference logic
+- [[train_py|train.py]] - Instantiates model for training
+- [[../api/websocket_py|websocket.py]] - Inference logic

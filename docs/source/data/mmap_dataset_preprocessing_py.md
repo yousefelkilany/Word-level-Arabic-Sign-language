@@ -57,8 +57,8 @@ data/
 ## Related Documentation
 
 **Depends On**:
-- [[../../source/core/constants_py|constants.py]] - Directory paths
+- [[../core/constants_py|constants.py]] - Directory paths
 
 **Used By**:
 - Used offline before training.
-- Generates data for [[../../source/data/mmap_dataset_py|mmap_dataset.py]]
+- Generates data for [[mmap_dataset_py|mmap_dataset.py]]

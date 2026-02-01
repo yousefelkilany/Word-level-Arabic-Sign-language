@@ -64,7 +64,7 @@ make run  # (Assuming standard makefile command)
 ## Related Documentation
 
 **Calls**:
-- [[../../source/api/main_py|api.main:app]] - The application instance being run
+- [[main_py|api.main:app]] - The application instance being run
 
 **Conceptual**:
 - [[../../deployment/docker_setup|Docker Setup]] - Uses this script as entrypoint

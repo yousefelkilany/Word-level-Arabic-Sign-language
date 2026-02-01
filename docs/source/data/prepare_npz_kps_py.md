@@ -67,9 +67,9 @@ python src/data/prepare_npz_kps.py \
 
 **Depends On**:
 
-- [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]] - Extraction logic
-- [[../../source/core/constants_py|constants.py]] - Paths
+- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - Extraction logic
+- [[../core/constants_py|constants.py]] - Paths
 
 **Produces**:
 
-- Raw `.npz` files consumed by [[../../source/data/lazy_dataset_py|LazyDataset]] and [[../../source/data/mmap_dataset_preprocessing_py|Preprocessing]].
+- Raw `.npz` files consumed by [[lazy_dataset_py|LazyDataset]] and [[mmap_dataset_preprocessing_py|Preprocessing]].

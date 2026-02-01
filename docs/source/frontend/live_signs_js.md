@@ -86,5 +86,5 @@ let state = {
 ## Related Documentation
 
 **Connects To**:
-- [[../../source/api/websocket_py|websocket.py]] - The backend endpoint receiving the blobs.
-- [[../../source/frontend/index_html|index.html]] - The DOM elements manipulated.
+- [[../api/websocket_py|websocket.py]] - The backend endpoint receiving the blobs.
+- [[../frontend/index_html|index.html]] - The DOM elements manipulated.

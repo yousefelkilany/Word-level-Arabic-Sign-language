@@ -60,7 +60,7 @@ The layout is built using semantic HTML5 and CSS Grid/Flexbox.
 ## Related Documentation
 
 **Styled By**:
-- [[../../source/frontend/styles_css|styles.css]]
+- [[../frontend/styles_css|styles.css]]
 
 **Scripted By**:
-- [[../../source/frontend/live_signs_js|live_signs.js]]
+- [[../frontend/live_signs_js|live_signs.js]]

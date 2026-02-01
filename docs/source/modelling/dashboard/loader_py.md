@@ -1,5 +1,5 @@
 ---
-title: source/modelling/dashboard/loader.py
+title: loader.py
 date: 2026-01-28
 lastmod: 2026-01-28
 aliases: ["Dashboard Data Loader", "Streamlit Caching Wrappers"]

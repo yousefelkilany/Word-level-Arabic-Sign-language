@@ -1,5 +1,5 @@
 ---
-title: source/api/live-processing.py
+title: live-processing.py
 date: 2026-01-28
 lastmod: 2026-01-28
 aliases: ["Frame Buffer Management", "Asynchronous Keypoint Extraction"]
@@ -101,7 +101,7 @@ Uses thread pool executor to run MediaPipe processing off main thread.
 **Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
 
 **Calls**:
-- [[../../source/core/mediapipe_utils_py#LandmarkerProcessor.extract_frame_keypoints|mp_processor.extract_frame_keypoints()]]
+- [[../core/mediapipe_utils_py#LandmarkerProcessor.extract_frame_keypoints|mp_processor.extract_frame_keypoints()]]
 
 ## Thread Pool
 
@@ -115,8 +115,8 @@ keypoints_detection_executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
 
 ## Related Documentation
 
-- [[../../source/api/websocket_py|websocket.py]] - Main consumer
-- [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]] - Keypoint extraction
+- [[websocket_py|websocket.py]] - Main consumer
+- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - Keypoint extraction
 - [[../../api/live_processing_pipeline|Live Processing Pipeline]]
 
 ---

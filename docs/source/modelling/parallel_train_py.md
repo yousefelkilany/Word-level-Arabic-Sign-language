@@ -22,4 +22,4 @@ make parallel_train
 
 ## Related Code
 
-- [[../../source/modelling/train_py|train.py]]
+- [[train_py|train.py]]

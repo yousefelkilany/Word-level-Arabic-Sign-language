@@ -1,5 +1,5 @@
 ---
-title: source/api/main.py
+title: main.py
 date: 2026-01-28
 lastmod: 2026-01-28
 aliases: ["Application Entry Point", "Lifespan Manager"]
@@ -56,9 +56,9 @@ from fastapi.staticfiles import StaticFiles
 ```
 
 **Internal Imports**:
-- [[../../source/api/websocket_py#websocket_router|websocket_router]] from `api.websocket`
-- [[../../source/core/constants_py#MODELS_DIR|MODELS_DIR]] from `core.constants`
-- [[../../source/modelling/model_py#load_onnx_model|load_onnx_model]] from `modelling.model`
+- [[websocket_py#websocket_router|websocket_router]] from `api.websocket`
+- [[../core/constants_py#MODELS_DIR|MODELS_DIR]] from `core.constants`
+- [[../modelling/model_py#load_onnx_model|load_onnx_model]] from `modelling.model`
 
 ## Functions
 
@@ -96,7 +96,7 @@ async def lifespan(app: fastapi.FastAPI):
 - FastAPI framework (automatic on startup/shutdown)
 
 **Calls**:
-- [[../../source/modelling/model_py#load_onnx_model|load_onnx_model()]] - Loads ONNX model from file
+- [[../modelling/model_py#load_onnx_model|load_onnx_model()]] - Loads ONNX model from file
 
 **Side Effects**:
 - Sets `app.state.onnx_model` with loaded ONNX inference session
@@ -105,7 +105,7 @@ async def lifespan(app: fastapi.FastAPI):
 
 **Related**:
 - [[../../deployment/environment_configuration#ONNX_CHECKPOINT_FILENAME|ONNX_CHECKPOINT_FILENAME]] environment variable
-- [[../../source/core/constants_py#MODELS_DIR|MODELS_DIR]] constant
+- [[../core/constants_py#MODELS_DIR|MODELS_DIR]] constant
 
 ---
 
@@ -138,10 +138,10 @@ async def live_signs_ui():
 - `FileResponse()` - FastAPI response class
 
 **Returns**:
-- [[../../source/frontend/index_html|index.html]] file from static directory
+- [[../frontend/index_html|index.html]] file from static directory
 
 **Related**:
-- [[../../source/frontend/index_html|index.html]] - The served HTML file
+- [[../frontend/index_html|index.html]] - The served HTML file
 - [[../../frontend/web_interface_design|Web Interface Design]]
 
 ---
@@ -260,9 +260,9 @@ app.mount("/static", StaticFiles(directory=static_assets_dir, html=True), name="
 - HTML file serving enabled
 
 **Served Files**:
-- [[../../source/frontend/index_html|index.html]]
-- [[../../source/frontend/live_signs_js|live-signs.js]]
-- [[../../source/frontend/styles_css|styles.css]]
+- [[../frontend/index_html|index.html]]
+- [[../frontend/live_signs_js|live-signs.js]]
+- [[../frontend/styles_css|styles.css]]
 - `mediapipe-logo.ico`
 
 ### Router Inclusion
@@ -272,7 +272,7 @@ app.include_router(websocket_router)
 ```
 
 **Includes**:
-- [[../../source/api/websocket_py#websocket_router|websocket_router]] - WebSocket routes for live sign detection
+- [[websocket_py#websocket_router|websocket_router]] - WebSocket routes for live sign detection
 
 ## Usage
 
@@ -317,14 +317,14 @@ app.state.onnx_model: InferenceSession
 - [[../../deployment/environment_configuration|Environment Configuration]]
 
 **Source Code**:
-- [[../../source/api/websocket_py|websocket.py]] - WebSocket handler
-- [[../../source/api/run_py|run.py]] - Application entry point
-- [[../../source/modelling/model_py|model.py]] - Model loading functions
-- [[../../source/core/constants_py|constants.py]] - Configuration constants
+- [[websocket_py|websocket.py]] - WebSocket handler
+- [[run_py|run.py]] - Application entry point
+- [[../modelling/model_py|model.py]] - Model loading functions
+- [[../core/constants_py|constants.py]] - Configuration constants
 
 **Frontend**:
-- [[../../source/frontend/index_html|index.html]] - Main HTML interface
-- [[../../source/frontend/live_signs_js|live-signs.js]] - Client-side logic
+- [[../frontend/index_html|index.html]] - Main HTML interface
+- [[../frontend/live_signs_js|live-signs.js]] - Client-side logic
 
 ---
 

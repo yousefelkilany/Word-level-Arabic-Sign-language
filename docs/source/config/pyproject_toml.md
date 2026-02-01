@@ -44,4 +44,4 @@ torch = [
 ## Related Documentation
 
 **Consumed By**:
-- [[../../source/config/dockerfile|Dockerfile]] - Install step
+- [[dockerfile|Dockerfile]] - Install step

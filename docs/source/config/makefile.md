@@ -55,5 +55,5 @@ make prepare_npz_kps splits="train" signers="01"
 ## Related Documentation
 
 **Invokes**:
-- [[../../source/modelling/train_py|train.py]]
-- [[../../source/data/prepare_npz_kps_py|prepare_npz_kps.py]]
+- [[../modelling/train_py|train.py]]
+- [[../data/prepare_npz_kps_py|prepare_npz_kps.py]]

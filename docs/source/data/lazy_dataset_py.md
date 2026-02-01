@@ -54,8 +54,8 @@ Unlike the Memory-Mapped dataset (which loads a massive monolithic file), this c
 ## Related Documentation
 
 **Depends On**:
-- [[../../source/data/data_preparation_py|data_preparation.py]] - `TSNSampler`, `DataAugmentor`
-- [[../../source/core/constants_py|constants.py]] - `NPZ_KPS_DIR`
+- [[data_preparation_py|data_preparation.py]] - `TSNSampler`, `DataAugmentor`
+- [[../core/constants_py|constants.py]] - `NPZ_KPS_DIR`
 
 **Used By**:
-- [[../../source/data/dataloader_py|dataloader.py]]
+- [[dataloader_py|dataloader.py]]

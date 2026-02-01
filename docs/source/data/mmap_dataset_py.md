@@ -55,9 +55,9 @@ Instead of loading thousands of small files (Lazy) or the whole dataset into RAM
 
 **Depends On**:
 
-- [[../../source/data/mmap_dataset_preprocessing_py|mmap_dataset_preprocessing.py]] - Creates the mmap files
-- [[../../source/core/constants_py|constants.py]] - `MMAP_PREPROCESSED_DIR`
+- [[mmap_dataset_preprocessing_py|mmap_dataset_preprocessing.py]] - Creates the mmap files
+- [[../core/constants_py|constants.py]] - `MMAP_PREPROCESSED_DIR`
 
 **Used By**:
 
-- [[../../source/data/dataloader_py|dataloader.py]]
+- [[dataloader_py|dataloader.py]]

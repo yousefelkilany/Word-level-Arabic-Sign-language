@@ -1,5 +1,5 @@
 ---
-title: source/api/cv2-utils.py
+title: cv2-utils.py
 date: 2026-01-28
 lastmod: 2026-01-28
 aliases: ["OpenCV Utilities", "Motion Detection Utilities"]
@@ -133,7 +133,7 @@ for frame in video_frames:
 
 ## Related Documentation
 
-- [[../../source/api/websocket_py|websocket.py]] - Uses MotionDetector
+- [[websocket_py|websocket.py]] - Uses MotionDetector
 - [[../../api/live_processing_pipeline|Live Processing Pipeline]]
 
 ---

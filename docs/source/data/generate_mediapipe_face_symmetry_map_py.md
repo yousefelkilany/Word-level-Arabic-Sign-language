@@ -1,5 +1,5 @@
 ---
-title: source/data/generate_mediapipe_face_symmetry_map.py
+title: generate_mediapipe_face_symmetry_map.py
 date: 2026-01-28
 lastmod: 2026-01-28
 aliases: ["Face Symmetry Mapping", "Horizontal Flip Mapping Generator"]
@@ -41,7 +41,7 @@ Generated file `face_symmetry_map.npy` is used during data augmentation to prope
 ## Related Documentation
 
 - [[data_preparation_py|data_preparation.py]] - Uses the symmetry map for `hflip`.
-- [[../../core/mediapipe_utils_py|mediapipe_utils.py]] - MediaPipe constants.
+- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - MediaPipe constants.
 
 ---
 

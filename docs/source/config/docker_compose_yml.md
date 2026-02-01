@@ -48,5 +48,5 @@ docker compose up -d --build live-app
 ## Related Documentation
 
 **Depends On**:
-- [[../../source/config/dockerfile|Dockerfile]]
+- [[dockerfile|Dockerfile]]
 - [[../../deployment/environment_configuration|.env]]

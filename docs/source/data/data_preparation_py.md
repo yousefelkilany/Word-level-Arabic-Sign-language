@@ -70,9 +70,9 @@ final_seq = augmentor(sampled_seq)
 ## Related Documentation
 
 **Depends On**:
-- [[../../source/core/constants_py|constants.py]] - `FACE_SYMMETRY_MAP_PATH`
-- [[../../source/core/mediapipe_utils_py|mediapipe_utils.py]] - `KP2SLICE`
+- [[../core/constants_py|constants.py]] - `FACE_SYMMETRY_MAP_PATH`
+- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - `KP2SLICE`
 
 **Used By**:
-- [[../../source/data/lazy_dataset_py|lazy_dataset.py]]
-- [[../../source/data/mmap_dataset_py|mmap_dataset.py]]
+- [[lazy_dataset_py|lazy_dataset.py]]
+- [[mmap_dataset_py|mmap_dataset.py]]
