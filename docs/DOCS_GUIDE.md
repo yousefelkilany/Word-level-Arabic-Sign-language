@@ -230,6 +230,9 @@ AI agents MUST follow these path translations when generating or updating docume
 
 ### ⚡ Automated Sync Triggers
 The project uses automation to keep Documentation and Quartz configuration in sync.
+- **Trigger**: `scripts/sync_docs_metadata.py`
+- **Hook**: `.pre-commit-config.yaml`
+- **Rule**: Documentation `lastmod` timestamps are automatically synced with Python file modification dates during pre-commit.
 - **Trigger**: `data/sync_quartz_configs.py`
 - **Hook**: `.git/hooks/pre-commit`
 - **Rule**: DO NOT manually edit navigation or sidebars in `quartz.config.ts`. Update the documentation structure in Markdown, and the pre-commit hook will sync the changes.
