@@ -1,7 +1,7 @@
 ---
 title: write_signs_to_json.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-29
 aliases: ["Labels Format Converter", "Excel to JSON Script"]
 ---
 
@@ -29,7 +29,7 @@ Reads the raw Excel file containing Arabic and English sign labels and exports t
 - `LOCAL_INPUT_DATA_DIR`: Input directory containing the Excel file.
 
 ## Related Documentation
-- [[../../core/constants_py|constants.py]] - Defines paths.
+- [[../core/constants_py|constants.py]] - Defines paths.
 - [[dataloader_py|dataloader.py]] - Uses the generated JSON.
 
 ---

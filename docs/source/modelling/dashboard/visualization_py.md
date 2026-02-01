@@ -1,7 +1,7 @@
 ---
 title: visualization.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-29
 aliases: ["3D Skeleton Plotting", "Interactive Plotly Visualizer"]
 ---
 

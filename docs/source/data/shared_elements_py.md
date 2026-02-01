@@ -1,7 +1,7 @@
 ---
 title: shared_elements.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-29
 aliases: ["Shared Dashboard Components", "Streamlit UI Widgets"]
 ---
 

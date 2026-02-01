@@ -1,8 +1,10 @@
-from core.constants import PROJECT_ROOT_DIR, os_join
-import shutil
 import os
+import shutil
 import subprocess
 import sys
+
+sys.path.append("src")
+from core.constants import PROJECT_ROOT_DIR, os_join
 
 # Configuration
 SYNC_FILES = ["quartz.config.ts", "quartz.layout.ts"]

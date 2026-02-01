@@ -1,6 +1,9 @@
 import re
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
+
+sys.path.append("src")
 from core.constants import PROJECT_ROOT_DIR, os_join
 
 
@@ -16,11 +19,13 @@ def sync_metadata():
     print(f"Found {len(python_files)} python files in {src_root}")
 
     updated_count = 0
-    missing_count = 0
+    missing_docs = []
 
     for py_path in python_files:
         # Mapping logic: src/path/file.py -> docs/source/path/file_py.md
         rel_path = py_path.relative_to(src_root)
+        if rel_path.stem == "__init__":
+            continue
 
         # Mirror the folder structure and naming convention
         # example: src/modelling/dashboard/views.py -> docs/source/modelling/dashboard/views_py.md
@@ -28,7 +33,7 @@ def sync_metadata():
         doc_path = docs_root / rel_path.parent / doc_filename
 
         if not doc_path.exists():
-            missing_count += 1
+            missing_docs.append(doc_path)
             continue
 
         # Get Python file modification date from OS
@@ -53,7 +58,12 @@ def sync_metadata():
             print(f"Updated {doc_path} lastmod to {mtime}")
             updated_count += 1
 
-    print(f"Sync complete. Updated: {updated_count}, Missing Docs: {missing_count}")
+    print(f"Sync complete. Updated: {updated_count}, Missing Docs: {len(missing_docs)}")
+
+    if missing_docs:
+        print(f"List of {len(missing_docs)} missing docs")
+        for doc in missing_docs:
+            print(doc)
 
 
 if __name__ == "__main__":

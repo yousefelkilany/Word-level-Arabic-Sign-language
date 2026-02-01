@@ -1,7 +1,7 @@
 ---
 title: live-processing.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-31
 aliases: ["Frame Buffer Management", "Asynchronous Keypoint Extraction"]
 ---
 

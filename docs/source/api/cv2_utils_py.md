@@ -1,7 +1,7 @@
 ---
 title: cv2-utils.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-14
 aliases: ["OpenCV Utilities", "Motion Detection Utilities"]
 ---
 

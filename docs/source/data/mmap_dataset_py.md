@@ -1,7 +1,7 @@
 ---
 title: mmap_dataset.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-29
 aliases: ["Memory-mapped Dataset", "High-performance PyTorch Dataset"]
 ---
 

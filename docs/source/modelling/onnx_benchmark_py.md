@@ -1,7 +1,7 @@
 ---
 title: onnx_benchmark.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-29
 aliases: ["Performance Profiling", "Inference Speed Benchmark"]
 ---
 

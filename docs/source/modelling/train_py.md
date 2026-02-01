@@ -1,7 +1,7 @@
 ---
 title: train.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-31
 aliases: ["Training Loop Implementation", "PyTorch Model Trainer"]
 ---
 

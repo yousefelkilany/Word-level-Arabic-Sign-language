@@ -1,7 +1,7 @@
 ---
 title: dataloader.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-29
 aliases: ["PyTorch DataLoader Manager", "Splits and Transforms Config"]
 ---
 

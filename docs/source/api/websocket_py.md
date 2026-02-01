@@ -1,7 +1,7 @@
 ---
 title: websocket.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-31
 aliases: ["Real-time WebSocket Handler", "Sign Recognition Pipeline"]
 ---
 

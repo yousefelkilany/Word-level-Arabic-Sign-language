@@ -1,7 +1,7 @@
 ---
 title: views.py
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-01-29
 aliases: ["Dashboard Tabs Rendering", "UI View Components"]
 ---
 

@@ -3,16 +3,18 @@ repos:
     hooks:
       - id: sync-docs-metadata
         name: Sync Documentation Metadata
-        entry: python scripts/sync_docs_metadata.py
-        language: python
+        entry: uv run scripts/sync_docs_metadata.py
+        language: system
+        verbose: true
         files: ^src/.*\.py$
         pass_filenames: false
         always_run: true
 
       - id: sync-quartz-config
         name: Sync Quartz Configuration
-        entry: python scripts/sync_quartz_configs.py
-        language: python
+        entry: uv run scripts/sync_quartz_configs.py
+        language: system
+        verbose: true
         files: ^quartz-config/.*
         pass_filenames: false
         always_run: true
