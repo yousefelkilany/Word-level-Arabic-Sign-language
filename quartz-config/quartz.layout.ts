@@ -6,7 +6,12 @@ export const sharedPageComponents: SharedLayout = {
   head: Component.Head(),
   header: [],
   afterBody: [],
-  footer: Component.Footer(),
+  footer: Component.Footer({
+    links: {
+      GitHub: "https://github.com/yousefelkilany/word-level-arabic-sign-language",
+      Demo: "https://arsl.yousefelkilany.com/demo",
+    },
+  }),
 }
 
 // components for pages that display a single page (e.g. a single note)

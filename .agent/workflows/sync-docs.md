@@ -15,7 +15,10 @@ uv run scripts/sync_docs_metadata.py
    - Read the current documentation file (e.g., `docs/source/core/constants_py.md`).
    - Read `docs/SOURCE_DOCS_GUIDE.md` to ensure compliance with standards.
    - Update the documentation content to reflect the source changes while preserving metadata.
+   - **Propagate Changes**: Identify and update related high-level conceptual documents in `docs/` (e.g., `docs/core/keypoint_visualization.md`) that link to this source doc.
 
 4. After processing all files, re-run the sync script to verify that all hashes are now matching and "ACTION REQUIRED" is no longer present.
 // turbo
 uv run scripts/sync_docs_metadata.py
+
+5. **Final Review**: Ensure that the `architecture_overview.md` and `getting_started.md` are still accurate if major changes occurred.

@@ -16,8 +16,8 @@ const config: QuartzConfig = {
       provider: "plausible",
     },
     locale: "en-US",
-    baseUrl: "quartz.jzhao.xyz",
-    ignorePatterns: ["README.md", "DOCS_GUIDE.md", "private", "templates", ".obsidian"],
+    baseUrl: "arsl.yousefelkilany.com",
+    ignorePatterns: ["README.md", "DOCS_GUIDE.md", "SOURCE_DOCS_GUIDE.md", "private", "templates", ".obsidian"],
     defaultDateType: "modified",
     theme: {
       fontOrigin: "googleFonts",

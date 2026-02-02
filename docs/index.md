@@ -126,7 +126,3 @@ This project implements a real-time Arabic Sign Language (ArSL) recognition syst
 - **Tags**: Use `#tag` for categorization
 - **Code References**: Functions and classes link to their detailed documentation
 - **Bidirectional Links**: Each function shows where it's called from and what it calls
-
----
-
-*Last Updated: 2026-01-27*
