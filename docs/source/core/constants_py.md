@@ -2,6 +2,7 @@
 title: constants.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: b885604e23f2c9397f7b1428ea6aad08a590d9e2f8011e10c101f8f5d0cab6af
 aliases: ["System-wide Constants", "Path Configuration"]
 ---
 
@@ -116,6 +117,6 @@ Manages the complexity of the transformer model (heads and layers) based on the 
 
 **Used By**:
 
-- [[source/modelling/model_py|model.py]] - Model architecture constants.
-- [[source/data/dataloader_py|dataloader.py]] - Dataset paths and split types.
-- [[source/modelling/train_py|train.py]] - Checkpoint paths and device config.
+- [[../modelling/model_py|model.py]] - Model architecture constants.
+- [[../data/dataloader_py|dataloader.py]] - Dataset paths and split types.
+- [[../modelling/train_py|train.py]] - Checkpoint paths and device config.

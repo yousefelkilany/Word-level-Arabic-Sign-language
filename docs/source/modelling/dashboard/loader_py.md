@@ -2,6 +2,7 @@
 title: loader.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: 389b9c31f608384bdd8e467c280b213f39eddf0a0bd972efb7914b2fa49cfce0
 aliases: ["Dashboard Data Loader", "Streamlit Caching Wrappers"]
 ---
 

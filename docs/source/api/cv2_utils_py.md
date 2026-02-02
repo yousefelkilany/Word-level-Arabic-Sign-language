@@ -2,6 +2,7 @@
 title: cv2-utils.py
 date: 2026-01-28
 lastmod: 2026-01-14
+src_hash: ddc2d40a9155b0dc844f0cd12f77c93938da28c5aceb0fb4b62500e5ce258d03
 aliases: ["OpenCV Utilities", "Motion Detection Utilities"]
 ---
 
@@ -89,7 +90,7 @@ Converts frame to grayscale and resizes to target dimensions.
 5. Calculate motion ratio (non-zero pixels / total pixels)
 6. Compare ratio against threshold
 
-**Called By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Called By**: [[websocket_py#ws_live_signs|ws_live_signs()]]
 
 **Calls**:
 - [[#MotionDetector.convert_small_gray|convert_small_gray()]]

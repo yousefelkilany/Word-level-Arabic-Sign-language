@@ -2,6 +2,7 @@
 title: model.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: acd6eae379845a6d54a1a0431ad42681832f90ecf0443cc11590f8fa8fb6dc6a
 aliases: ["Deep Learning Architecture", "Spatial-Temporal Model Definition"]
 ---
 

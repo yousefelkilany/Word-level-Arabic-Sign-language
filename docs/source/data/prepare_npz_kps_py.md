@@ -2,6 +2,7 @@
 title: prepare_npz_kps.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: 8a0ebf665f94200fdd97d39737a21bca2fb575382d3dea76d9afce8fde4a4926
 aliases: ["Keypoint Extraction ETL", "Video to Skeleton Script"]
 ---
 

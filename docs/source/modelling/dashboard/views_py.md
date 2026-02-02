@@ -2,6 +2,7 @@
 title: views.py
 date: 2026-01-28
 lastmod: 2026-01-29
+src_hash: 70e95ac3011b079669ee4df6868a35ce43dbc8de216dde20cd741c30d529dbf6
 aliases: ["Dashboard Tabs Rendering", "UI View Components"]
 ---
 

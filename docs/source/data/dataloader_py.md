@@ -2,6 +2,7 @@
 title: dataloader.py
 date: 2026-01-28
 lastmod: 2026-01-29
+src_hash: ab7b49103287f756af6343ac77fdfefdd675d1b33761dbaa419314486939a3c8
 aliases: ["PyTorch DataLoader Manager", "Splits and Transforms Config"]
 ---
 

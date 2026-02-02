@@ -2,6 +2,7 @@
 title: app.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: bce8d36dbc3ceaf5924f3d8c2ec149040d60e10ccd1b24e7d0b73b30ca2e3663
 aliases: ["Dashboard Entry Point", "Streamlit App Main"]
 ---
 

@@ -2,6 +2,7 @@
 title: onnx_benchmark.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: 52460f7f6f19919c66842b5a66cb30ca88240ec9a405d53c6c6f250168f5ccf4
 aliases: ["Performance Profiling", "Inference Speed Benchmark"]
 ---
 

@@ -2,6 +2,7 @@
 title: parallel_train.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: e24f2205a3e14ff8904c790f4e0ce5c8123193056b2799847056afb9219a66ff
 aliases: ["Distributed Training Launcher", "Multi-GPU Training Script"]
 ---
 

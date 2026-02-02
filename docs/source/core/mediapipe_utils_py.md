@@ -2,6 +2,7 @@
 title: mediapipe_utils.py
 date: 2026-01-28
 lastmod: 2026-01-31
+src_hash: f06d99903c66aa101232357da87a6a1b28e3827e596cd2de338b3fe4d560ea5c
 aliases: ["MediaPipe Wrappers", "Keypoint Extraction Core"]
 ---
 

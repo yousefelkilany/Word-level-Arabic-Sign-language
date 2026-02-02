@@ -2,6 +2,7 @@
 title: write_signs_to_json.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: d9b757b27159b09bebb3db3e0942f0eb50b2e380dd318baea3bd073cc4854893
 aliases: ["Labels Format Converter", "Excel to JSON Script"]
 ---
 

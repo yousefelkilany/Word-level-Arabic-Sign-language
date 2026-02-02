@@ -2,6 +2,7 @@
 title: lazy_dataset.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: c8f6277ca2277c5fe29351e8e82f7c9af8d17c8a1e6aa47f57aef33ce03bfbe3
 aliases: ["Lazy Loading Dataset", "Individual NPZ File Loader"]
 ---
 

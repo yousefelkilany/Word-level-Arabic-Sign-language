@@ -2,6 +2,7 @@
 title: mmap_dataset.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: 090742ca02bc2074b403bf841fe929b206e022fb421cd888bf3b45420fffd686
 aliases: ["Memory-mapped Dataset", "High-performance PyTorch Dataset"]
 ---
 

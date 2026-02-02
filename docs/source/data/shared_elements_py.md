@@ -2,6 +2,7 @@
 title: shared_elements.py
 date: 2026-01-28
 lastmod: 2026-01-29
+src_hash: 5eb65510bbea6b1b7ce1958763bfc660aaff306e9320f6ba28daaf4529a27fd1
 aliases: ["Shared Dashboard Components", "Streamlit UI Widgets"]
 ---
 

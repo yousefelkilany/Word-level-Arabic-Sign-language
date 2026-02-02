@@ -2,6 +2,7 @@
 title: utils.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: 78799d7af53c50daaa5530c35d469d407d0598fb940819c1ceac8bd716bd747d
 aliases: ["General Utilities", "Logger Configuration"]
 ---
 

@@ -38,12 +38,12 @@ A comprehensive lookup of all documented functions.
 - **`get_model_instance`**: [[../source/modelling/model_py#Functions|model.py]] - Factory for creating model objects.
 - **`load_onnx_model`**: [[../source/modelling/model_py#Functions|model.py]] - Initializes ONNX Runtime session.
 - **`onnx_inference`**: [[../source/modelling/model_py#Functions|model.py]] - Runs inference helper.
-- **`train`**: [[source/modelling/train_py#Functions|train.py]] - Main training loop (Epoch/Batch iteration).
-- **`export_model`**: [[source/modelling/export_py#Functions|export.py]] - Converts PyTorch checkpoint to ONNX.
+- **`train`**: [[../source/modelling/train_py#Functions|train.py]] - Main training loop (Epoch/Batch iteration).
+- **`export_model`**: [[../source/modelling/export_py#Functions|export.py]] - Converts PyTorch checkpoint to ONNX.
 
 ## Dashboard
-- **`main`**: [[source/modelling/dashboard/app_py#Functions|app.py]] - Dashboard entry point.
-- **`run_inference`**: [[source/modelling/dashboard/loader_py#Functions|loader.py]] - Runs cached inference.
-- **`render_metrics_view`**: [[source/modelling/dashboard/views_py#Functions|views.py]] - Renders accuracy/confusion matrix.
-- **`render_inspector_view`**: [[source/modelling/dashboard/views_py#Functions|views.py]] - Renders single-sample 3D visualization.
-- **`plot_3d_animation`**: [[source/modelling/dashboard/visualization_py#Functions|visualization.py]] - Low-level Plotly 3D plotting.
+- **`main`**: [[../source/modelling/dashboard/app_py#Functions|app.py]] - Dashboard entry point.
+- **`run_inference`**: [[../source/modelling/dashboard/loader_py#Functions|loader.py]] - Runs cached inference.
+- **`render_metrics_view`**: [[../source/modelling/dashboard/views_py#Functions|views.py]] - Renders accuracy/confusion matrix.
+- **`render_inspector_view`**: [[../source/modelling/dashboard/views_py#Functions|views.py]] - Renders single-sample 3D visualization.
+- **`plot_3d_animation`**: [[../source/modelling/dashboard/visualization_py#Functions|visualization.py]] - Low-level Plotly 3D plotting.

@@ -2,6 +2,7 @@
 title: websocket.py
 date: 2026-01-28
 lastmod: 2026-01-31
+src_hash: 0b1919cb7c6a5088f670fb7da63fb0ea8692f7583fe85f97524893276b153cf0
 aliases: ["Real-time WebSocket Handler", "Sign Recognition Pipeline"]
 ---
 
@@ -57,10 +58,10 @@ from torch import nn
 
 **Internal Imports**:
 - [[cv2_utils_py#MotionDetector|MotionDetector]] from `api.cv2_utils`
-- [[live_processing_py#FrameBuffer|FrameBuffer]], [[source/api/live_processing_py#get_frame_kps|get_frame_kps]], [[source/api/live_processing_py#producer_handler|producer_handler]] from `api.live_processing`
+- [[live_processing_py#FrameBuffer|FrameBuffer]], [[live_processing_py#get_frame_kps|get_frame_kps]], [[live_processing_py#producer_handler|producer_handler]] from `api.live_processing`
 - [[../core/constants_py#SEQ_LEN|SEQ_LEN]] from `core.constants`
 - [[../core/mediapipe_utils_py#LandmarkerProcessor|LandmarkerProcessor]] from `core.mediapipe_utils`
-- `AR_WORDS`, `EN_WORDS`, `get_default_logger` from [[source/core/utils_py|core.utils]]
+- `AR_WORDS`, `EN_WORDS`, `get_default_logger` from [[../core/utils_py|core.utils]]
 - [[../modelling/model_py#onnx_inference|onnx_inference]] from `modelling.model`
 
 ## Constants

@@ -2,6 +2,7 @@
 title: visualization.py
 date: 2026-01-28
 lastmod: 2026-01-29
+src_hash: 97c85568408227f377e16d651b835ff445929c57e530acb42a61c34f2b8205b1
 aliases: ["3D Skeleton Plotting", "Interactive Plotly Visualizer"]
 ---
 

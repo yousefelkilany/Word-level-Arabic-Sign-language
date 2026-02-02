@@ -2,6 +2,7 @@
 title: main.py
 date: 2026-01-28
 lastmod: 2026-02-01
+src_hash: b19224bbfdb427ba98a41f4b9487e8eff8015ecf60059a8943cd625110eae9c7
 aliases: ["Application Entry Point", "Lifespan Manager"]
 ---
 
@@ -276,7 +277,7 @@ app.include_router(websocket_router)
 
 ## Usage
 
-This module is not run directly. Instead, it's imported by [[source/api/run_py|run.py]]:
+This module is not run directly. Instead, it's imported by [[run_py|run.py]]:
 
 ```python
 # In run.py
@@ -301,7 +302,7 @@ app.state.onnx_model: InferenceSession
 ```
 
 **Set By**: [[#lifespan|lifespan()]]
-**Used By**: [[source/api/websocket_py#ws_live_signs|ws_live_signs()]]
+**Used By**: [[websocket_py#ws_live_signs|ws_live_signs()]]
 
 ## Error Handling
 
