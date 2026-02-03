@@ -9,8 +9,8 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader, random_split
 from torch.utils.data.distributed import DistributedSampler
 
-from core.constants import DatasetType, SplitType, get_model_size
-from data import DataAugmentor, MmapKArSLDataset
+from core.constants import DatasetType, ModelSize, SplitType, get_model_size
+from data import DataAugmentor, LazyKArSLDataset
 from data.dataloader import prepare_dataloader
 from modelling.model import get_model_instance
 from modelling.train import train, train_cli, visualize_metrics
@@ -20,7 +20,6 @@ def setup(rank, world_size):
     """Sets up the distributed environment."""
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = "12355"  # Standard port
-    # Initialize process group using NCCL backend
     dist.init_process_group("nccl", rank=rank, world_size=world_size)
 
 
@@ -28,14 +27,21 @@ def cleanup():
     dist.destroy_process_group()
 
 
-def run_training(rank, world_size, signers, signs, num_epochs, model_size):
+def run_training(
+    rank: int,
+    world_size: int,
+    signers: list[str],
+    signs: range,
+    num_epochs: int,
+    model_size: ModelSize,
+):
     torch.cuda.set_device(rank)
     device = torch.device(f"cuda:{rank}")
 
     torch.manual_seed(42)
 
     batch_size = 64
-    dataset = MmapKArSLDataset(
+    dataset = LazyKArSLDataset(
         SplitType.train, signers=signers, signs=signs, transforms=DataAugmentor()
     )
     train_size = int(len(dataset) * 0.8)
@@ -64,7 +70,7 @@ def run_training(rank, world_size, signers, signs, num_epochs, model_size):
         num_workers=4,
     )
 
-    model = get_model_instance(signs, model_size, device=device)
+    model = get_model_instance(len(signs), model_size, device=device)
     model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
     model = DDP(model, device_ids=[rank])
 
@@ -93,7 +99,7 @@ def run_training(rank, world_size, signers, signs, num_epochs, model_size):
 
     if rank == 0:
         test_dl = prepare_dataloader(
-            DatasetType.mmap,
+            DatasetType.lazy,
             SplitType.test,
             signers,
             signs,
@@ -104,7 +110,14 @@ def run_training(rank, world_size, signers, signs, num_epochs, model_size):
         visualize_metrics(best_checkpoint, num_signs, model_size, test_dl)
 
 
-def training_wrapper(rank, world_size, signers, signs, num_epochs, model_size):
+def training_wrapper(
+    rank: int,
+    world_size: int,
+    signers: list[str],
+    signs: range,
+    num_epochs: int,
+    model_size: ModelSize,
+):
     try:
         setup(rank, world_size)
         run_training(rank, world_size, signers, signs, num_epochs, model_size)
@@ -118,12 +131,15 @@ def training_wrapper(rank, world_size, signers, signs, num_epochs, model_size):
 if __name__ == "__main__":
     cli_args = train_cli()
     world_size = torch.cuda.device_count()
+    if world_size == 0:
+        print("No GPUs found!")
+        exit(1)
     print(f"Using {world_size} GPUs!")
 
-    signers = cli_args.signers
+    signers: list[str] = cli_args.signers
     signs = range(cli_args.selected_signs_from, cli_args.selected_signs_to + 1)
     num_epochs = int(cli_args.num_epochs)
-    model_size = get_model_size(cli_args.model_size)
+    model_size = get_model_size(cli_args.model_metadata)
     print(
         f"Training signs {cli_args.selected_signs_from} to {cli_args.selected_signs_to}, for {num_epochs} epochs"
     )

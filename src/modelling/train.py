@@ -19,6 +19,7 @@ from core.constants import (
     DatasetType,
     ModelSize,
     get_model_size,
+    os_join,
 )
 from data.dataloader import prepare_dataloaders
 from modelling.model import get_model_instance, save_model
@@ -45,7 +46,10 @@ def train(
         timestamp = datetime.now().strftime("%b%d_%H-%M-%S")
         num_signs = model.module.num_classes if rank >= 0 else model.num_classes
         model_size = model.module.model_size if rank >= 0 else model.model_size
-        checkpoint_root = f"{TRAIN_CHECKPOINTS_DIR}/checkpoint_{timestamp}-signs_{num_signs}_{model_size.to_str()}"
+        checkpoint_root = os_join(
+            TRAIN_CHECKPOINTS_DIR,
+            f"checkpoint_{timestamp}-signs_{num_signs}_{model_size.to_str()}",
+        )
         os.makedirs(checkpoint_root, exist_ok=True)
     if rank >= 0:
         autocast_ctx = autocast(device_type="cuda", dtype=torch.bfloat16)
@@ -174,4 +178,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"[training error]: { e = }")
 
-    visualize_metrics(best_checkpoint, num_signs, cli_args.model_metadata, test_dl)
+    visualize_metrics(best_checkpoint, num_signs, model_size, test_dl)

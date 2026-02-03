@@ -82,19 +82,22 @@ class ModelSize:
 
         match head_size:
             case HeadSize.tiny:
-                self.num_heads = 4
-                self.num_layers = 2
+                num_heads = 4
+                num_layers = 2
             case HeadSize.small:
-                self.num_heads = 4
-                self.num_layers = 4
+                num_heads = 4
+                num_layers = 4
             case HeadSize.medium:
-                self.num_heads = 4
-                self.num_layers = 6
+                num_heads = 4
+                num_layers = 6
             case HeadSize.large:
-                self.num_heads = 6
-                self.num_layers = 8
+                num_heads = 6
+                num_layers = 8
             case _:
                 raise ValueError(f"Unknown head size: {head_size}")
+
+        self.num_heads = self.num_heads or num_heads
+        self.num_layers = self.num_layers or num_layers
 
     def __str__(self):
         return f"ModelSize({self.head_size}={HeadSize.get_val(self.head_size)}, {self.num_heads}, {self.num_layers})"

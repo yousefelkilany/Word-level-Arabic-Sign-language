@@ -8,13 +8,13 @@ ARGS_CHECKPOINT :=
 ARGS_CHECKPOINT += $(if $(checkpoint_path),--checkpoint_path $(checkpoint_path))
 ARGS_CHECKPOINT += $(if $(onnx_model_path),--onnx_model_path $(onnx_model_path))
 ARGS_CHECKPOINT += $(if $(num_signs),--num_signs $(num_signs))
-ARGS_CHECKPOINT += $(if $(model_size),--model_size $(model_size))
+ARGS_CHECKPOINT += $(if $(model_metadata),--model_metadata $(model_metadata))
 
 ARGS_TRAIN :=
 ARGS_TRAIN += $(if $(selected_signs_from),--selected_signs_from $(selected_signs_from))
 ARGS_TRAIN += $(if $(selected_signs_to),--selected_signs_to $(selected_signs_to))
 ARGS_TRAIN += $(if $(signers),--signers $(signers))
-ARGS_TRAIN += $(if $(model_size),--model_size $(model_size))
+ARGS_TRAIN += $(if $(model_metadata),--model_metadata $(model_metadata))
 
 ARGS_MMAP := $(ARGS_TRAIN)
 ARGS_MMAP += $(if $(splits),--splits $(splits))

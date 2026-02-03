@@ -167,8 +167,10 @@ class STTransformer(nn.Module):
         return logits
 
 
-def get_model_instance(num_signs, model_size: ModelSize, device="cpu") -> STTransformer:
-    model = STTransformer(num_signs, model_size, 0.2)
+def get_model_instance(
+    num_signs: int, model_size: ModelSize, device="cpu"
+) -> STTransformer:
+    model = STTransformer(num_signs, model_size, 0.5)
     return model.to(device)
 
 

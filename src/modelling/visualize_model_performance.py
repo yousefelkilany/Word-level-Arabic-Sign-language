@@ -8,7 +8,7 @@ import torch
 from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
 
-from core.constants import DEVICE, DatasetType, SplitType, get_model_size
+from core.constants import DEVICE, DatasetType, SplitType, get_model_size, ModelSize
 from core.utils import extract_metadata_from_checkpoint
 from data.dataloader import prepare_dataloader
 from modelling.model import load_model
@@ -16,7 +16,12 @@ from modelling.onnx_benchmark import onnx_cli
 
 
 def visualize_metrics(
-    checkpoint_path, num_signs, model_metadata, test_dl, device=DEVICE, top_k_errors=20
+    checkpoint_path: str,
+    num_signs: int,
+    model_size: ModelSize,
+    test_dl,
+    device=DEVICE,
+    top_k_errors=20,
 ):
     """
     Generates a 3-part dashboard:
@@ -30,7 +35,7 @@ def visualize_metrics(
     model = load_model(
         checkpoint_path,
         num_signs=num_signs,
-        model_size=get_model_size(model_metadata),
+        model_size=model_size,
         device=device,
     )
     model.eval()
@@ -127,16 +132,16 @@ def visualize_metrics(
 if __name__ == "__main__":
     cli_args = onnx_cli()
     metadata = extract_metadata_from_checkpoint(cli_args.checkpoint_path)
+    num_signs, model_size = None, None
     if metadata:
-        num_signs, model_metadata = metadata
+        num_signs, model_size = metadata
 
     num_signs = num_signs or cli_args.num_signs
-    model_metadata = model_metadata or cli_args.model_metadata
-
-    if not (num_signs and model_metadata):
+    model_size = model_size or get_model_size(cli_args.model_metadata)
+    if not (num_signs and model_size):
         raise ValueError("Metadata not found in checkpoint path")
 
     test_dl = prepare_dataloader(
         DatasetType.lazy, SplitType.test, signs=range(1, 1 + num_signs)
     )
-    visualize_metrics(cli_args.checkpoint_path, num_signs, model_metadata, test_dl)
+    visualize_metrics(cli_args.checkpoint_path, num_signs, model_size, test_dl)
