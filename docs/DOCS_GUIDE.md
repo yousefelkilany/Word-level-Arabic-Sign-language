@@ -192,6 +192,13 @@ Content...
 6. **deployment/environment-configuration.md** - Environment variables
 7. **reference/troubleshooting.md** - Common issues and solutions
 
+### ✍️ Tone and Styling
+
+1. **Professionalism**: Maintain a neutral, professional tone.
+2. **Pragmatism**: Write for developer readers. Focus on practical utility and technical rationale.
+3. **Objectivity**: Avoid expressive words (e.g., "fast", "powerful", "good"). State facts and specifications instead.
+4. **Conciseness**: Avoid redundant or marketing-style phrases.
+
 ## 📝 Documentation Standards
 
 ### Obsidian Features Used

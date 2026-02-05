@@ -1,7 +1,7 @@
 ---
 title: Getting Started
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-02-05
 aliases: ["Installation Guide", "Quick Start Setup"]
 ---
 
@@ -15,14 +15,14 @@ This guide will help you set up and run the Arabic Sign Language Recognition sys
 
 Choose one of the following setups:
 
-### Option 1: Docker (Recommended)
+### Option 1: Docker (Standard)
 - **Docker** and **Docker Compose** installed
 - No other dependencies required
 
 ### Option 2: Local Development
 - **Python 3.12+**
-- **[uv](https://github.com/astral-sh/uv)** - Fast Python package installer
-- **Webcam** (for live recognition)
+- **[uv](https://github.com/astral-sh/uv)** - CLI tool for dependency management
+- **Webcam** (for hardware interface)
 
 ## Installation
 
@@ -116,19 +116,18 @@ The API will be available at `http://localhost:8000`.
 
 ### 1. Access the Web Interface
 
-Navigate to [http://localhost:8000/live-signs](http://localhost:8000/live-signs) in your web browser.
+Connect to `http://localhost:8000/live-signs`.
 
-### 2. Grant Camera Permissions
+### 2. Camera Access
 
-When prompted, allow the browser to access your webcam.
+Enable camera permissions when requested by the browser.
 
-### 3. Start Signing
+### 3. Interaction
 
-- Position yourself in front of the camera.
-- Perform Arabic sign language gestures.
-- **New**: Use the "Settings" menu to toggle skeletal visualization for Face, Pose, and Hands.
-- **New**: View session history and past detections in the "Archive" and "History Log".
-- The system will detect and display recognized signs in real-time.
+- Position the signer within the camera frame.
+- Perform signs for recognition.
+- **Settings**: Toggle skeletal visualization for specific body regions.
+- **History Log**: Access recognized sign history and session logs.
 
 ## Project Structure
 

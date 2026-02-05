@@ -1,7 +1,7 @@
 ---
 title: Live Processing Pipeline
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-02-05
 aliases: ["Inference Pipeline", "Frame Processing Workflow"]
 ---
 
@@ -62,7 +62,7 @@ Raw images are processed by **MediaPipe** to extract skeletal landmarks.
 The extracted keypoints are formatted into a tensor and passed to the **ONNX Runtime** session.
 
 - **Input**: Shape `(Batch, Time, Channels, Keypoints)`.
-- **Model**: Attention-based BiLSTM.
+- **Model**: Spatial-Temporal Transformer (ST-Transformer).
 - **Output**: Softmax probability distribution over the 502 sign classes.
 
 ### 6. Post-Processing

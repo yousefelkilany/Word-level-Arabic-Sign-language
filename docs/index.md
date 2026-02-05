@@ -1,7 +1,7 @@
 ---
 title: Arabic Sign Language Recognition - Documentation
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-02-05
 aliases: ["Documentation Home", "Obsidian Vault Entry"]
 ---
 
@@ -34,7 +34,7 @@ Welcome to the comprehensive documentation for the **Word-Level Arabic Sign Lang
 - [[data/memory_mapped_datasets|Memory-Mapped Datasets]] - Efficient dataset implementation
 
 ### Models
-- [[models/architecture_design|Architecture Design]] - AttentionBiLSTM model architecture
+- [[models/architecture_design|Architecture Design]] - ST-Transformer model architecture
 - [[models/training_process|Training Process]] - Training, hyperparameters, and best practices
 - [[models/onnx_export_process|ONNX Export Process]] - Model export and conversion
 
@@ -115,7 +115,7 @@ Complete function-level documentation mirroring the repository structure:
 This project implements a real-time Arabic Sign Language (ArSL) recognition system using:
 - **Dataset**: KArSL-502 (502 Arabic sign words)
 - **Keypoint Extraction**: MediaPipe (pose, face, hands)
-- **Model**: Attention-based Bidirectional LSTM
+- **Model**: Spatial-Temporal Transformer (ST-Transformer)
 - **Inference**: ONNX Runtime for optimized CPU execution
 - **Frontend**: HTML5/JavaScript with WebSocket communication
 - **Backend**: FastAPI with async WebSocket support

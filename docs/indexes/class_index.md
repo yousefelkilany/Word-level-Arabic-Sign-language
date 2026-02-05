@@ -1,7 +1,7 @@
 ---
 title: Class Index
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-02-05
 aliases: ["Classes Reference", "OOP Index"]
 ---
 
@@ -23,7 +23,8 @@ A comprehensive lookup of project classes.
 - **`DataAugmentor`**: [[../source/data/data_preparation_py#Classes|data_preparation.py]] - Spatial augmentation logic.
 
 ## Modelling
-- **`AttentionBiLSTM`**: [[../source/modelling/model_py#Classes|model.py]] - The main neural network architecture.
-- **`SpatialGroupEmbedding`**: [[../source/modelling/model_py#Classes|model.py]] - Body-part specific projection layer.
-- **`AttentionPooling`**: [[../source/modelling/model_py#Classes|model.py]] - Weighted temporal aggregation layer.
-- **`ResidualBiLSTMBlock`**: [[../source/modelling/model_py#Classes|model.py]] - Building block for the sequence encoder.
+- **`STTransformer`**: [[../source/modelling/model_py#Class STTransformer|model.py]] - The main Spatial-Temporal Transformer architecture.
+- **`GroupTokenEmbedding`**: [[../source/modelling/model_py#Class GroupTokenEmbedding|model.py]] - Body-part specific projection and tokenization layer.
+- **`AttentionPooling`**: [[../source/modelling/model_py#Class AttentionPooling|model.py]] - Weighted temporal aggregation layer.
+- **`STTransformerBlock`**: [[../source/modelling/model_py#Class STTransformerBlock|model.py]] - Dual-stream spatial-temporal attention block.
+- **`PositionalEncoding`**: [[../source/modelling/model_py#Class PositionalEncoding|model.py]] - Sinusoidal temporal positional encoding layer.

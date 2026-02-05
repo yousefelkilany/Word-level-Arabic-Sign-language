@@ -7,7 +7,7 @@ aliases: ["Project Overview", "Main Readme"]
 
 # KArSL-502 Documentation
 
-Welcome to the official documentation for the **KArSL-502 Word-Level Arabic Sign Language Recognition** project. This documentation provides a comprehensive guide to the system arcitecture, data processing pipelines, machine learning models, and deployment configurations.
+Technical documentation for the **KArSL-502 Word-Level Arabic Sign Language Recognition** project. This repository contains system architecture details, data processing pipeline specifications, model definitions, and deployment configurations.
 
 ## 📖 Table of Contents
 

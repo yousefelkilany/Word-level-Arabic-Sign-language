@@ -16,11 +16,11 @@ aliases: ["Application Entry Point", "Lifespan Manager"]
 
 ## Overview
 
-This module serves as the main entry point for the FastAPI application. It handles:
-- Application lifespan (model loading/cleanup)
-- CORS middleware configuration
-- Static file serving
-- Route definitions for the web interface
+This module is the entry point for the FastAPI application. Content includes:
+- Lifespan management for model loading and resource cleanup.
+- CORS middleware configuration for origin control.
+- Static asset serving.
+- Route definitions for the web interface.
 
 ## Call Graph
 

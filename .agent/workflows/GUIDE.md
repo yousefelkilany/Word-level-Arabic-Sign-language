@@ -13,7 +13,7 @@ This guide provides instructions for AI agents to maintain the root `README.md` 
 ### 1. Header & Intro
 
 - Keep the title: `# Word-Level Arabic Sign Language Recognition`.
-- The intro should mention **KArSL-502**, **MediaPipe**, and **Attention-based BiLSTM**.
+- The intro should mention **KArSL-502**, **MediaPipe**, and **Spatial-Temporal Transformer (ST-Transformer)**.
 
 ### 2. Features
 
@@ -33,7 +33,7 @@ This guide provides instructions for AI agents to maintain the root `README.md` 
 ### 5. Model Architecture
 
 - This section is highly technical. Ensure it reflects changes in `src/modelling/model.py` and `docs/models/architecture_design.md`.
-- Use subheadings for Spatial Group Embedding, Residual Temporal Processing, Multi-Head Self-Attention, etc.
+- Use subheadings for Group Token Embedding, Positional Encoding, Spatial-Temporal Blocks, Attention Pooling, etc.
 
 ### 6. Resources & Citation
 

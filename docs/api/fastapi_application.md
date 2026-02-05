@@ -1,7 +1,7 @@
 ---
 title: FastAPI Application Structure
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-02-05
 aliases: ["Backend Web Framework", "Server Structure"]
 ---
 
@@ -61,7 +61,7 @@ The application defines several types of routes:
 
 - **Static Files**:
     - Serves the frontend application (HTML, CSS, JS) from the `static/` directory.
-    - Mounted at `/static` and also serves `index.html` at the root `/`.
+    - Mounted at `/static` and also serves `index.html` at the root `/` and `/live-signs`.
 - **WebSocket**:
     - A dedicated router is included for `ws_live_signs` to handle real-time inference.
 - **Utility**:

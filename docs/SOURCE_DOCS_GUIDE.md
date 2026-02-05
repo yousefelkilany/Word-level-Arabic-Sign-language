@@ -13,6 +13,20 @@ When tasked with updating documentation based on source code changes:
 5. **Sync Metadata**: Update `lastmod` and `src_hash` (if the automation script is being run).
 6. **Propagate Upward**: Identify high-level conceptual documents in `docs/` that link to this source doc and update them if necessary.
 
+## ✍️ Tone and Style Guidelines
+
+All documentation must adhere to a professional, pragmatic, and developer-focused tone.
+
+### 🚫 Prohibited Language
+- **Expressive Adjectives**: Avoid words like "excellent", "powerful", "amazing", "great", "easy", "best-in-class".
+- **Marketing Fluff**: Do not "flaunt" edges or claim superiority without technical justification.
+- **Subjective Praise**: Avoid saying something is a "good thing" or "highly recommended" unless explaining *why* for practical/technical reasons.
+
+### ✅ Required Language
+- **Pragmatic Explanations**: Focus on *how* things work and *why* they were implemented a certain way for practical reasons (e.g., performance, reliability, compatibility).
+- **Technical Facts**: Use data, specifications, and architecture details instead of descriptive superlatives.
+- **Direct Tone**: Use active voice and be concise. Explain the "what" and "how" without unnecessary preamble.
+
 ## 📂 File Mappings & Naming
 
 - **Source**: `src/path/file.py` -> **Doc**: `docs/source/path/file_py.md`

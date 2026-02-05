@@ -1,6 +1,6 @@
 # Word-Level Arabic Sign Language Recognition
 
-This project implements a real-time Arabic Sign Language (ArSL) recognition system using the **KArSL-502** dataset. It utilizes **MediaPipe** for pose and hand landmark extraction and an **Attention-based BiLSTM** PyTorch model for sequence classification.
+This project implements a real-time Arabic Sign Language (ArSL) recognition system using the **KArSL-502** dataset. It utilizes **MediaPipe** for pose and hand landmark extraction and a **Spatial-Temporal Transformer (ST-Transformer)** PyTorch model for sequence classification.
 
 ## Table of Contents
 
@@ -20,10 +20,10 @@ This project implements a real-time Arabic Sign Language (ArSL) recognition syst
     - [Local Setup (Data/Labels)](#local-setup-datalabels)
   - [Repository Structure](#repository-structure)
   - [Model Architecture](#model-architecture)
-    - [1. Spatial Group Embedding](#1-spatial-group-embedding)
-    - [2. Residual Temporal Processing](#2-residual-temporal-processing)
-    - [3. Multi-Head Self-Attention](#3-multi-head-self-attention)
-    - [4. Trainable Attention Pooling](#4-trainable-attention-pooling)
+    - [1. Group Token Embedding](#1-group-token-embedding)
+    - [2. Positional Encoding](#2-positional-encoding)
+    - [3. Spatial-Temporal Blocks](#3-spatial-temporal-blocks)
+    - [4. Self-Attention Pooling](#4-self-attention-pooling)
     - [5. Classification Head](#5-classification-head)
   - [Resources](#resources)
     - [Project Derived Data](#project-derived-data)
@@ -32,10 +32,10 @@ This project implements a real-time Arabic Sign Language (ArSL) recognition syst
 
 ## Features
 
-- **Real-time Recognition**: Inference via WebSocket connectivity using an **ONNX** model.
-- **Web Interface**: HTML5/JS frontend for live webcam interaction.
-- **Deep Learning Model**: Bidirectional LSTM with Multi-Head Self-Attention.
-- **Pipeline**: Preprocessing and keypoint extraction pipeline optimized for CPU execution.
+- **Sign Recognition**: Token-based inference via WebSocket using an ONNX model.
+- **Web Interface**: Browser-based frontend for webcam interaction.
+- **Model Architecture**: Spatial-Temporal Transformer (ST-Transformer) for temporal sequence classification.
+- **Preprocessing Pipeline**: Keypoint extraction via MediaPipe for CPU execution.
 
 ## Configuration
 
@@ -56,7 +56,7 @@ cp .env.example .env
 
 ### Prerequisites
 
-- **Docker** (Recommended setup)
+- **Docker** (Primary setup)
 - *OR* **Python 3.12+** and [uv](https://github.com/astral-sh/uv)
 
 ### Steps
@@ -162,7 +162,7 @@ The core logic resides in the `src/` directory:
   - `run.py`: Server runner with reload enabled.
   - `websocket.py`: WebSocket logic for real-time inference.
 - `src/modelling/`: PyTorch model architecture and training/export scripts.
-  - `model.py`: **AttentionBiLSTM** definition and ONNX loading.
+  - `model.py`: **STTransformer** definition and ONNX loading.
   - `train.py`: Training loop and validation.
   - `export.py`: ONNX export utility.
 - `src/data/`: Data processing, loading, and preprocessing scripts.
@@ -177,39 +177,38 @@ The core logic resides in the `src/` directory:
 
 ## Model Architecture
 
-The recognition system is based on the **AttentionBiLSTM**, a neural network architecture for temporal sequence classification. It uses standard PyTorch modules for feature extraction and dependency modeling.
+The recognition system is based on the **Spatial-Temporal Transformer (ST-Transformer)**, a dual-stream attention neural network architecture for temporal sequence classification. It models both spatial relationships between anatomical regions and temporal dynamics of signs.
 
-### 1. Spatial Group Embedding
+### 1. Group Token Embedding
 
-The model utilizes a `SpatialGroupEmbedding` layer to perform group-wise linear projections for anatomical regions:
+Keypoints are grouped into anatomical regions (Pose, Face, Hands) and projected into a latent space:
 
-- **Pose, Face, and Hands**: Each group is projected into a latent space using independent `nn.Linear` layers.
-- **Activation & Normalization**: Concatenated group embeddings pass through a **GELU** (Gaussian Error Linear Unit) activation function and a **Batch Normalization** layer to stabilize the distribution across the temporal dimension.
+- **Anatomical Tokens**: Pose, Face, and Hands are treated as independent tokens for attention mechanisms.
+- **Normalization**: Input features are stabilized using Batch Normalization.
+- **Learnable Embeddings**: Part-specific embeddings are added to distinguish anatomical regions.
 
-### 2. Residual Temporal Processing
+### 2. Positional Encoding
 
-Sequence modeling is handled by a stack of **Residual Bi-directional LSTM (BiLSTM)** blocks:
+- **Temporal Context**: Sinusoidal positional encodings are added to the temporal dimension to preserve frame order information.
+- **Scale Invariance**: The model handles variable-length sequences through temporal attention.
 
-- **Residual Connections**: Each block implements an identity skip connection (`x + dropout(lstm(x))`) for gradient flow.
-- **Layer Normalization**: Each block integrates `nn.LayerNorm` for consistent internal representations.
+### 3. Spatial-Temporal Blocks
 
-### 3. Multi-Head Self-Attention
+The core processing consists of multiple ST-Transformer blocks:
 
-To capture temporal dependencies and context, the model incorporates a **Multi-Head Attention** mechanism:
+- **Spatial Attention**: Multi-head self-attention operating across body parts in a single frame.
+- **Temporal Attention**: Multi-head self-attention operating across the sequence for each body part.
+- **Residual Processing**: Each attention stream uses residual connections and Layer Normalization.
 
-- **Configuration**: 8 attention heads operating on the hidden size.
-- **Residual Integration**: Attention output is added to the input latent states via a residual connection and Layer Normalization.
+### 4. Self-Attention Pooling
 
-### 4. Trainable Attention Pooling
-
-The architecture employs an `AttentionPooling` mechanism for sequence-to-vector mapping:
-
-- **Weighted Summation**: A neural network calculates the weight of each temporal frame, producing a single context vector through a softmax-weighted sum.
-- **Latent Bottleneck**: The pooled vector passes through dropout before the classification head.
+- **Weighted Aggregation**: A trainable attention mechanism identifies the most significant frames in a sequence for sign recognition.
+- **Feature Fusion**: Produces a unified context vector for the entire sign clip.
 
 ### 5. Classification Head
 
-The representing vector is passed through a fully connected layer (`nn.Linear`) to produce logits for the **502 sign classes**.
+- **Projections**: The context vector is passed through a classification head with dropout regularization.
+- **Logits**: Produces probability distributions for the **502 sign classes**.
 
 ## Resources
 

@@ -1,61 +1,65 @@
 ---
 title: Model Architecture Design
 date: 2026-01-28
-lastmod: 2026-01-28
-aliases: ["Neural Network Design", "BiLSTM Model Structure"]
+lastmod: 2026-02-05
+aliases: ["Neural Network Design", "ST-Transformer Model Structure"]
 ---
 
 # Model Architecture Design
 
 #model #architecture #deep-learning
 
-The core of the recognition system is a custom **Attention-based Bidirectional LSTM (BiLSTM)** network designed for processing streaming skeletal data.
+The core of the recognition system is a **Spatial-Temporal Transformer (ST-Transformer)**, a dual-attention neural network designed for processing streaming skeletal data by modeling both spatial relationships between body parts and temporal dynamics over time.
 
 ## Architecture Overview
 
-The model takes a sequence of spatial keypoints and outputs a probability distribution over the sign classes.
+The model takes a sequence of spatial keypoints and outputs a probability distribution over the sign classes. It utilizes a hierarchical approach, first embedding anatomical groups and then processing them through alternating spatial and temporal attention mechanisms.
 
 ## Diagram
 
 ```mermaid
 graph TD
-    Input["Input Sequence (T,F)"] --> SGE[Spatial Group Embedding]
-    SGE --> L1[ResBiLSTM Block 1]
-    L1 --> L2[ResBiLSTM Block 2]
-    L2 --> L3[ResBiLSTM Block 3]
-    L3 --> L4[ResBiLSTM Block 4]
-    L4 --> Attn[Multihead Attention]
-    Attn --> Pool[Attention Pooling]
-    Pool --> FC[Classifier Head]
-    FC --> Softmax[Softmax Probabilities]
+    Input["Input Sequence (Batch, T, F)"] --> GTE[Group Token Embedding]
+    GTE --> PE[Positional Encoding]
+    PE --> Drop[Dropout]
+    Drop --> B1[ST-Transformer Block 1]
+    B1 --> B2[ST-Transformer Block N]
+    B2 --> MP[Mean Pooling]
+    MP --> AP[Attention Pooling]
+    AP --> FC[Classifier Head]
+    FC --> Logits[Class Logits]
 ```
 
-### 1. Spatial Group Embedding (SGE)
-Before temporal processing, we independently project distinct body parts into a shared latent space. This allows the model to learn part-specific features.
+### 1. Group Token Embedding
+The model independently projects anatomical regions (Pose, Face, Left Hand, Right Hand) into a shared latent space.
 
-- **Inputs**: Pose, Face, Left Hand, Right Hand.
-- **Projections**: 4 separate Linear layers.
-- **Fusion**: Concatenation -> GELU -> BatchNorm -> Permute.
-- **Output**: A unified feature vector per time step.
+- **Separate Projections**: 4 independent Linear layers for each body part.
+- **Normalization**: Batch Normalization on raw input features for stability.
+- **Tokenization**: Body parts are stacked as "tokens" for spatial attention.
+- **Part Embeddings**: Learnable parameter added to distinguish anatomical regions.
 
-### 2. Residual BiLSTM Layers
-We use a stack of **BiLSTM blocks** to capture temporal dependencies.
+### 2. Positional Encoding
+Since Transformers are permutation-invariant, a sinusoidal positional encoding is added to the temporal dimension to provide the model with information about the order of frames.
 
-- **Bidirectional**: Processes the sequence forwards and backwards to capture context.
-- **Residual Connection**: The input to the block is added to the output to prevent vanishing gradients.
-- **Layer Normalization**: Applied after the residual addition for stability.
+### 3. ST-Transformer Blocks
+A stack of consecutive blocks that perform dual-stream attention:
 
-### 3. Self-Attention Pooling
-Instead of simply taking the last hidden state (which loses early context) or averaging all states (which dilutes information), we use a **Self-Attention** mechanism.
+- **Spatial Attention**: Multi-head self-attention operating across the body part tokens (Pose, Face, Hands) within each time step.
+- **Temporal Attention**: Multi-head self-attention operating across the time steps for each body part.
+- **MLP Head**: A position-wise feed-forward network with GELU activation.
+- **Residual Connections & LayerNorm**: Each sub-layer (Spatial, Temporal, MLP) uses residual additions and normalization.
 
-- **Query**: The model learns to weigh each time step based on its relevance.
-- **Weighted Sum**: The final representation is a weighted sum of all time steps.
+### 4. Self-Attention Pooling
+Instead of simple averaging, the model uses a trainable **Attention Pooling** mechanism to aggregate the temporal dimension into a single context vector.
 
-### 4. Classification Head
-- **Dropout**: For regularization.
-- **Linear Layer**: Maps the pooled representation to `num_classes` logits.
+- **Trainable Weights**: Learns which frames are most informative for the sign.
+- **Softmax Weighting**: Produces a normalized weighted sum of the hidden states.
+
+### 5. Classification Head
+- **Linear Layer**: Maps the pooled representation to the final class logits (502 signs).
 
 ## Related Documentation
 
 - [[../source/modelling/model_py|model.py Source Code]]
 - [[../models/training_process|Training Process]]
+- [[../architecture_overview|Architecture Overview]]

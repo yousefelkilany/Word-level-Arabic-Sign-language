@@ -1,7 +1,7 @@
 [project]
 name = "arabic-sign-language-recognition"
 version = "0.1.0"
-description = "Real-time Arabic Sign Language recognition system using MediaPipe and Attention-based BiLSTM on KArSL-502 dataset."
+description = "Real-time Arabic Sign Language recognition system using MediaPipe and Spatial-Temporal Transformer (ST-Transformer) on KArSL-502 dataset."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

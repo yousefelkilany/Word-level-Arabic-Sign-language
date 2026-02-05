@@ -1,7 +1,7 @@
 ---
 title: Architecture Overview
 date: 2026-01-28
-lastmod: 2026-01-28
+lastmod: 2026-02-05
 aliases: ["System Design", "Technical Architecture"]
 ---
 
@@ -312,14 +312,14 @@ See [[deployment/docker_setup|Docker Setup]] for configuration.
 
 ## Performance Considerations
 
-### Optimization Strategies
+### Performance Considerations
 
-1. **ONNX Runtime**: Optimized inference engine
-2. **CPU Execution**: Tuned for CPU performance
-3. **Frame Buffering**: Circular buffer prevents memory overflow
-4. **Motion Detection**: Reduces unnecessary processing
-5. **Async Processing**: Non-blocking WebSocket communication
-6. **Thread Pool**: Parallel keypoint extraction
+1. **ONNX Runtime**: Inference engine for CPU-bound environments.
+2. **CPU Execution**: Configured for hardware without GPU acceleration.
+3. **Frame Buffering**: Asynchronous queue management to prevent memory exhaustion.
+4. **Motion Detection**: Frame differencing to reduce processing load during idle periods.
+5. **Async Processing**: Non-blocking concurrency for client-server communication.
+6. **Thread Pool**: Parallel execution for compute-intensive keypoint extraction.
 
 ### Bottlenecks
 
