@@ -19,10 +19,10 @@ from core.mediapipe_utils import (
     HAND_KPS_CONNECTIONS,
     KP2SLICE,
     POSE_KPS_CONNECTIONS,
-    face_kps_idx,
-    hand_kps_idx,
+    face_kps_mp_idx,
+    hand_kps_mp_idx,
     mp_pose_landmark,
-    pose_kps_idx,
+    pose_kps_mp_idx,
 )
 
 landmark_styling_fallback = DrawingSpec(
@@ -67,7 +67,7 @@ def draw_kps_on_image(
 def get_pose_lms_list(pose_kps, return_as_lm=True):
     return get_lms_list(
         pose_kps,
-        pose_kps_idx,
+        pose_kps_mp_idx,
         len(mp_pose_landmark),
         return_as_lm,
     )
@@ -85,7 +85,7 @@ def draw_pose_kps_on_image(rgb_image, pose_kps):
 def get_face_lms_list(face_kps, return_as_lm=True):
     return get_lms_list(
         face_kps,
-        face_kps_idx,
+        face_kps_mp_idx,
         face_mesh.FACEMESH_NUM_LANDMARKS_WITH_IRISES,
         return_as_lm,
     )
@@ -103,7 +103,7 @@ def draw_face_kps_on_image(rgb_image, face_kps):
 def get_hand_lms_list(hand_kps, return_as_lm=True):
     return get_lms_list(
         hand_kps,
-        hand_kps_idx,
+        hand_kps_mp_idx,
         len(hands.HandLandmark),
         return_as_lm,
     )

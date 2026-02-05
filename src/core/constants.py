@@ -9,6 +9,7 @@ use_gpu = os.environ.get("USE_CPU", "0") == "0" and cuda_is_available()
 DEVICE = ["cpu", "cuda"][int(use_gpu)]
 LOCAL_DEV = int(os.environ.get("LOCAL_DEV", 1))
 PROJECT_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+STATIC_ASSETS_DIR = os_join(PROJECT_ROOT_DIR, "static")
 LOGS_DIR = os_join(PROJECT_ROOT_DIR, "logs")
 LANDMARKERS_DIR = os_join(PROJECT_ROOT_DIR, "landmarkers")
 MODELS_DIR = os_join(PROJECT_ROOT_DIR, "models")
@@ -16,6 +17,9 @@ PROJECT_DATA_DIR = os_join(PROJECT_ROOT_DIR, "data")
 LABELS_PATH = os_join(PROJECT_DATA_DIR, "KARSL-502_Labels.xlsx")
 LABELS_JSON_PATH = os_join(PROJECT_DATA_DIR, "KARSL-502_Labels.json")
 FACE_SYMMETRY_MAP_PATH = os_join(PROJECT_DATA_DIR, "face_mesh_symmetry_map.npy")
+SIMPLIFIED_FACE_CONNECTIONS_PATH = os_join(
+    PROJECT_DATA_DIR, "simplified_face_connections.json"
+)
 LOCAL_INPUT_DATA_DIR = LOCAL_OUTPUT_DATA_DIR = PROJECT_DATA_DIR
 KAGGLE_INPUT_DATA_DIR = "/kaggle/input"
 KAGGLE_OUTPUT_DATA_DIR = "/kaggle/working"
@@ -145,6 +149,7 @@ class DatasetType(StrEnum):
 
 
 if TYPE_CHECKING:
-    from data import LazyKArSLDataset, MmapKArSLDataset
+    from data.lazy_dataset import LazyKArSLDataset
+    from data.mmap_dataset import MmapKArSLDataset
 
 type KarslDatasetType = "LazyKArSLDataset" | "MmapKArSLDataset"

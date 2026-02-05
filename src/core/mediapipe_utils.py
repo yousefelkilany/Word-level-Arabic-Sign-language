@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
@@ -7,7 +8,14 @@ import mediapipe as mp
 import numpy as np
 from mediapipe.tasks.python import BaseOptions, vision
 
-from core.constants import FEAT_DIM, FEAT_NUM, LANDMARKERS_DIR, os_join, use_gpu
+from core.constants import (
+    FEAT_DIM,
+    FEAT_NUM,
+    LANDMARKERS_DIR,
+    SIMPLIFIED_FACE_CONNECTIONS_PATH,
+    os_join,
+    use_gpu,
+)
 from core.utils import get_default_logger
 
 delegate = [BaseOptions.Delegate.CPU, BaseOptions.Delegate.GPU][int(use_gpu)]
@@ -46,24 +54,63 @@ FACE_KPS_CONNECTIONS = [
 from mediapipe.python.solutions.hands import (
     HAND_CONNECTIONS as HAND_KPS_CONNECTIONS,  # noqa: F401
 )
+from mediapipe.python.solutions.hands_connections import HAND_PALM_CONNECTIONS
 
-pose_kps_idx = tuple(
-    (
-        mp_pose_landmark.LEFT_SHOULDER,
-        mp_pose_landmark.RIGHT_SHOULDER,
-        mp_pose_landmark.LEFT_ELBOW,
-        mp_pose_landmark.RIGHT_ELBOW,
-        mp_pose_landmark.LEFT_WRIST,
-        mp_pose_landmark.RIGHT_WRIST,
-    )
+pose_kps_mp_idx = (
+    mp_pose_landmark.LEFT_SHOULDER,
+    mp_pose_landmark.RIGHT_SHOULDER,
+    mp_pose_landmark.LEFT_ELBOW,
+    mp_pose_landmark.RIGHT_ELBOW,
+    mp_pose_landmark.LEFT_WRIST,
+    mp_pose_landmark.RIGHT_WRIST,
 )
-face_kps_idx = tuple(
+face_kps_mp_idx = tuple(
     sorted(set(point for edge in FACE_KPS_CONNECTIONS for point in edge))
 )
-hand_kps_idx = tuple(range(len(mp_hand_landmark)))
+hand_kps_mp_idx = tuple(range(len(mp_hand_landmark)))
+
+
+simplified_face_contours, simplified_face_paths, reduced_face_kps = [], [], []
+
+
+def init_reduced_face_kps():
+    global simplified_face_contours, simplified_face_paths, reduced_face_kps
+    if (
+        len(simplified_face_contours) > 0
+        and len(simplified_face_paths) > 0
+        and len(reduced_face_kps) > 0
+    ):
+        return
+
+    with open(SIMPLIFIED_FACE_CONNECTIONS_PATH, "r") as f:
+        simplified_face = json.load(f)
+    simplified_face_contours = simplified_face["face_contours"]
+    simplified_face_paths = simplified_face["face_paths"]
+    reduced_face_kps = tuple(
+        sorted(
+            set(
+                point
+                for contour in simplified_face_contours.values()
+                for edge in contour
+                for point in edge
+            )
+        )
+    )
+
+
+init_reduced_face_kps()
+
+
+# reference: https://ai.google.dev/static/edge/mediapipe/images/solutions/hand-landmarks.png
+simplified_hand_connections = tuple(
+    set([*HAND_PALM_CONNECTIONS, (1, 4), (5, 8), (9, 12), (13, 16), (17, 20)])
+)
+reduced_hand_kps = tuple(
+    sorted(set(point for edge in simplified_hand_connections for point in edge))
+)
 
 mp_pose_nose_idx = mp_pose_landmark.NOSE
-mp_pose_shoulders_idx = pose_kps_idx[:2]
+mp_pose_shoulders_idx = pose_kps_mp_idx[:2]
 
 mp_face_nose_idx = sorted(mp_facemesh.FACEMESH_NOSE)[0][0]
 left_iris = mp_facemesh.FACEMESH_LEFT_IRIS
@@ -73,15 +120,51 @@ mp_face_eyes_idx = (list(sorted(left_iris))[0][0], list(sorted(right_iris))[0][0
 mp_hand_wrist_idx = mp_hand_landmark.WRIST
 mp_hands_palm_idx = (mp_hand_landmark.THUMB_MCP, mp_hand_landmark.PINKY_MCP)
 
-POSE_NUM = len(pose_kps_idx)
-FACE_NUM = len(face_kps_idx)
-HAND_NUM = len(hand_kps_idx)
+POSE_NUM = len(pose_kps_mp_idx)
+FACE_NUM = len(face_kps_mp_idx)
+HAND_NUM = len(hand_kps_mp_idx)
 
 KP2SLICE: dict[str, slice] = {
     "pose": slice(0, POSE_NUM),
     "face": slice(POSE_NUM, POSE_NUM + FACE_NUM),
     "rh": slice(POSE_NUM + FACE_NUM, POSE_NUM + FACE_NUM + HAND_NUM),
     "lh": slice(POSE_NUM + FACE_NUM + HAND_NUM, POSE_NUM + FACE_NUM + HAND_NUM * 2),
+}
+
+mp_idx_to_kps_idx = {
+    "pose": {mp_idx: kps_idx for kps_idx, mp_idx in enumerate(pose_kps_mp_idx)},
+    "face": {
+        mp_idx: kps_idx + POSE_NUM for kps_idx, mp_idx in enumerate(face_kps_mp_idx)
+    },
+    "rh": {
+        mp_idx: kps_idx + POSE_NUM + FACE_NUM
+        for kps_idx, mp_idx in enumerate(hand_kps_mp_idx)
+    },
+    "lh": {
+        mp_idx: kps_idx + POSE_NUM + FACE_NUM + HAND_NUM
+        for kps_idx, mp_idx in enumerate(hand_kps_mp_idx)
+    },
+}
+reduced_mp_kps_idx_view = [
+    *[mp_idx_to_kps_idx["pose"][mp_idx] for mp_idx in pose_kps_mp_idx],
+    *[mp_idx_to_kps_idx["face"][mp_idx] for mp_idx in reduced_face_kps],
+    *[mp_idx_to_kps_idx["rh"][mp_idx] for mp_idx in reduced_hand_kps],
+    *[mp_idx_to_kps_idx["lh"][mp_idx] for mp_idx in reduced_hand_kps],
+]
+
+rh_offset = POSE_NUM + len(reduced_face_kps)
+mp_idx_to_reduced_kps_idx = {
+    "pose": {mp_idx: kps_idx for kps_idx, mp_idx in enumerate(pose_kps_mp_idx)},
+    "face": {
+        mp_idx: kps_idx + POSE_NUM for kps_idx, mp_idx in enumerate(reduced_face_kps)
+    },
+    "rh": {
+        mp_idx: kps_idx + rh_offset for kps_idx, mp_idx in enumerate(reduced_hand_kps)
+    },
+    "lh": {
+        mp_idx: kps_idx + rh_offset + len(reduced_hand_kps)
+        for kps_idx, mp_idx in enumerate(reduced_hand_kps)
+    },
 }
 
 from mediapipe.tasks.python.vision.face_landmarker import FaceLandmarker
@@ -152,11 +235,19 @@ class LandmarkerProcessor:
         if "hands" in self.landmarkers and self.hands_model:
             self.hands_model.close()
 
-    def extract_frame_keypoints(self, frame_rgb, timestamp_ms=-1, adjusted=False):
+    def extract_frame_keypoints(
+        self, frame_rgb, timestamp_ms=-1, adjusted=False, return_both=False
+    ):
         # do some preprocessing on frame if needed
         ...
 
         # define numpy views, pose=6 -> face=136 -> rh=21 -> lh=21
+        all_kps_raw = np.zeros((FEAT_NUM, FEAT_DIM))
+        pose_kps_raw = all_kps_raw[KP2SLICE["pose"]]
+        face_kps_raw = all_kps_raw[KP2SLICE["face"]]
+        rh_kps_raw = all_kps_raw[KP2SLICE["rh"]]
+        lh_kps_raw = all_kps_raw[KP2SLICE["lh"]]
+
         all_kps = np.zeros((FEAT_NUM, FEAT_DIM))
         pose_kps = all_kps[KP2SLICE["pose"]]
         face_kps = all_kps[KP2SLICE["face"]]
@@ -174,7 +265,7 @@ class LandmarkerProcessor:
             return max(np.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2), 1e-6)
 
         def get_pose():
-            nonlocal pose_kps
+            nonlocal pose_kps, pose_kps_raw
             if timestamp_ms == -1:
                 results = self.pose_model.detect(frame)
             else:
@@ -185,14 +276,16 @@ class LandmarkerProcessor:
 
             lms = results.pose_landmarks[0]
             pose_kps[:] = np.fromiter(
-                (lm_xyzv(lms[idx]) for idx in pose_kps_idx), dtype=np_xyzv
+                (lm_xyzv(lms[idx]) for idx in pose_kps_mp_idx), dtype=np_xyzv
             )
             if adjusted:
+                if return_both:
+                    pose_kps_raw[:] = pose_kps[:]
                 pose_kps[:, :3] -= pose_kps[mp_pose_nose_idx, :3]
                 pose_kps[:, :3] /= landmarks_distance(lms, mp_pose_shoulders_idx)
 
         def get_face():
-            nonlocal face_kps
+            nonlocal face_kps, face_kps_raw
             if timestamp_ms == -1:
                 results = self.face_model.detect(frame)
             else:
@@ -202,14 +295,16 @@ class LandmarkerProcessor:
 
             lms = results.face_landmarks[0]
             face_kps[:] = np.fromiter(
-                (lm_xyzv(lms[idx]) for idx in face_kps_idx), dtype=np_xyzv
+                (lm_xyzv(lms[idx]) for idx in face_kps_mp_idx), dtype=np_xyzv
             )
             if adjusted:
+                if return_both:
+                    face_kps_raw[:] = face_kps[:]
                 face_kps[:, :3] -= face_kps[mp_face_nose_idx, :3]
                 face_kps[:, :3] /= landmarks_distance(lms, mp_face_eyes_idx)
 
         def get_hands():
-            nonlocal rh_kps, lh_kps
+            nonlocal rh_kps, lh_kps, rh_kps_raw, lh_kps_raw
             if timestamp_ms == -1:
                 results = self.hands_model.detect(frame)
             else:
@@ -218,14 +313,16 @@ class LandmarkerProcessor:
                 return
 
             for handedness, hand_lms in zip(results.handedness, results.hand_landmarks):
-                target_hand = (
-                    lh_kps if handedness[0].category_name == "Left" else rh_kps
-                )
+                is_left = handedness[0].category_name == "Left"
+                target_hand = lh_kps if is_left else rh_kps
                 target_hand[:] = np.fromiter(
-                    (lm_xyzv(hand_lms[idx]) for idx in hand_kps_idx),
+                    (lm_xyzv(hand_lms[idx]) for idx in hand_kps_mp_idx),
                     dtype=np_xyzv,
                 )
                 if adjusted:
+                    if return_both:
+                        target_hand_raw = lh_kps_raw if is_left else rh_kps_raw
+                        target_hand_raw[:] = target_hand[:]
                     target_hand[:, :3] -= target_hand[mp_hand_wrist_idx, :3]
                     target_hand[:, :3] /= landmarks_distance(
                         hand_lms, mp_hands_palm_idx
@@ -246,5 +343,8 @@ class LandmarkerProcessor:
 
         # do some preprocessing on kps if needed
         ...
+
+        if return_both:
+            return all_kps, all_kps_raw
 
         return all_kps

@@ -53,4 +53,5 @@ dev = [
     "seaborn>=0.13.2",
     "plotly>=6.5.2",
     "streamlit>=1.53.0",
+    "shapely>=2.1.2",
 ]

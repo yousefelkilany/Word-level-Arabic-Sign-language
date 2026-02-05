@@ -3,7 +3,9 @@ from typing import Optional
 from torch.utils.data import DataLoader, random_split
 
 from core.constants import DatasetType, SplitType
-from data import DataAugmentor, LazyKArSLDataset, MmapKArSLDataset
+from data.data_preparation import DataAugmentor
+from data.lazy_dataset import LazyKArSLDataset
+from data.mmap_dataset import MmapKArSLDataset
 
 
 def prepare_dataloader(

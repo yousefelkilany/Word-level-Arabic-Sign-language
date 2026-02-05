@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 import cv2
@@ -8,7 +7,7 @@ from mediapipe.tasks.python import BaseOptions, vision
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cdist
 
-from core.constants import FACE_SYMMETRY_MAP_PATH, LOCAL_INPUT_DATA_DIR, LANDMARKERS_DIR
+from core.constants import FACE_SYMMETRY_MAP_PATH, LANDMARKERS_DIR, LOCAL_INPUT_DATA_DIR
 
 
 def init_face_model():
@@ -24,7 +23,7 @@ def init_face_model():
     return vision.FaceLandmarker.create_from_options(face_options)
 
 
-async def get_face_mesh_symmetry_indices(face_model, image_path):
+def get_face_mesh_symmetry_indices(face_model, image_path):
     if not os.path.exists(image_path):
         raise ValueError(f"Invalid path: {image_path = }")
 
@@ -49,7 +48,7 @@ async def get_face_mesh_symmetry_indices(face_model, image_path):
 
 
 def gen_symmetry_map(face_model, image_path: str) -> np.ndarray:
-    symmetry_map = asyncio.run(get_face_mesh_symmetry_indices(face_model, image_path))
+    symmetry_map = get_face_mesh_symmetry_indices(face_model, image_path)
     print(f"Generated mapping for {len(symmetry_map)} points.")
 
     symmetry_arr = np.array([symmetry_map[i] for i in range(0, 478)])

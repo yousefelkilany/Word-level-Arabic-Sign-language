@@ -12,13 +12,20 @@ from core.constants import (
 )
 
 
-def init_signs() -> tuple[list[str], list[str]]:
+AR_WORDS, EN_WORDS = [], []
+
+
+def init_signs():
+    global AR_WORDS, EN_WORDS
+    if len(AR_WORDS) > 0 and len(EN_WORDS) > 0:
+        return
+
     with open(LABELS_JSON_PATH, "r", encoding="utf-8") as f:
         signs = json.load(f)
-    return signs["AR_WORDS"], signs["EN_WORDS"]
+    AR_WORDS, EN_WORDS = signs["AR_WORDS"], signs["EN_WORDS"]
 
 
-AR_WORDS, EN_WORDS = init_signs()
+init_signs()
 
 
 def extract_metadata_from_checkpoint(

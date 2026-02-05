@@ -10,8 +10,9 @@ from torch.utils.data import DataLoader, random_split
 from torch.utils.data.distributed import DistributedSampler
 
 from core.constants import DatasetType, ModelSize, SplitType, get_model_size
-from data import DataAugmentor, LazyKArSLDataset
+from data.data_preparation import DataAugmentor
 from data.dataloader import prepare_dataloader
+from data.lazy_dataset import LazyKArSLDataset
 from modelling.model import get_model_instance
 from modelling.train import train, train_cli, visualize_metrics
 
