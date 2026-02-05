@@ -2,6 +2,11 @@ const elVideo = document.getElementById('webcam');
 const elCanvas = document.getElementById('process-canvas');
 const elCtx = elCanvas.getContext('2d', { alpha: false });
 
+const elOverlayCanvas = document.getElementById('overlay-canvas');
+const elOverlayCtx = elOverlayCanvas.getContext('2d');
+const chkDrawPoints = document.getElementById('chk-draw-points');
+const chkDrawLines = document.getElementById('chk-draw-lines');
+
 const elAr = document.getElementById('prediction-text-ar');
 const elEn = document.getElementById('prediction-text-en');
 const elConfVal = document.getElementById('confidence-val');
@@ -32,6 +37,13 @@ const elSessionDetail = document.getElementById('session-detail');
 const btnBackList = document.getElementById('btn-back-list');
 
 let currentSessionLog = [];
+let POSE_KPS = [];
+let FACE_KPS = [];
+let HAND_KPS = [];
+let POSE_CONNECTIONS = [];
+let FACE_CONNECTIONS = [];
+let HAND_CONNECTIONS = [];
+let KPS_MAPPING = {};
 
 const CONFIG = {
     wsUrl: `ws://${location.host}/live-signs`,
@@ -40,8 +52,16 @@ const CONFIG = {
     processWidth: 320,
     STABILITY_THRESHOLD: 0,
     theme: 'light',
-    lang: 'ar-EG'
+    lang: 'ar-EG',
+    viz: {
+        face: false,
+        pose: true,
+        hands: false,
+        lines: false,
+        points: true
+    }
 };
+let needLandmarks = false;
 
 let state = {
     sessionId: new Date().toISOString(),
@@ -75,6 +95,40 @@ socket.onmessage = (event) => {
     updateUI(data);
 };
 
+function setupDrawingToggle(element, draw_mode) {
+    const configKey = `chk-draw-${draw_mode}`;
+    let saved = localStorage.getItem(configKey);
+    if (saved)
+        saved = saved === 'true';
+    else
+        saved = CONFIG.viz[draw_mode];
+
+    element.checked = saved;
+    CONFIG.viz[draw_mode] = saved;
+
+    element.addEventListener('change', (e) => {
+        CONFIG.viz[draw_mode] = e.target.checked;
+        localStorage.setItem(configKey, CONFIG.viz[draw_mode]);
+    });
+}
+
+window.toggleViz = function (region) {
+    CONFIG.viz[region] = !CONFIG.viz[region];
+    const btn = document.getElementById(`btn-viz-${region}`);
+    btn.classList.toggle('active', CONFIG.viz[region]);
+    localStorage.setItem(`viz_${region}`, CONFIG.viz[region]);
+};
+
+function initVizSettings() {
+    ['face', 'pose', 'hands'].forEach(region => {
+        const saved = localStorage.getItem(`viz_${region}`);
+        if (saved !== null) {
+            CONFIG.viz[region] = (saved === 'true');
+            document.getElementById(`btn-viz-${region}`).classList.toggle('active', CONFIG.viz[region]);
+        }
+    });
+}
+
 function initConfig() {
     const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const savedTheme = localStorage.getItem('theme');
@@ -90,6 +144,12 @@ function initConfig() {
         CONFIG.lang = savedLang;
         elLangSelect.value = savedLang;
     }
+
+    loadSkeletonConfig();
+
+    initVizSettings();
+    setupDrawingToggle(chkDrawLines, 'lines');
+    setupDrawingToggle(chkDrawPoints, 'points');
 }
 
 window.setTheme = function (themeName) {
@@ -172,6 +232,9 @@ function updateStatus(status) {
 }
 
 function updateUI(data) {
+    console.log(data);
+    drawSkeleton(data.landmarks);
+
     if (data.status === "idle" || !data.detected_sign) {
         elAr.textContent = "...";
         elEn.textContent = "...";
@@ -213,6 +276,103 @@ function updateUI(data) {
     if (confidencePct > 80) elConfBar.style.backgroundColor = 'var(--success-color)';
     else if (confidencePct > 50) elConfBar.style.backgroundColor = 'var(--accent-color)';
     else elConfBar.style.backgroundColor = 'var(--error-color)';
+}
+
+async function loadSkeletonConfig() {
+    try {
+        const response = await fetch('/static/simplified_kps_connections.json');
+        if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+
+        const kps = await response.json();
+        if (!kps)
+            throw new Error(`connections JSON error!`);
+
+        POSE_KPS = kps['pose_kps'];
+        FACE_KPS = kps['face_kps'];
+        HAND_KPS = kps['hand_kps'];
+        POSE_CONNECTIONS = kps['pose_connections'];
+        FACE_CONNECTIONS = kps['face_contours'];
+        HAND_CONNECTIONS = kps['hand_connections'];
+        KPS_MAPPING = kps['mp_idx_to_kps_idx'];
+        if (!POSE_CONNECTIONS || !FACE_CONNECTIONS || !HAND_CONNECTIONS || !KPS_MAPPING)
+            throw new Error(`Failed to load connections and kyepoints mapping!`);
+        console.log(`[ArSL] Loaded skeleton connections.`);
+    } catch (err) {
+        console.error("[ArSL] Failed to load skeleton config:", err);
+        POSE_CONNECTIONS = [];
+        FACE_CONNECTIONS = [];
+        HAND_CONNECTIONS = [];
+        KPS_MAPPING = {};
+    }
+}
+
+function drawSkeleton(landmarks) {
+    elOverlayCtx.clearRect(0, 0, elOverlayCanvas.width, elOverlayCanvas.height);
+    if (!landmarks || landmarks.length === 0 || (!CONFIG.viz.lines && !CONFIG.viz.points))
+        return;
+
+    const w = elOverlayCanvas.width;
+    const h = elOverlayCanvas.height;
+
+    // landmarks are normalized 0-1, so we need to scale them to the canvas size
+    const scaledLandmarks = landmarks.map(p => ({ x: p[0] * w, y: p[1] * h }));
+
+    if (CONFIG.viz.points) {
+        const drawRegion = (mp_idx, mp_idx_map_kps, color) => {
+            elOverlayCtx.beginPath();
+            elOverlayCtx.fillStyle = color;
+            const point_r = 2;
+            mp_idx.forEach((idx) => {
+                const p = scaledLandmarks[mp_idx_map_kps[idx]];
+                if (p && (p.x !== 0 || p.y !== 0)) {
+                    elOverlayCtx.moveTo(p.x + point_r, p.y);
+                    elOverlayCtx.arc(p.x, p.y, point_r, 0, 2 * Math.PI);
+                }
+            });
+            elOverlayCtx.fill();
+        };
+
+        if (CONFIG.viz.pose) drawRegion(POSE_KPS, KPS_MAPPING['pose'], '#0d9165');
+        if (CONFIG.viz.face) drawRegion(FACE_KPS, KPS_MAPPING['face'], '#d1880a');
+        if (CONFIG.viz.hands) {
+            drawRegion(HAND_KPS, KPS_MAPPING['rh'], '#ca3a3a');
+            drawRegion(HAND_KPS, KPS_MAPPING['lh'], '#ca3a3a');
+        }
+    }
+
+    if (CONFIG.viz.lines) {
+        const drawRegion = (connections, mp_idx_map_kps, color) => {
+            if (connections.length == 0)
+                return;
+
+            elOverlayCtx.beginPath();
+            elOverlayCtx.lineWidth = 2;
+            elOverlayCtx.lineJoin = 'round';
+
+            connections.forEach(([startIdx, endIdx]) => {
+                const p1 = scaledLandmarks[mp_idx_map_kps[startIdx]];
+                const p2 = scaledLandmarks[mp_idx_map_kps[endIdx]];
+                if (p1 && p2 && (p1.x || p1.y) && (p2.x || p2.y)) {
+                    elOverlayCtx.moveTo(p1.x, p1.y);
+                    elOverlayCtx.lineTo(p2.x, p2.y);
+                }
+            });
+
+            elOverlayCtx.strokeStyle = color;
+            elOverlayCtx.stroke();
+        };
+
+        if (CONFIG.viz.pose) drawRegion(POSE_CONNECTIONS, KPS_MAPPING['pose'], '#10b981');
+        if (CONFIG.viz.face)
+            Object.values(FACE_CONNECTIONS).forEach(face_subregion =>
+                drawRegion(face_subregion, KPS_MAPPING['face'], '#f59e0b')
+            );
+        if (CONFIG.viz.hands) {
+            drawRegion(HAND_CONNECTIONS, KPS_MAPPING['rh'], '#ef4444');
+            drawRegion(HAND_CONNECTIONS, KPS_MAPPING['lh'], '#ef4444');
+        }
+    }
 }
 
 function addWordToSentence(word) {
@@ -370,6 +530,8 @@ async function setupWebcam() {
             const ratio = elVideo.videoWidth / elVideo.videoHeight;
             elCanvas.width = CONFIG.processWidth;
             elCanvas.height = CONFIG.processWidth / ratio;
+            elOverlayCanvas.width = elCanvas.width;
+            elOverlayCanvas.height = elCanvas.height;
             requestAnimationFrame(loop);
         };
     } catch (err) {
@@ -391,11 +553,16 @@ function loop(timestamp) {
 }
 
 function processFrame() {
+    needLandmarks = (CONFIG.viz.lines || CONFIG.viz.points) &&
+        (CONFIG.viz.face || CONFIG.viz.pose || CONFIG.viz.hands);
     state.isSending = true;
     elCtx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
     elCanvas.toBlob((blob) => {
         if (blob && state.isSocketOpen) {
-            socket.send(blob);
+            const header = new Uint8Array(1);
+            header[0] = needLandmarks ? 1 : 0;
+            const finalBlob = new Blob([header, blob], { type: 'image/jpeg' });
+            socket.send(finalBlob);
         }
     }, 'image/jpeg', CONFIG.jpgQuality);
     state.isSending = false;

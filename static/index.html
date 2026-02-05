@@ -123,6 +123,7 @@
 
         <div class="viewport">
             <video id="webcam" autoplay playsinline muted></video>
+            <canvas id="overlay-canvas"></canvas>
             <canvas id="process-canvas" hidden></canvas>
 
             <div class="hud-layer">
@@ -231,6 +232,37 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="setting-group">
+                    <label>Active Regions</label>
+                    <div class="chip-container">
+                        <button id="btn-viz-face" class="filter-chip active"
+                            onclick="toggleViz('face')">Face</button>
+                        <button id="btn-viz-pose" class="filter-chip active"
+                            onclick="toggleViz('pose')">Pose</button>
+                        <button id="btn-viz-hands" class="filter-chip active"
+                            onclick="toggleViz('hands')">Hands</button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label>Draw Style</label>
+                    <div class="toggle-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="chk-draw-lines">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Skeleton (Lines)</span>
+                    </div>
+                    <div class="toggle-wrapper" style="margin-top: 10px;">
+                        <label class="switch">
+                            <input type="checkbox" id="chk-draw-points">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Keypoints (Dots)</span>
+                    </div>
+                </div>
+
 
                 <div class="setting-group">
                     <label for="lang-select">Voice Language</label>

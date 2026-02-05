@@ -1,165 +1,52 @@
 import asyncio
 import gc
-import time
-from collections import Counter, deque
 
 import fastapi
-import numpy as np
-import torch
-from torch import nn
 
-from api.cv2_utils import MotionDetector
-from api.live_processing import get_frame_kps, producer_handler
-from core.constants import SEQ_LEN
-from core.mediapipe_utils import LandmarkerProcessor
-from core.utils import AR_WORDS, EN_WORDS, get_default_logger
-from modelling.model import onnx_inference
+from api.live_processing import MAX_SIGN_FRAMES, consumer_handler, producer_handler
+from core.utils import get_default_logger
 
 logger = get_default_logger()
-
-NUM_IDLE_FRAMES = 15
-HISTORY_LEN = 5
-HISTORY_THRESHOLD = 2
-MIN_SIGN_FRAMES = 15
-MAX_SIGN_FRAMES = SEQ_LEN
-CONFIDENCE_THRESHOLD = 0.7
-EXT_FRAME = ".jpg"
-
 websocket_router = fastapi.APIRouter()
-
-
-def get_default_state():
-    return {
-        "is_idle": False,
-        "idle_frames_num": 0,
-        "sign_history": deque(maxlen=5),
-        "last_sent_sign": None,
-    }
 
 
 @websocket_router.websocket("/live-signs")
 async def ws_live_signs(websocket: fastapi.WebSocket):
     await websocket.accept()
     client_id = websocket.client
+    if not client_id:
+        logger.error("Recieved client connection but couldn't get client id")
+        return
+
     logger.info(f"Connected client: {client_id}")
 
-    client_buffer = []
-    client_state = get_default_state()
-
     frame_buffer = asyncio.Queue(MAX_SIGN_FRAMES)
-    producer_task = asyncio.create_task(producer_handler(websocket, frame_buffer))
-
-    motion_detector = MotionDetector()
-    mp_processor = await LandmarkerProcessor.create_async(None, True)
-
-    start_time = int(time.time())
-    last_processed_ts = start_time
-    prev_gray = np.array([])
+    producer_task = asyncio.create_task(
+        producer_handler(client_id, websocket, frame_buffer)
+    )
+    consumer_task = asyncio.create_task(
+        consumer_handler(client_id, websocket, frame_buffer)
+    )
 
     try:
-        while True:
-            frame = await frame_buffer.get()
-            if frame is None or frame.size == 0:
-                continue
+        done, pending = await asyncio.wait(
+            [producer_task, consumer_task], return_when=asyncio.FIRST_COMPLETED
+        )
 
-            if prev_gray.size == 0:
-                prev_gray = frame
-
-            has_motion, gray = await asyncio.to_thread(
-                motion_detector.detect, prev_gray, frame
-            )
-            prev_gray = gray
-
-            if not has_motion:
-                client_state["idle_frames_num"] += 1
-                if (
-                    client_state["idle_frames_num"] >= NUM_IDLE_FRAMES
-                    and not client_state["is_idle"]
-                ):
-                    client_state["is_idle"] = True
-                    client_buffer.clear()
-                    client_state["sign_history"].clear()
-                    client_state["last_sent_sign"] = None
-                    await websocket.send_json({"status": "idle"})
-                continue
-
-            client_state["is_idle"] = False
-            client_state["idle_frames_num"] = 0
-
-            try:
-                now_ms = int((time.time() - start_time) * 1000)
-                if now_ms <= last_processed_ts:
-                    now_ms = last_processed_ts + 1
-                last_processed_ts = now_ms
-
-                kps = await get_frame_kps(mp_processor, frame, now_ms)
-                client_buffer.append(kps)
-            except Exception as e:
-                logger.error(f"Error extracting keypoints: {e}")
-                continue
-
-            if len(client_buffer) < MIN_SIGN_FRAMES:
-                continue
-
-            if len(client_buffer) > MAX_SIGN_FRAMES:
-                client_buffer = client_buffer[-MAX_SIGN_FRAMES:]
-
-            try:
-                input_kps = np.array(client_buffer, dtype=np.float32)
-                input_kps = input_kps.reshape(1, input_kps.shape[0], -1)
-                raw_outputs = await asyncio.to_thread(
-                    onnx_inference, websocket.app.state.onnx_model, [input_kps]
-                )
-
-                if raw_outputs is not None:
-                    raw_outputs = raw_outputs.flatten()
-                    probs = nn.functional.softmax(torch.Tensor(raw_outputs), dim=0)
-                    pred_idx = int(torch.argmax(probs).item())
-                    confidence = probs[pred_idx].item()
-
-                    if confidence > CONFIDENCE_THRESHOLD:
-                        client_state["sign_history"].append(pred_idx)
-
-                        most_common_sign, sign_count = Counter(
-                            client_state["sign_history"]
-                        ).most_common(1)[0]
-                        if (
-                            sign_count >= HISTORY_THRESHOLD
-                            and most_common_sign != client_state["last_sent_sign"]
-                        ):
-                            client_state["last_sent_sign"] = most_common_sign
-                            await websocket.send_json(
-                                {
-                                    "detected_sign": {
-                                        "sign_ar": AR_WORDS[pred_idx],
-                                        "sign_en": EN_WORDS[pred_idx],
-                                    },
-                                    "confidence": confidence,
-                                }
-                            )
-
-            except Exception as e:
-                logger.error(f"Error detecting sign: {e}")
-                continue
-
-    except fastapi.WebSocketDisconnect:
-        logger.info(f"Disconnected client (consumer): {client_id}")
-
-    except Exception as e:
-        logger.error(f"Error (consumer): {e}")
+        for task in done:
+            if task.exception():
+                logger.error(f"Task failed: {task = }")
 
     finally:
         logger.info(f"Cleaning up resources for {client_id}")
 
-        client_buffer = None
-        client_state = None
-
-        producer_task.cancel()
-        try:
-            await producer_task
-        except asyncio.CancelledError:
-            ...
-
-        mp_processor.close()
-
+        for task in [producer_task, consumer_task]:
+            if not task.done():
+                task.cancel()
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    ...
+                except Exception as e:
+                    logger.error(f"Error during task cleanup: {e}")
         gc.collect()
