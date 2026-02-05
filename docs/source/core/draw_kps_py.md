@@ -1,8 +1,8 @@
 ---
 title: draw_kps.py
 date: 2026-01-28
-lastmod: 2026-01-29
-src_hash: e2291927430f188aa1b9060f58c4e46f87e0779d9fcfc2f2d63f213c1396468d
+lastmod: 2026-02-05
+src_hash: edf51f81ce412fb05f3fecdfa3aee5606f123b84ff0c0ec38556e053a584c6c2
 aliases: ["Landmark Visualization", "Keypoint Drawing Utilities"]
 ---
 
@@ -21,9 +21,12 @@ Converts raw numpy keypoint arrays back into MediaPipe's `NormalizedLandmark` fo
 ## Functions
 
 ### `get_lms_list(...)`
-Converts a numpy array segment into a list of `landmark_pb2.NormalizedLandmark`.
-- **Input**: `(N, 3)` or `(N, 4)` array.
-- **Output**: List of Protobuf objects with `.x`, `.y`, `.z`.
+Converts a numpy array segment into a list of `landmark_pb2.NormalizedLandmark` or a numpy array of coordinates.
+- **Input**: `(N, 3)` or `(N, 4)` array, `kps_idx`, `lms_num`, `return_as_lm=True`.
+- **Output**: List of MediaPipe Landmark objects or numpy array of coordinates.
+
+### `get_pose_lms_list(...)`, `get_face_lms_list(...)`, `get_hand_lms_list(...)`
+Specialized body-part getters that wrap `get_lms_list`.
 
 ### `draw_kps_on_image(...)`
 Generic drawer.

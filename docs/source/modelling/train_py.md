@@ -1,8 +1,8 @@
 ---
 title: train.py
 date: 2026-01-28
-lastmod: 2026-02-01
-src_hash: 67704c55646f34b48339248c8056e49e8e8fd12d28bf9b9dfe884d5b577f70e3
+lastmod: 2026-02-03
+src_hash: 97d54542c68fa9009b2bc186fe3ba50d63a644c43a75f970fea42bed9f78fc36
 aliases: ["Training Loop Implementation", "PyTorch Model Trainer"]
 ---
 

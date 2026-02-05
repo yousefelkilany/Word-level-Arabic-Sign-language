@@ -33,6 +33,16 @@ git clone https://github.com/yousefelkilany/word-level-arabic-sign-language.git
 cd word-level-arabic-sign-language
 ```
 
+### 2. Download Models (Git LFS)
+The landmarker models and latest ONNX checkpoints are stored using Git LFS. Run the following to ensure they are downloaded:
+
+```bash
+make download_lfs_files
+```
+
+> [!NOTE]
+> Ensure you have `git-lfs` installed and initialized on your system.
+
 ### 2. Configuration Setup
 
 Create a `.env` file from the example:
@@ -114,9 +124,11 @@ When prompted, allow the browser to access your webcam.
 
 ### 3. Start Signing
 
-- Position yourself in front of the camera
-- Perform Arabic sign language gestures
-- The system will detect and display recognized signs in real-time
+- Position yourself in front of the camera.
+- Perform Arabic sign language gestures.
+- **New**: Use the "Settings" menu to toggle skeletal visualization for Face, Pose, and Hands.
+- **New**: View session history and past detections in the "Archive" and "History Log".
+- The system will detect and display recognized signs in real-time.
 
 ## Project Structure
 
@@ -145,18 +157,18 @@ See [[development/project_structure|Project Structure]] for detailed organizatio
 ### Using Make
 
 ```bash
+# Setup
+make download_lfs_files  # Pull latest models/landmarkers via Git LFS
+
 # Training
 make train              # Train model with default settings
+make parallel_train     # Multi-GPU training
 make cpu_train          # Train on CPU only
 
-# Model Export
-make export_model checkpoint_path=path/to/checkpoint.pth
-
-# Benchmarking
-make onnx_benchmark checkpoint_path=path/to/model.onnx
-
-# Local Development
-make local_setup        # Set LOCAL_DEV=1 for current command
+# Model Export & Analysis
+make export_onnx        # Export PyTorch checkpoint to ONNX
+make onnx_benchmark     # Benchmark ONNX inference speed
+make visualize_metrics  # Generate performance plots
 ```
 
 See [[development/makefile_commands|Makefile Commands]] for all available commands.

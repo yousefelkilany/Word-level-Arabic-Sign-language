@@ -1,8 +1,8 @@
 ---
 title: utils.py
 date: 2026-01-28
-lastmod: 2026-02-01
-src_hash: 78799d7af53c50daaa5530c35d469d407d0598fb940819c1ceac8bd716bd747d
+lastmod: 2026-02-05
+src_hash: e8dbb5054e835c18d479b1b600ae0852c89c79603419ee7f454f12eea144f1b2
 aliases: ["General Utilities", "Logger Configuration"]
 ---
 
@@ -39,17 +39,18 @@ Provides shared helper functions used across the application for:
 ### `init_signs()`
 
 ```python
-def init_signs() -> tuple[list[str], list[str]]:
+def init_signs() -> None:
 ```
 
-**Purpose**: Loads and parses the JSON labels file.
+**Purpose**: Loads and parses the JSON labels file into the global `AR_WORDS` and `EN_WORDS` lists.
 
-**Returns**:
-- `Tuple`: `([Arabic Labels], [English Labels])`
+**Action**:
+- Reads `KARSL-502_Labels.json`.
+- Populates `AR_WORDS` and `EN_WORDS`.
 
 **Usage**:
 ```python
-AR_WORDS, EN_WORDS = init_signs()
+init_signs() # Usually called at module level
 ```
 
 ### `extract_metadata_from_checkpoint(checkpoint_path)`

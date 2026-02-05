@@ -16,6 +16,7 @@ When tasked with updating documentation based on source code changes:
 ## 📂 File Mappings & Naming
 
 - **Source**: `src/path/file.py` -> **Doc**: `docs/source/path/file_py.md`
+- **Source**: `scripts/file.py` -> **Doc**: `docs/source/scripts/file_py.md`
 - **Source**: `static/js/file.js` -> **Doc**: `docs/source/frontend/file_js.md`
 - **Rule**: Replace the dot in extension with an underscore (e.g., `.py` becomes `_py`).
 

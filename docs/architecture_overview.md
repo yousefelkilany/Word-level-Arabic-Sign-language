@@ -57,8 +57,9 @@ graph TB
 **Components**:
 - **Camera Handler**: Captures video frames from webcam
 - **WebSocket Client**: Establishes real-time connection to backend
-- **UI Controller**: Displays recognized signs and confidence scores
-- **Frame Encoder**: Converts canvas frames to JPEG for transmission
+- **UI Controller**: Displays recognized signs, confidence scores, and skeletal visualizations.
+- **Frame Encoder**: Converts canvas frames to JPEG for transmission, including optimization flags.
+- **Visualization Engine**: Renders body-region specific landmarks and connections.
 
 **Key Files**:
 - [[source/frontend/live_signs_js|live-signs.js]] - Main client logic
@@ -96,9 +97,9 @@ See [[api/fastapi_application|FastAPI Application]] for details.
 **Components**:
 
 #### Frame Buffer
-Circular buffer for managing incoming frames during inference.
+Asynchronous queue for managing incoming frames between the producer and consumer tasks.
 
-**Key Class**: `FrameBuffer` in [[source/api/live_processing_py|live_processing.py]]
+**Key Class**: `asyncio.Queue` (integrated in [[source/api/live_processing_py|live_processing.py]])
 
 **Methods**:
 - `add_frame()` - Adds frame to buffer
@@ -132,19 +133,19 @@ See [[core/mediapipe_integration|MediaPipe Integration]] for details.
 **Components**:
 
 #### Model Architecture
-Attention-based Bidirectional LSTM for sequence classification.
+Spatial-Temporal Transformer (ST-Transformer) for sequence classification.
 
 **Key Classes** in [[source/modelling/model_py|model.py]]:
-- `AttentionBiLSTM` - Main model architecture
-- `SpatialGroupEmbedding` - Feature embedding layer
-- `ResidualBiLSTMBlock` - BiLSTM building block
-- `AttentionPooling` - Attention-based pooling
+- `STTransformer` - Main model architecture
+- `GroupTokenEmbedding` - Body part tokenization layer
+- `STTransformerBlock` - Spatial-Temporal dual attention block
+- `AttentionPooling` - Attention-based temporal aggregation
 
 **Model Pipeline**:
 1. **Input**: Keypoint sequences (batch, seq_len, features)
-2. **Embedding**: Spatial group embedding
-3. **BiLSTM**: 4 residual BiLSTM layers
-4. **Attention**: Multi-head self-attention
+2. **Embedding**: Group token embedding (4 tokens: Pose, Face, Hands)
+3. **Positioning**: Sinusoidal positional encoding
+4. **Transformer**: N consecutive Spatial-Temporal attention blocks
 5. **Pooling**: Attention-based temporal pooling
 6. **Output**: Class logits (502 classes)
 
@@ -190,39 +191,37 @@ See [[data/data_preparation_pipeline|Data Preparation Pipeline]] for details.
 sequenceDiagram
     participant User
     participant Browser
-    participant WebSocket
-    participant FrameBuffer
-    participant MotionDetector
+    participant WebSocket as WS Router
+    participant Producer as Producer Handler
+    participant Queue as asyncio.Queue
+    participant Consumer as Consumer Handler
     participant MediaPipe
     participant ONNX
-    participant Classifier
     
     User->>Browser: Perform sign
-    Browser->>WebSocket: Send frame (JPEG)
-    WebSocket->>FrameBuffer: Add frame
+    Browser->>WebSocket: Connect WS
+    WebSocket->>Queue: Initialize (max_size=50)
+    WebSocket->>Producer: Spawn Process
+    WebSocket->>Consumer: Spawn Process
     
-    loop Processing Loop
-        FrameBuffer->>MotionDetector: Get latest frame
-        MotionDetector->>MotionDetector: Detect motion
+    loop Stream
+        Browser->>Producer: Send Frame (JPEG)
+        Producer->>Queue: Put (Decoded Frame)
+        
+        Queue->>Consumer: Get Frame
+        Consumer->>Consumer: Motion Detection
         
         alt Motion Detected
-            MotionDetector->>MediaPipe: Extract keypoints
-            MediaPipe->>FrameBuffer: Store keypoints
+            Consumer->>MediaPipe: Extract Keypoints
+            Consumer->>Consumer: Buffer Keypoints
             
-            alt Buffer >= MIN_FRAMES
-                FrameBuffer->>ONNX: Keypoint sequence
-                ONNX->>Classifier: Raw logits
-                Classifier->>Classifier: Apply softmax
-                Classifier->>Classifier: Check confidence
-                
-                alt Confidence > Threshold
-                    Classifier->>WebSocket: Send prediction
-                    WebSocket->>Browser: Display sign
-                    Browser->>User: Show result
-                end
+            alt Keypoints >= 15
+                Consumer->>ONNX: Run Inference
+                ONNX-->>Consumer: Logits
+                Consumer->>Browser: Send Prediction (JSON)
             end
         else No Motion
-            MotionDetector->>WebSocket: Send idle status
+            Consumer->>Browser: Send Idle Status
         end
     end
 ```

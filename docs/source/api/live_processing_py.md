@@ -1,125 +1,72 @@
 ---
-title: live-processing.py
+title: live_processing.py
 date: 2026-01-28
-lastmod: 2026-01-31
-src_hash: d21b40279656ac90b80aaf497e5df909907bbca0dc78af9e509a27c02a8f9efe
-aliases: ["Frame Buffer Management", "Asynchronous Keypoint Extraction"]
+lastmod: 2026-02-05
+src_hash: 8eee887f6a864ca0a9aaef85fe99ece1772d984d59f862ed8d7da4d1075ab036
+aliases: ["Real-time Processing", "Stream Ingestion", "Live Sign Detection"]
 ---
 
-# source/api/live-processing.py
+# live_processing.py
 
-#source-code #api #frame-processing #async
+#source #api #real-time #async #inference
 
 **File Path**: `src/api/live_processing.py`
 
-**Purpose**: Frame buffer management and asynchronous keypoint extraction for real-time processing.
+**Purpose**: Orchestrates real-time video frame ingestion, motion detection, keypoint extraction, and sign language inference.
 
 ## Overview
 
-Provides infrastructure for buffering incoming video frames and extracting keypoints asynchronously using thread pools.
+This module implements a dual-handler architecture (Producer/Consumer) using `asyncio.Queue` to process video streams from WebSockets. It handles:
+1.  **Frame Ingestion**: Decoding binary bytes from WebSockets into OpenCV images.
+2.  **Motion Detection**: Skipping static frames to save compute.
+3.  **Feature Extraction**: Concurrent MediaPipe landmarking.
+4.  **Inference Orchestration**: Sliding window based classification using ONNX models.
 
-## Classes
+## Handlers
 
-### `FrameBuffer`
+### `producer_handler(client_id, websocket, buffer)`
+**Purpose**: Receives raw bytes from the client and decodes them.
+- **Protocol**: Receives `bytes`. First byte is `draw_mode` (toggle), remaining are JPEG-encoded frame.
+- **Decoding**: Uses `cv2.imdecode` via `asyncio.to_thread`.
+- **Queueing**: Drops oldest frames if the buffer is full to maintain low latency.
 
-#class #buffer #circular-buffer
+### `consumer_handler(client_id, websocket, buffer)`
+**Purpose**: The main processing engine for each client connection.
+- **Initialization**: Creates `LandmarkerProcessor` asynchronously.
+- **Workflow**:
+    1.  Polls frames from the buffer.
+    2.  Performs motion detection via `MotionDetector`.
+    3.  If motion detected:
+        - Extracts keypoints via `get_frame_kps`.
+        - Updates `client_buffer` (size: `MAX_SIGN_FRAMES`).
+    4.  If buffer meets `MIN_SIGN_FRAMES`:
+        - Runs `onnx_inference`.
+        - Applies Softmax and checks `CONFIDENCE_THRESHOLD`.
+        - Uses a `sign_history` deque and `HISTORY_THRESHOLD` to stabilize predictions.
+    5.  Sends JSON response (landmarks, detected sign, confidence).
 
-**Purpose**: Circular buffer for managing video frames during inference.
-
-**Attributes**:
-- `_frames` (dict[int, np.ndarray]): Frame storage indexed by frame number
-- `_max_size` (int): Maximum buffer capacity
-- `_latest_idx` (int): Index of most recent frame
-- `logger`: Logger instance
-
-**Methods**:
-
-#### `__init__(max_size)`
-Initializes buffer with maximum size.
-
-#### `add_frame(frame)`
-Adds frame to buffer, removes oldest if full.
-
-**Called By**: [[websocket_py#ws_live_signs|ws_live_signs()]]
-
-#### `get_frame(idx) -> Optional[np.ndarray]`
-Retrieves frame by index.
-
-**Called By**: [[websocket_py#ws_live_signs|ws_live_signs()]]
-
-#### `latest_idx` (property)
-Returns index of most recent frame.
-
-#### `oldest_idx` (property)
-Returns index of oldest frame in buffer.
-
-#### `clear()`
-Clears all frames and resets index.
-
-**Called By**: [[websocket_py#ws_live_signs|ws_live_signs()]]
-
-## Functions
-
-### `producer_handler(websocket, buffer: FrameBuffer)`
-
-#async #producer
-
-**Purpose**: Asynchronously receives and decodes frames from WebSocket.
-
-**Parameters**:
-- `websocket`: WebSocket connection
-- `buffer` (FrameBuffer): Frame buffer to populate
-
-**Implementation**:
-- Receives binary frame data via WebSocket
-- Decodes JPEG frames using cv2.imdecode
-- Adds decoded frames to buffer
-- Runs until WebSocket closes or error occurs
-
-**Called By**: [[websocket_py#ws_live_signs|ws_live_signs()]]
-
-**Calls**:
-- `websocket.receive_bytes()` - Receives frame data
-- `cv2.imdecode()` - Decodes JPEG to numpy array
-- [[#FrameBuffer.add_frame|buffer.add_frame()]] - Stores frame
+## Core Functions
 
 ### `get_frame_kps(mp_processor, frame, timestamp_ms=-1)`
+**Purpose**: Wrapper for thread-pool based keypoint extraction.
+- **Returns**: `tuple(adjusted_kps, raw_kps)`.
 
-#async #keypoint-extraction
+## Constants & Configuration
 
-**Purpose**: Asynchronously extracts keypoints from frame using MediaPipe.
-
-**Parameters**:
-- `mp_processor` ([[../core/mediapipe_utils_py#LandmarkerProcessor|LandmarkerProcessor]]): MediaPipe processor
-- `frame` (np.ndarray): Video frame
-- `timestamp_ms` (int): Frame timestamp
-
-**Returns**: Extracted keypoints array
-
-**Implementation**:
-Uses thread pool executor to run MediaPipe processing off main thread.
-
-**Called By**: [[websocket_py#ws_live_signs|ws_live_signs()]]
-
-**Calls**:
-- [[../core/mediapipe_utils_py#LandmarkerProcessor.extract_frame_keypoints|mp_processor.extract_frame_keypoints()]]
-
-## Thread Pool
-
-```python
-keypoints_detection_executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
-```
-
-**Configuration**: [[../core/constants_py#MAX_WORKERS|MAX_WORKERS]] = 4
-
-**Used By**: [[#get_frame_kps|get_frame_kps()]]
+| Constant               | Value | Description                                  |
+| :--------------------- | :---- | :------------------------------------------- |
+| `NUM_IDLE_FRAMES`      | 15    | Frames before switching back to idle state.  |
+| `MIN_SIGN_FRAMES`      | 15    | Minimum frames required for inference.       |
+| `MAX_SIGN_FRAMES`      | 50    | Maximum temporal window (matches `SEQ_LEN`). |
+| `CONFIDENCE_THRESHOLD` | 0.7   | Minimum probability for valid detection.     |
+| `HISTORY_THRESHOLD`    | 2     | Required repetitions in history for output.  |
 
 ## Related Documentation
 
-- [[websocket_py|websocket.py]] - Main consumer
-- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - Keypoint extraction
-- [[../../api/live_processing_pipeline|Live Processing Pipeline]]
+**Depends On**:
+- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - `LandmarkerProcessor`.
+- [[cv2_utils_py|cv2_utils.py]] - `MotionDetector`.
+- [[../modelling/model_py|model.py]] - `onnx_inference`.
 
----
-
-**File Location**: `src/api/live_processing.py`
+**Used By**:
+- [[websocket_py|websocket.py]] - Spawns the handlers.

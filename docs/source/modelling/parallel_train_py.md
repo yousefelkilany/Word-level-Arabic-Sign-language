@@ -1,8 +1,8 @@
 ---
 title: parallel_train.py
 date: 2026-01-28
-lastmod: 2026-02-01
-src_hash: e24f2205a3e14ff8904c790f4e0ce5c8123193056b2799847056afb9219a66ff
+lastmod: 2026-02-05
+src_hash: e6e05cc73da977e632f01815fe4026cdad5a804d22ed4856e4433b2faa5fbdbf
 aliases: ["Distributed Training Launcher", "Multi-GPU Training Script"]
 ---
 
@@ -31,8 +31,10 @@ This script orchestrates distributed training across all available GPUs on a sin
    - Wraps the dataset in `DataLoader` with `pin_memory=True`.
 5. **Model Parallelism**:
    - Wraps the model in `DistributedDataParallel (DDP)`.
-   - Converts Batch Norm layers to `SyncBatchNorm`.
-6. **Training**: Invokes the shared `train()` function from `train.py`.
+   - Converts Batch Norm layers to `SyncBatchNorm` for consistent statistics across GPUs.
+6. **Dynamic Scaling**:
+   - Scales the learning rate by the square root of the `world_size`: `lr = 1e-3 * sqrt(world_size)`.
+7. **Training**: Invokes the shared `train()` function from `train.py`.
 
 ## Key Functions
 

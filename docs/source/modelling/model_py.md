@@ -1,93 +1,86 @@
 ---
 title: model.py
 date: 2026-01-28
-lastmod: 2026-02-01
-src_hash: acd6eae379845a6d54a1a0431ad42681832f90ecf0443cc11590f8fa8fb6dc6a
-aliases: ["Deep Learning Architecture", "Spatial-Temporal Model Definition"]
+lastmod: 2026-02-03
+src_hash: ebea28b55c949cabdb75f7d1e637ccc32b760d0d47633988195ca42a65d5c66d
+aliases: ["ST-Transformer", "Spatial-Temporal Model", "Architecture Definition"]
 ---
 
 # model.py
 
-#source #modelling #pytorch #architecture
+#source #modelling #pytorch #transformer #architecture
 
 **File Path**: `src/modelling/model.py`
 
-**Purpose**: Definition of the deep learning architecture for sign language recognition.
+**Purpose**: Defines the Spatial-Temporal Transformer (ST-Transformer) architecture for sign language recognition.
 
 ## System Architecture
 
-The model uses a **Spatial-Temporal** architecture combining embeddings for body parts with BiLSTMs and Attention.
+The model uses an ST-Transformer which processes data in both spatial (within a frame) and temporal (across time) dimensions.
 
 ```mermaid
 graph TD
-    Input["Input Tensor (Batch, Seq, Feat)"] --> Embed[Spatial Group Embedding]
-    Embed --> BiLSTM[Residual BiLSTM Blocks]
-    BiLSTM --> Attn[Multi-Head Self Attention]
-    Attn --> Pool[Attention Pooling]
-    Pool --> Dropout
-    Dropout --> FC[Fully Connected]
+    Input["Input Tensor (Batch, Seq, Feat)"] --> GTE[Group Token Embedding]
+    GTE --> PE[Positional Encoding]
+    PE --> Blocks[ST-Transformer Blocks x N]
+    subgraph ST-Transformer Block
+        Blocks --> SN[Spatial Norm]
+        SN --> SA[Spatial Attention]
+        SA --> TN[Temporal Norm]
+        TN --> TA[Temporal Attention]
+        TA --> MN[MLP Norm]
+        MN --> MLP[GELU MLP]
+    end
+    Blocks --> Pool[Attention Pooling]
+    Pool --> FC[Output Linear]
     FC --> Logits
 ```
 
 ## Classes
 
-### `SpatialGroupEmbedding`
-**Purpose**: Embeds raw keypoints into a hidden semantic space, processing distinct body parts separately.
-**Input**: `(Batch, Seq, 184 * 4)`
-**Logic**:
-- **Pose**: Linear Proj -> 40 dim
-- **Face**: Linear Proj -> 88 dim
-- **Hands**: Linear Proj -> 128 dim (each)
-- **Aggregated**: Concatenated (384 dim) -> GELU -> BatchNorm
+### `GroupTokenEmbedding`
+**Purpose**: Transforms raw keypoints into body-part specific tokens.
+- **Tokens**: Creates 4 tokens per frame (Pose, Face, Right Hand, Left Hand).
+- **Projections**: Each part is projected to `token_dim` using a linear layer.
+- **Normalization**: Uses `BatchNorm1d` on input features and `LayerNorm` on tokens.
+- **Part Embeddings**: Adds learned embeddings to distinguish body parts.
 
-### `ResidualBiLSTMBlock`
-**Purpose**: A single building block for the temporal encoder.
-**Components**:
-- Bidirectional LSTM
-- Dropout
-- LayerNorm
-- **Residual Connection**: `x + f(x)`
+### `STTransformerBlock`
+**Purpose**: Dual-attention block for spatial and temporal modeling.
+- **Spatial Attention**: Self-attention over body-part tokens within the same time step.
+- **Temporal Attention**: Self-attention over the same body part across different time steps.
+- **MLP**: A 2-layer GELU-based feed-forward network.
+- **Residual Connections**: Used after each attention and MLP sub-block.
+
+### `PositionalEncoding`
+**Purpose**: Adds sinusoidal position signals to the input tokens to provide temporal context.
 
 ### `AttentionPooling`
-**Purpose**: Aggregates the sequence of hidden states into a single vector using learned attention weights.
-**Formula**: $\sum (x_t \cdot \text{softmax}(W \cdot x_t))$
+**Purpose**: Aggregates temporal information by weighting frames based on learned importance.
 
-### `AttentionBiLSTM`
-**Purpose**: Main model class.
-**Hyperparameters**:
-- `hidden_size`: 384
-- `num_lstm_blocks`: 4
-- `heads`: 8
+### `STTransformer`
+**Purpose**: The full model assembler.
+- **Layers**: Configurable through `ModelSize` (Head size, Num heads, Num layers).
+- **Output**: Linear layer mapping hidden representations to `num_classes`.
 
 ## Functions
 
-### `get_model_instance(...)`
-Factory function creating a standard model configuration.
-```python
-def get_model_instance(num_signs, device="cpu") -> AttentionBiLSTM:
-```
-**Default Params**:
-- `hidden_size`: 384
-- `dropout`: 0.5 (all types)
+### `get_model_instance(num_signs, model_size, device="cpu")`
+**Purpose**: Factory function to instantiate the ST-Transformer.
 
-### `load_onnx_model(...)`
-Initializes an ONNX Runtime Inference Session.
-```python
-def load_onnx_model(onnx_model_path, device="cpu") -> InferenceSession:
-```
-**Providers**:
-- checks `device="cuda"` to use `CUDAExecutionProvider` or defaults to `CPU`.
+### `load_model(checkpoint_path, ...)`
+**Purpose**: Loads a PyTorch checkpoint, extracting model metadata (number of signs, size) from the filename if not provided.
 
-### `onnx_inference(...)`
-Runs inference on a sequence using the ONNX session.
-- **Padding**: Automatically pads input sequence to `SEQ_LEN` (50) by repeating the last frame if necessary.
+### `onnx_inference(ort_session, input_data)`
+**Purpose**: Executes inference using ONNX Runtime.
+- **Padding**: Pads sequences shorter than `SEQ_LEN` (50) by repeating the last frame.
 
 ## Related Documentation
 
 **Depends On**:
-- [[../core/constants_py|constants.py]] - `FEAT_DIM`, `SEQ_LEN`
-- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - Body part indices
+- [[../core/constants_py|constants.py]] - `ModelSize`, `FEAT_DIM`, `SEQ_LEN`.
+- [[../core/mediapipe_utils_py|mediapipe_utils.py]] - Body part counts.
 
 **Used By**:
-- [[train_py|train.py]] - Instantiates model for training
-- [[../api/websocket_py|websocket.py]] - Inference logic
+- [[train_py|train.py]] - Model training.
+- [[../api/live_processing_py|live_processing.py]] - Online inference.

@@ -1,8 +1,8 @@
 ---
 title: dataloader.py
 date: 2026-01-28
-lastmod: 2026-01-29
-src_hash: ab7b49103287f756af6343ac77fdfefdd675d1b33761dbaa419314486939a3c8
+lastmod: 2026-02-05
+src_hash: 812057cc8b339eb2c244a59c88acc011d69ed4284322aff5caaa1baedc7c3221
 aliases: ["PyTorch DataLoader Manager", "Splits and Transforms Config"]
 ---
 
@@ -16,10 +16,11 @@ Manages the creation of PyTorch DataLoaders for training, validation, and testin
 
 ### `prepare_dataloader(...)`
 Creates a single `DataLoader` for a specific split.
-- **Args**: `dataset_type`, `split`, `signers`, `signs`, `batch_size`, `train_transforms`.
+- **Args**: `dataset_type`, `split`, `signers`, `signs`, `batch_size`, `shuffle`, `num_workers`, `transforms`.
 - **Logic**:
     - Selects `LazyKArSLDataset` or `MmapKArSLDataset`.
-    - For `train` split, it further performs an 80/20 random split for training/validation if not explicitly handling separate files (though typically `train` and `test` are distinct).
+    - Returns `test_dl` directly if split is `test`.
+    - For other splits, it performs an 80/20 random split for training/validation.
     - Returns `(train_dl, val_dl)` or `test_dl`.
 
 ### `prepare_dataloaders(...)`

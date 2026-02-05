@@ -1,7 +1,7 @@
 ---
 title: run.py
 date: 2026-01-28
-lastmod: 2026-01-14
+lastmod: 2026-02-02
 src_hash: 2b76f6012f3a66a7f5239f67aacaeb09021613f29325d726c0b1323b9d881239
 aliases: ["Application Server Entry", "Uvicorn Runner"]
 ---

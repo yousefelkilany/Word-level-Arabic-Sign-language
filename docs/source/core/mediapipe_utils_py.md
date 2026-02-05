@@ -1,8 +1,8 @@
 ---
 title: mediapipe_utils.py
 date: 2026-01-28
-lastmod: 2026-01-31
-src_hash: f06d99903c66aa101232357da87a6a1b28e3827e596cd2de338b3fe4d560ea5c
+lastmod: 2026-02-05
+src_hash: d6675e0c39b08b2c3502dcaa4640b5d3fb662a6ff27151bd5d30c42c69b3ba03
 aliases: ["MediaPipe Wrappers", "Keypoint Extraction Core"]
 ---
 
@@ -33,7 +33,8 @@ graph TD
 ### Key Features
 - **Concurrent Extraction**: Uses `ThreadPoolExecutor` to run landmarkers in parallel.
 - **Normalization**: Indices mapping for specific body parts.
-- **Async Creation**: Supports asynchronous initialization for non-blocking startup.
+- **Async Creation**: `create_async` supports asynchronous initialization for non-blocking startup using `asyncio.to_thread`.
+- **Reduced Representation**: Supports simplified face and hand keypoints for efficient processing.
 
 ## Constants
 
@@ -48,6 +49,11 @@ graph TD
 - `face`: `[POSE_NUM:POSE_NUM+FACE_NUM]`
 - `rh`: `[...:...+HAND_NUM]`
 - `lh`: `[...:...+HAND_NUM]`
+
+### Reduced Representations
+- `reduced_face_kps`: Subset of face landmarks based on `simplified_face_connections.json`.
+- `reduced_hand_kps`: Subset of hand landmarks (11 points per hand).
+- `reduced_mp_kps_idx_view`: Global view of all selected keypoints.
 
 ## Classes
 
@@ -64,13 +70,17 @@ Initializes logger and definition references.
 - `inference_mode`: `True` for Video (stateful), `False` for Image (stateless).
 **Returns**: Initialized instance.
 
-#### `extract_frame_keypoints(frame_rgb, timestamp_ms=-1, adjusted=False)`
+#### `create_async(landmarkers, inference_mode)`
+**Purpose**: Asynchronous version of `create`.
+
+#### `extract_frame_keypoints(frame_rgb, timestamp_ms=-1, adjusted=False, return_both=False)`
 **Core Logic**:
 1. Defines nested functions (`get_pose`, `get_face`, `get_hands`) to capture local state.
 2. Submits tasks to `ThreadPoolExecutor(max_workers=3)`.
 3. Waits for all results.
 4. Aggregates results into a single `(N, 4)` numpy array `[x, y, z, visibility]`.
 5. **Adjusted Mode**: If `True`, normalizes points relative to a reference (e.g., Nose) and scales by a body-part metric (e.g., Shoulder width).
+6. **Return Both**: If `True`, returns both adjusted and raw keypoints.
 
 ## Related Documentation
 

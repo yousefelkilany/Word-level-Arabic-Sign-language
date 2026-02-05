@@ -1,8 +1,8 @@
 ---
 title: constants.py
 date: 2026-01-28
-lastmod: 2026-02-01
-src_hash: b885604e23f2c9397f7b1428ea6aad08a590d9e2f8011e10c101f8f5d0cab6af
+lastmod: 2026-02-05
+src_hash: 40468146b1c7439db4a931b9798a95e3a9d347abc315d61fc28fcef10139a88d
 aliases: ["System-wide Constants", "Path Configuration"]
 ---
 
@@ -33,6 +33,7 @@ Central configuration module that defines:
 ### Base Directories
 
 - `PROJECT_ROOT_DIR`: Root folder containing the `src/` directory.
+- `STATIC_ASSETS_DIR`: `{PROJECT_ROOT_DIR}/static`.
 - `MODELS_DIR`: `{PROJECT_ROOT_DIR}/models`.
 - `LOGS_DIR`: `{PROJECT_ROOT_DIR}/logs`.
 - `LANDMARKERS_DIR`: Folder containing MediaPipe `.task` files.
@@ -56,6 +57,7 @@ Central configuration module that defines:
 - `LABELS_PATH`: Path to the `KARSL-502_Labels.xlsx` file.
 - `LABELS_JSON_PATH`: Path to the `KARSL-502_Labels.json` file.
 - `FACE_SYMMETRY_MAP_PATH`: Path to the `.npy` symmetry map used for face mesh processing.
+- `SIMPLIFIED_FACE_CONNECTIONS_PATH`: Path to the `simplified_face_connections.json` file.
 
 ---
 

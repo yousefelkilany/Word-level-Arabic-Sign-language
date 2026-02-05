@@ -1,8 +1,8 @@
 ---
 title: main.py
 date: 2026-01-28
-lastmod: 2026-02-01
-src_hash: b19224bbfdb427ba98a41f4b9487e8eff8015ecf60059a8943cd625110eae9c7
+lastmod: 2026-02-05
+src_hash: 669dd05d7f7719c47dcfcabc864db6d481aeca0adc84541331bed53f59cfa8c4
 aliases: ["Application Entry Point", "Lifespan Manager"]
 ---
 
@@ -80,16 +80,19 @@ from fastapi.staticfiles import StaticFiles
 ```python
 @asynccontextmanager
 async def lifespan(app: fastapi.FastAPI):
-    print("Loading model...")
+    logger = get_default_logger()
+    logger.info("Loading Onnx model...")
     ONNX_CHECKPOINT_FILENAME = (
         os.environ.get("ONNX_CHECKPOINT_FILENAME") or "ONNX_CHECKPOINT_FILENAME"
     )
     onnx_checkpoint_path = os.path.join(MODELS_DIR, ONNX_CHECKPOINT_FILENAME)
     app.state.onnx_model = load_onnx_model(onnx_checkpoint_path)
 
+    logger.info("Onnx model loaded successfully")
+
     yield
 
-    print("Shutting down...")
+    logger.info("Shutting down...")
     del app.state.onnx_model
 ```
 
@@ -129,7 +132,7 @@ async def lifespan(app: fastapi.FastAPI):
 @app.get("/")
 @app.get("/live-signs")
 async def live_signs_ui():
-    return FileResponse(os.path.join(static_assets_dir, "index.html"))
+    return FileResponse(os.path.join(STATIC_ASSETS_DIR, "index.html"))
 ```
 
 **Called By**:
@@ -166,7 +169,7 @@ async def live_signs_ui():
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return FileResponse(
-        path=os.path.join(static_assets_dir, "mediapipe-logo.ico"),
+        path=os.path.join(STATIC_ASSETS_DIR, "mediapipe-logo.ico"),
         headers={"Content-Disposition": "attachment; filename=favicon.ico"},
     )
 ```
@@ -286,10 +289,10 @@ uvicorn.run("api.main:app", host="0.0.0.0", port=8000, reload=True)
 
 ## Environment Variables Used
 
-| Variable                                                        | Usage                      | Default             |
-| --------------------------------------------------------------- | -------------------------- | ------------------- |
-| [[deployment/environment_configuration#ONNX_CHECKPOINT_FILENAME | ONNX_CHECKPOINT_FILENAME]] | ONNX model filename | `"ONNX_CHECKPOINT_FILENAME"` |
-| [[deployment/environment_configuration#DOMAIN_NAME              | DOMAIN_NAME]]              | CORS allowed origin | `"DOMAIN_NAME"`              |
+| Variable                   | Usage               | Default                      |
+| :------------------------- | :------------------ | :--------------------------- |
+| `ONNX_CHECKPOINT_FILENAME` | ONNX model filename | `"ONNX_CHECKPOINT_FILENAME"` |
+| `DOMAIN_NAME`              | CORS allowed origin | `"DOMAIN_NAME"`              |
 
 ## State Management
 
