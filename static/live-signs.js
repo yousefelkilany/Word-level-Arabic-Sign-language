@@ -1,572 +1,561 @@
-const elVideo = document.getElementById('webcam');
-const elCanvas = document.getElementById('process-canvas');
-const elCtx = elCanvas.getContext('2d', { alpha: false });
-
-const elOverlayCanvas = document.getElementById('overlay-canvas');
-const elOverlayCtx = elOverlayCanvas.getContext('2d');
-const chkDrawPoints = document.getElementById('chk-draw-points');
-const chkDrawLines = document.getElementById('chk-draw-lines');
-
-const elAr = document.getElementById('prediction-text-ar');
-const elEn = document.getElementById('prediction-text-en');
-const elConfVal = document.getElementById('confidence-val');
-const elConfBar = document.getElementById('confidence-bar');
-const elStatus = document.getElementById('connection-status');
-const elStatusText = document.getElementById('status-text');
-
-const elSentenceOutput = document.getElementById('sentence-output');
-const btnSpeak = document.getElementById('btn-speak');
-const btnClear = document.getElementById('btn-clear');
-
-const elSettingsOverlay = document.getElementById('settings-overlay');
-const btnSettings = document.getElementById('btn-settings');
-const btnCloseSettings = document.getElementById('btn-close-settings');
-const elLangSelect = document.getElementById('lang-select');
-
-const elHistorySidebar = document.getElementById('history-sidebar');
-const elHistoryList = document.getElementById('history-list');
-const btnHistoryToggle = document.getElementById('history-toggle');
-const btnCloseHistory = document.getElementById('close-history');
-const btnClearHistory = document.getElementById('clear-history');
-
-const btnArchive = document.getElementById('btn-archive');
-const elArchiveModal = document.getElementById('archive-modal');
-const btnCloseArchive = document.getElementById('btn-close-archive');
-const elSessionList = document.getElementById('session-list');
-const elSessionDetail = document.getElementById('session-detail');
-const btnBackList = document.getElementById('btn-back-list');
-
-let currentSessionLog = [];
-let POSE_KPS = [];
-let FACE_KPS = [];
-let HAND_KPS = [];
-let POSE_CONNECTIONS = [];
-let FACE_CONNECTIONS = [];
-let HAND_CONNECTIONS = [];
-let KPS_MAPPING = {};
-
-const CONFIG = {
-    wsUrl: `ws://${location.host}/live-signs`,
-    fps: 30,
-    jpgQuality: 0.7,
-    processWidth: 320,
-    STABILITY_THRESHOLD: 0,
-    theme: 'light',
-    lang: 'ar-EG',
-    viz: {
-        face: false,
-        pose: true,
-        hands: false,
-        lines: false,
-        points: true
-    }
-};
-let needLandmarks = false;
-
-let state = {
-    sessionId: new Date().toISOString(),
-    isSocketOpen: false,
-    isSending: false,
-    lastFrameTime: 0,
-    lastFrameWord: "",
-    sentenceBuffer: [],
-    stabilityCounter: 0
-};
-
-const socket = new WebSocket(CONFIG.wsUrl);
-
-socket.onopen = () => {
-    updateStatus('connected');
-    state.isSocketOpen = true;
-};
-
-socket.onclose = () => {
-    updateStatus('disconnected');
-    state.isSocketOpen = false;
-};
-
-socket.onerror = (err) => {
-    console.error("WS Error", err);
-    updateStatus('error');
-};
-
-socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    updateUI(data);
-};
-
-function setupDrawingToggle(element, draw_mode) {
-    const configKey = `chk-draw-${draw_mode}`;
-    let saved = localStorage.getItem(configKey);
-    if (saved)
-        saved = saved === 'true';
-    else
-        saved = CONFIG.viz[draw_mode];
-
-    element.checked = saved;
-    CONFIG.viz[draw_mode] = saved;
-
-    element.addEventListener('change', (e) => {
-        CONFIG.viz[draw_mode] = e.target.checked;
-        localStorage.setItem(configKey, CONFIG.viz[draw_mode]);
-    });
-}
-
-window.toggleViz = function (region) {
-    CONFIG.viz[region] = !CONFIG.viz[region];
-    const btn = document.getElementById(`btn-viz-${region}`);
-    btn.classList.toggle('active', CONFIG.viz[region]);
-    localStorage.setItem(`viz_${region}`, CONFIG.viz[region]);
-};
-
-function initVizSettings() {
-    ['face', 'pose', 'hands'].forEach(region => {
-        const saved = localStorage.getItem(`viz_${region}`);
-        if (saved !== null) {
-            CONFIG.viz[region] = (saved === 'true');
-            document.getElementById(`btn-viz-${region}`).classList.toggle('active', CONFIG.viz[region]);
-        }
-    });
-}
-
-function initConfig() {
-    const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        CONFIG.theme = savedTheme;
-    } else if (sysDark) {
-        CONFIG.theme = 'dark';
-    }
-    setTheme(CONFIG.theme);
-
-    const savedLang = localStorage.getItem('speechLang');
-    if (savedLang) {
-        CONFIG.lang = savedLang;
-        elLangSelect.value = savedLang;
-    }
-
-    loadSkeletonConfig();
-
-    initVizSettings();
-    setupDrawingToggle(chkDrawLines, 'lines');
-    setupDrawingToggle(chkDrawPoints, 'points');
-}
-
-window.setTheme = function (themeName) {
-    document.documentElement.setAttribute('data-theme', themeName);
-    CONFIG.theme = themeName;
-    localStorage.setItem('theme', themeName);
-    document.getElementById('theme-btn-light').classList.toggle('active', themeName === 'light');
-    document.getElementById('theme-btn-dark').classList.toggle('active', themeName === 'dark');
-};
-
-btnHistoryToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    elHistorySidebar.classList.toggle('open');
-});
-
-btnCloseHistory.addEventListener('click', () => {
-    elHistorySidebar.classList.remove('open');
-});
-
-elHistorySidebar.addEventListener('click', (e) => {
-    e.stopPropagation();
-});
-
-function addToHistoryLog(word) {
-    const emptyMsg = elHistoryList.querySelector('.history-empty');
-    if (emptyMsg) emptyMsg.remove();
-
-    const li = document.createElement('li');
-    li.className = 'history-item';
-
-    const now = new Date();
-    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-    li.innerHTML = `
-        <span class="history-word">${word}</span>
-        <span class="history-time">${timeString}</span>
-    `;
-
-    elHistoryList.prepend(li);
-    if (elHistoryList.children.length > 50) {
-        elHistoryList.lastElementChild.remove();
-    }
-}
-
-document.addEventListener('click', (e) => {
-    if (elHistorySidebar.classList.contains('open')) {
-        const isClickInside = elHistorySidebar.contains(e.target);
-        const isClickOnToggle = btnHistoryToggle.contains(e.target);
-        if (!isClickInside && !isClickOnToggle) {
-            elHistorySidebar.classList.remove('open');
-        }
-    }
-});
-
-elLangSelect.addEventListener('change', (e) => {
-    CONFIG.lang = e.target.value;
-    localStorage.setItem('speechLang', CONFIG.lang);
-    speakText(CONFIG.lang.startsWith('ar') ? "مرحباً" : "Hello");
-});
-
-btnSettings.addEventListener('click', () => {
-    elSettingsOverlay.classList.remove('hidden');
-});
-
-btnCloseSettings.addEventListener('click', () => {
-    elSettingsOverlay.classList.add('hidden');
-});
-
-elSettingsOverlay.addEventListener('click', (e) => {
-    if (e.target === elSettingsOverlay) {
-        elSettingsOverlay.classList.add('hidden');
-    }
-});
-
-function updateStatus(status) {
-    elStatus.className = `status-pill ${status}`;
-    if (status === 'connected') elStatusText.textContent = "Live";
-    else if (status === 'disconnected') elStatusText.textContent = "Offline";
-    else elStatusText.textContent = "Error";
-}
-
-function updateUI(data) {
-    console.log(data);
-    drawSkeleton(data.landmarks);
-
-    if (data.status === "idle" || !data.detected_sign) {
-        elAr.textContent = "...";
-        elEn.textContent = "...";
-        state.stabilityCounter = 0;
-        state.lastFrameWord = "";
-        state.sentenceBuffer = [];
-        renderSentence();
-        elConfVal.textContent = "0%";
-        elConfBar.style.width = "0%";
-        return;
-    }
-
-    const { sign_ar, sign_en } = data.detected_sign;
-    const confidencePct = Math.round(data.confidence * 100);
-
-    if (sign_ar === state.lastFrameWord) {
-        state.stabilityCounter++;
-    } else {
-        state.stabilityCounter = 0;
-        state.lastFrameWord = sign_ar;
-    }
-
-    // TODO: there's now this guard for stability on client-side
-    // this is suppressed in favor of server-side
-    if (state.stabilityCounter === CONFIG.STABILITY_THRESHOLD) {
-        elAr.textContent = sign_ar;
-        elEn.textContent = sign_en;
-        elConfVal.textContent = `${confidencePct}%`;
-        elConfBar.style.width = `${confidencePct}%`;
-
-        addWordToSentence(sign_ar);
-        speakText(sign_ar);
-        saveCurrentSession();
-
-        elAr.style.transform = "scale(1.2)";
-        setTimeout(() => elAr.style.transform = "scale(1)", 200);
-    }
-
-    if (confidencePct > 80) elConfBar.style.backgroundColor = 'var(--success-color)';
-    else if (confidencePct > 50) elConfBar.style.backgroundColor = 'var(--accent-color)';
-    else elConfBar.style.backgroundColor = 'var(--error-color)';
-}
-
-async function loadSkeletonConfig() {
-    try {
-        const response = await fetch('/static/simplified_kps_connections.json');
-        if (!response.ok)
-            throw new Error(`HTTP error! status: ${response.status}`);
-
-        const kps = await response.json();
-        if (!kps)
-            throw new Error(`connections JSON error!`);
-
-        POSE_KPS = kps['pose_kps'];
-        FACE_KPS = kps['face_kps'];
-        HAND_KPS = kps['hand_kps'];
-        POSE_CONNECTIONS = kps['pose_connections'];
-        FACE_CONNECTIONS = kps['face_contours'];
-        HAND_CONNECTIONS = kps['hand_connections'];
-        KPS_MAPPING = kps['mp_idx_to_kps_idx'];
-        if (!POSE_CONNECTIONS || !FACE_CONNECTIONS || !HAND_CONNECTIONS || !KPS_MAPPING)
-            throw new Error(`Failed to load connections and kyepoints mapping!`);
-        console.log(`[ArSL] Loaded skeleton connections.`);
-    } catch (err) {
-        console.error("[ArSL] Failed to load skeleton config:", err);
-        POSE_CONNECTIONS = [];
-        FACE_CONNECTIONS = [];
-        HAND_CONNECTIONS = [];
-        KPS_MAPPING = {};
-    }
-}
-
-function drawSkeleton(landmarks) {
-    elOverlayCtx.clearRect(0, 0, elOverlayCanvas.width, elOverlayCanvas.height);
-    if (!landmarks || landmarks.length === 0 || (!CONFIG.viz.lines && !CONFIG.viz.points))
-        return;
-
-    const w = elOverlayCanvas.width;
-    const h = elOverlayCanvas.height;
-
-    // landmarks are normalized 0-1, so we need to scale them to the canvas size
-    const scaledLandmarks = landmarks.map(p => ({ x: p[0] * w, y: p[1] * h }));
-
-    if (CONFIG.viz.points) {
-        const drawRegion = (mp_idx, mp_idx_map_kps, color) => {
-            elOverlayCtx.beginPath();
-            elOverlayCtx.fillStyle = color;
-            const point_r = 2;
-            mp_idx.forEach((idx) => {
-                const p = scaledLandmarks[mp_idx_map_kps[idx]];
-                if (p && (p.x !== 0 || p.y !== 0)) {
-                    elOverlayCtx.moveTo(p.x + point_r, p.y);
-                    elOverlayCtx.arc(p.x, p.y, point_r, 0, 2 * Math.PI);
-                }
-            });
-            elOverlayCtx.fill();
+class AppConfig {
+    constructor() {
+        this.wsUrl = `ws://${location.host}/live-signs`;
+        this.fps = 30;
+        this.jpgQuality = 0.7;
+        this.processWidth = 320;
+        this.STABILITY_THRESHOLD = 0;
+        this.theme = 'light';
+        this.lang = localStorage.getItem('speechLang') || 'ar-EG';
+        this.viz = {
+            face: false,
+            pose: true,
+            hands: false,
+            lines: false,
+            points: true
         };
 
-        if (CONFIG.viz.pose) drawRegion(POSE_KPS, KPS_MAPPING['pose'], '#0d9165');
-        if (CONFIG.viz.face) drawRegion(FACE_KPS, KPS_MAPPING['face'], '#d1880a');
-        if (CONFIG.viz.hands) {
-            drawRegion(HAND_KPS, KPS_MAPPING['rh'], '#ca3a3a');
-            drawRegion(HAND_KPS, KPS_MAPPING['lh'], '#ca3a3a');
-        }
+        this.init();
     }
 
-    if (CONFIG.viz.lines) {
-        const drawRegion = (connections, mp_idx_map_kps, color) => {
-            if (connections.length == 0)
-                return;
-
-            elOverlayCtx.beginPath();
-            elOverlayCtx.lineWidth = 2;
-            elOverlayCtx.lineJoin = 'round';
-
-            connections.forEach(([startIdx, endIdx]) => {
-                const p1 = scaledLandmarks[mp_idx_map_kps[startIdx]];
-                const p2 = scaledLandmarks[mp_idx_map_kps[endIdx]];
-                if (p1 && p2 && (p1.x || p1.y) && (p2.x || p2.y)) {
-                    elOverlayCtx.moveTo(p1.x, p1.y);
-                    elOverlayCtx.lineTo(p2.x, p2.y);
-                }
-            });
-
-            elOverlayCtx.strokeStyle = color;
-            elOverlayCtx.stroke();
-        };
-
-        if (CONFIG.viz.pose) drawRegion(POSE_CONNECTIONS, KPS_MAPPING['pose'], '#10b981');
-        if (CONFIG.viz.face)
-            Object.values(FACE_CONNECTIONS).forEach(face_subregion =>
-                drawRegion(face_subregion, KPS_MAPPING['face'], '#f59e0b')
-            );
-        if (CONFIG.viz.hands) {
-            drawRegion(HAND_CONNECTIONS, KPS_MAPPING['rh'], '#ef4444');
-            drawRegion(HAND_CONNECTIONS, KPS_MAPPING['lh'], '#ef4444');
+    init() {
+        const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            this.theme = savedTheme;
+        } else if (sysDark) {
+            this.theme = 'dark';
         }
+
+        ['face', 'pose', 'hands'].forEach(region => {
+            const saved = localStorage.getItem(`viz_${region}`);
+            if (saved !== null) {
+                this.viz[region] = (saved === 'true');
+            }
+        });
+
+        const savedLines = localStorage.getItem('chk-draw-lines');
+        if (savedLines !== null) this.viz.lines = (savedLines === 'true');
+
+        const savedPoints = localStorage.getItem('chk-draw-points');
+        if (savedPoints !== null) this.viz.points = (savedPoints === 'true');
+    }
+
+    setTheme(themeName) {
+        this.theme = themeName;
+        localStorage.setItem('theme', themeName);
+        document.documentElement.setAttribute('data-theme', themeName);
+    }
+
+    setLang(lang) {
+        this.lang = lang;
+        localStorage.setItem('speechLang', lang);
+    }
+
+    setViz(region, value) {
+        this.viz[region] = value;
+        localStorage.setItem(`viz_${region}`, value);
+    }
+
+    setDrawMode(mode, value) {
+        this.viz[mode] = value;
+        localStorage.setItem(`chk-draw-${mode}`, value);
     }
 }
 
-function addWordToSentence(word) {
-    const lastWord = state.sentenceBuffer[state.sentenceBuffer.length - 1];
-    if (lastWord !== word) {
-        state.sentenceBuffer.push(word);
-        renderSentence();
-        addToHistoryLog(word);
-        currentSessionLog.push({
-            word: word,
-            time: (new Date()).toLocaleTimeString()
+class SessionManager {
+    constructor(config) {
+        this.config = config;
+        this.sessionId = new Date().toISOString();
+        this.sentenceBuffer = [];
+        this.currentSessionLog = [];
+    }
+
+    addWord(word, onUpdate) {
+        const lastWord = this.sentenceBuffer[this.sentenceBuffer.length - 1];
+        if (lastWord !== word) {
+            this.sentenceBuffer.push(word);
+            this.currentSessionLog.push({
+                word: word,
+                time: (new Date()).toLocaleTimeString()
+            });
+            this.save();
+            if (onUpdate) onUpdate(word, this.sentenceBuffer);
+        }
+    }
+
+    save(renewId = false) {
+        if (this.sentenceBuffer.length === 0 && this.currentSessionLog.length === 0) return;
+
+        const sessionData = {
+            id: this.sessionId,
+            date: new Date().toLocaleString(),
+            sentence: this.sentenceBuffer.join(" "),
+            log: this.currentSessionLog
+        };
+
+        if (renewId) this.sessionId = new Date().toISOString();
+
+        const savedSessions = JSON.parse(localStorage.getItem('slr_sessions') || '[]');
+        if (savedSessions.length > 0 && savedSessions[0].id == this.sessionId) {
+            savedSessions.shift();
+        }
+        savedSessions.unshift(sessionData);
+        if (savedSessions.length > 20) savedSessions.pop();
+
+        localStorage.setItem('slr_sessions', JSON.stringify(savedSessions));
+    }
+
+    reset() {
+        this.save(true);
+        this.sentenceBuffer = [];
+        this.currentSessionLog = [];
+    }
+
+    getHistory() {
+        return JSON.parse(localStorage.getItem('slr_sessions') || '[]');
+    }
+}
+
+class UIManager {
+    constructor(app) {
+        this.app = app;
+        this.elements = {
+            video: document.getElementById('webcam'),
+            canvas: document.getElementById('process-canvas'),
+            overlayCanvas: document.getElementById('overlay-canvas'),
+            arText: document.getElementById('prediction-text-ar'),
+            enText: document.getElementById('prediction-text-en'),
+            confVal: document.getElementById('confidence-val'),
+            confBar: document.getElementById('confidence-bar'),
+            statusPill: document.getElementById('connection-status'),
+            statusText: document.getElementById('status-text'),
+            sentenceOutput: document.getElementById('sentence-output'),
+            historySidebar: document.getElementById('history-sidebar'),
+            historyList: document.getElementById('history-list'),
+            langSelect: document.getElementById('lang-select'),
+            settingsOverlay: document.getElementById('settings-overlay'),
+            archiveModal: document.getElementById('archive-modal'),
+            sessionList: document.getElementById('session-list'),
+            sessionDetail: document.getElementById('session-detail'),
+            chkDrawPoints: document.getElementById('chk-draw-points'),
+            chkDrawLines: document.getElementById('chk-draw-lines'),
+            themeBtnLight: document.getElementById('theme-btn-light'),
+            themeBtnDark: document.getElementById('theme-btn-dark')
+        };
+
+        this.ctx = this.elements.canvas.getContext('2d', { alpha: false });
+        this.overlayCtx = this.elements.overlayCanvas.getContext('2d');
+
+        this.initEventListeners();
+        this.syncWithConfig();
+    }
+
+    initEventListeners() {
+        const { elements, app } = this;
+
+        // Buttons
+        document.getElementById('btn-speak').onclick = () => app.speakSentence();
+        document.getElementById('btn-clear').onclick = () => app.clearSession();
+        document.getElementById('btn-settings').onclick = () => this.toggleSettings(true);
+        document.getElementById('btn-close-settings').onclick = () => this.toggleSettings(false);
+        document.getElementById('history-toggle').onclick = (e) => { e.stopPropagation(); this.toggleHistory(true); };
+        document.getElementById('close-history').onclick = () => this.toggleHistory(false);
+        document.getElementById('clear-history').onclick = () => app.clearSession();
+        document.getElementById('btn-archive').onclick = () => this.showArchive();
+        document.getElementById('btn-close-archive').onclick = () => this.toggleArchive(false);
+        document.getElementById('btn-back-list').onclick = () => this.showSessionList();
+
+        // Toggles
+        ['face', 'pose', 'hands'].forEach(region => {
+            const btn = document.getElementById(`btn-viz-${region}`);
+            btn.onclick = () => {
+                app.config.setViz(region, !app.config.viz[region]);
+                btn.classList.toggle('active', app.config.viz[region]);
+            };
+        });
+
+        elements.chkDrawLines.onchange = (e) => app.config.setDrawMode('lines', e.target.checked);
+        elements.chkDrawPoints.onchange = (e) => app.config.setDrawMode('points', e.target.checked);
+
+        // Theme
+        elements.themeBtnLight.onclick = () => this.updateTheme('light');
+        elements.themeBtnDark.onclick = () => this.updateTheme('dark');
+
+        // Lang
+        elements.langSelect.onchange = (e) => {
+            app.config.setLang(e.target.value);
+            app.speakText(app.config.lang.startsWith('ar') ? "مرحباً" : "Hello");
+        };
+
+        // Modal/Sidebar clicks
+        elements.settingsOverlay.onclick = (e) => { if (e.target === elements.settingsOverlay) this.toggleSettings(false); };
+        elements.archiveModal.onclick = (e) => { if (e.target === elements.archiveModal) this.toggleArchive(false); };
+        elements.historySidebar.onclick = (e) => e.stopPropagation();
+        document.onclick = (e) => { if (elements.historySidebar.classList.contains('open') && !elements.historySidebar.contains(e.target) && !document.getElementById('history-toggle').contains(e.target)) this.toggleHistory(false); };
+    }
+
+    syncWithConfig() {
+        const { config } = this.app;
+        this.updateTheme(config.theme);
+        this.elements.langSelect.value = config.lang;
+        this.elements.chkDrawLines.checked = config.viz.lines;
+        this.elements.chkDrawPoints.checked = config.viz.points;
+
+        ['face', 'pose', 'hands'].forEach(region => {
+            const btn = document.getElementById(`btn-viz-${region}`);
+            if (btn) btn.classList.toggle('active', config.viz[region]);
         });
     }
-}
 
-function saveCurrentSession(renew_id = false) {
-    if (state.sentenceBuffer.length === 0 && currentSessionLog.length === 0) return;
-
-    const sessionData = {
-        id: state.sessionId,
-        date: new Date().toLocaleString(),
-        sentence: state.sentenceBuffer.join(" "),
-        log: currentSessionLog
-    };
-
-    if (renew_id) state.sessionId = new Date().toISOString();
-
-    const savedSessions = JSON.parse(localStorage.getItem('slr_sessions') || '[]');
-    if (savedSessions.length > 0 && savedSessions[0].id == state.sessionId) {
-        savedSessions.shift();
-    }
-    savedSessions.unshift(sessionData);
-    if (savedSessions.length > 20) savedSessions.pop();
-
-    localStorage.setItem('slr_sessions', JSON.stringify(savedSessions));
-}
-
-function resetRecognizedWords() {
-    saveCurrentSession(true);
-    elHistoryList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
-    currentSessionLog = [];
-    updateUI({});
-}
-
-btnClearHistory.addEventListener('click', () => {
-    resetRecognizedWords();
-});
-
-function renderSessions() {
-    const savedSessions = JSON.parse(localStorage.getItem('slr_sessions') || '[]');
-    elSessionList.innerHTML = '';
-
-    if (savedSessions.length === 0) {
-        elSessionList.innerHTML = '<li style="text-align:center; color:var(--text-sub); margin-top:2rem;">No saved sessions.</li>';
-        return;
+    updateTheme(theme) {
+        this.app.config.setTheme(theme);
+        this.elements.themeBtnLight.classList.toggle('active', theme === 'light');
+        this.elements.themeBtnDark.classList.toggle('active', theme === 'dark');
     }
 
-    savedSessions.forEach(session => {
-        const li = document.createElement('li');
-        li.className = 'session-item';
-        const preview = session.sentence || (session.log.length + " signs detected");
+    updateStatus(status) {
+        this.elements.statusPill.className = `status-pill ${status}`;
+        const texts = { connected: "Live", disconnected: "Offline", error: "Error" };
+        this.elements.statusText.textContent = texts[status] || "Unknown";
+    }
 
-        li.innerHTML = `
-            <div>
-                <span class="session-date">${session.date}</span>
-                <span class="session-preview">${preview}</span>
-            </div>
-            <div style="color:var(--text-sub)">›</div>
-        `;
+    updatePrediction(data, stabilityCounter) {
+        if (data.status === "idle" || !data.detected_sign) {
+            this.elements.arText.textContent = "...";
+            this.elements.enText.textContent = "...";
+            this.elements.confVal.textContent = "0%";
+            this.elements.confBar.style.width = "0%";
+            return;
+        }
 
-        li.addEventListener('click', () => showSessionDetail(session));
-        elSessionList.appendChild(li);
-    });
-}
+        const { sign_ar, sign_en } = data.detected_sign;
+        const confidencePct = Math.round(data.confidence * 100);
 
-function showSessionDetail(session) {
-    elSessionList.style.display = 'none';
-    elSessionDetail.classList.remove('hidden');
+        if (stabilityCounter === this.app.config.STABILITY_THRESHOLD) {
+            this.elements.arText.textContent = sign_ar;
+            this.elements.enText.textContent = sign_en;
+            this.elements.confVal.textContent = `${confidencePct}%`;
+            this.elements.confBar.style.width = `${confidencePct}%`;
 
-    document.getElementById('detail-date').textContent = session.date;
-    document.getElementById('detail-sentence').textContent = session.sentence || "(No sentence formed)";
+            this.elements.arText.style.transform = "scale(1.2)";
+            setTimeout(() => this.elements.arText.style.transform = "scale(1)", 200);
+        }
 
-    const elLog = document.getElementById('detail-log');
-    elLog.innerHTML = '';
-    session.log.forEach(item => {
+        const barColor = confidencePct > 80 ? 'var(--success-color)' : (confidencePct > 50 ? 'var(--accent-color)' : 'var(--error-color)');
+        this.elements.confBar.style.backgroundColor = barColor;
+    }
+
+    renderSentence(buffer) {
+        this.elements.sentenceOutput.textContent = buffer.join(" ");
+        this.elements.sentenceOutput.scrollLeft = this.elements.sentenceOutput.scrollWidth;
+    }
+
+    addToHistoryLog(word) {
+        const emptyMsg = this.elements.historyList.querySelector('.history-empty');
+        if (emptyMsg) emptyMsg.remove();
+
         const li = document.createElement('li');
         li.className = 'history-item';
-        li.innerHTML = `
-            <span class="history-word">${item.word}</span>
-            <span class="history-time">${item.time}</span>
-        `;
-        elLog.appendChild(li);
-    });
-}
+        const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-btnArchive.addEventListener('click', () => {
-    renderSessions();
-    elSessionList.style.display = 'block';
-    elSessionDetail.classList.add('hidden');
-    elArchiveModal.classList.remove('hidden');
-});
+        li.innerHTML = `<span class="history-word">${word}</span><span class="history-time">${timeString}</span>`;
+        this.elements.historyList.prepend(li);
+        if (this.elements.historyList.children.length > 50) this.elements.historyList.lastElementChild.remove();
+    }
 
-btnCloseArchive.addEventListener('click', () => {
-    elArchiveModal.classList.add('hidden');
-});
+    toggleSettings(show) {
+        this.elements.settingsOverlay.classList.toggle('hidden', !show);
+    }
 
-btnBackList.addEventListener('click', () => {
-    elSessionDetail.classList.add('hidden');
-    elSessionList.style.display = 'block';
-});
+    toggleHistory(show) {
+        this.elements.historySidebar.classList.toggle('open', show);
+    }
 
-elArchiveModal.addEventListener('click', (e) => {
-    if (e.target === elArchiveModal) elArchiveModal.classList.add('hidden');
-});
+    toggleArchive(show) {
+        this.elements.archiveModal.classList.toggle('hidden', !show);
+    }
 
-function renderSentence() {
-    elSentenceOutput.textContent = state.sentenceBuffer.join(" ");
-    elSentenceOutput.scrollLeft = elSentenceOutput.scrollWidth;
-}
+    showArchive() {
+        this.toggleArchive(true);
+        this.showSessionList();
+    }
 
-function speakText(text) {
-    if (!text) return;
+    showSessionList() {
+        this.elements.sessionList.style.display = 'block';
+        this.elements.sessionDetail.classList.add('hidden');
+        this.renderSessionList();
+    }
 
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+    renderSessionList() {
+        const sessions = this.app.session.getHistory();
+        this.elements.sessionList.innerHTML = sessions.length ? '' : '<li style="text-align:center; color:var(--text-sub); margin-top:2rem;">No saved sessions.</li>';
 
-    utterance.lang = CONFIG.lang;
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
-}
-
-btnSpeak.addEventListener('click', () => {
-    const text = state.sentenceBuffer.join(" ");
-    speakText(text);
-});
-
-btnClear.addEventListener('click', () => {
-    resetRecognizedWords();
-});
-
-async function setupWebcam() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                width: { ideal: 640 },
-                height: { ideal: 480 },
-                facingMode: "user"
-            },
-            audio: false
+        sessions.forEach(session => {
+            const li = document.createElement('li');
+            li.className = 'session-item';
+            li.innerHTML = `<div><span class="session-date">${session.date}</span><span class="session-preview">${session.sentence || (session.log.length + " signs detected")}</span></div><div style="color:var(--text-sub)">›</div>`;
+            li.onclick = () => this.showSessionDetail(session);
+            this.elements.sessionList.appendChild(li);
         });
+    }
 
-        elVideo.srcObject = stream;
+    showSessionDetail(session) {
+        this.elements.sessionList.style.display = 'none';
+        this.elements.sessionDetail.classList.remove('hidden');
+        document.getElementById('detail-date').textContent = session.date;
+        document.getElementById('detail-sentence').textContent = session.sentence || "(No sentence formed)";
+        const elLog = document.getElementById('detail-log');
+        elLog.innerHTML = '';
+        session.log.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'history-item';
+            li.innerHTML = `<span class="history-word">${item.word}</span><span class="history-time">${item.time}</span>`;
+            elLog.appendChild(li);
+        });
+    }
 
-        elVideo.onloadedmetadata = () => {
-            const ratio = elVideo.videoWidth / elVideo.videoHeight;
-            elCanvas.width = CONFIG.processWidth;
-            elCanvas.height = CONFIG.processWidth / ratio;
-            elOverlayCanvas.width = elCanvas.width;
-            elOverlayCanvas.height = elCanvas.height;
-            requestAnimationFrame(loop);
+    clearHistoryUI() {
+        this.elements.historyList.innerHTML = '<li class="history-empty">No signs detected yet.</li>';
+    }
+}
+
+class SkeletonDrawer {
+    constructor(ui) {
+        this.ui = ui;
+        this.POSE_KPS = [];
+        this.FACE_KPS = [];
+        this.HAND_KPS = [];
+        this.POSE_CONNECTIONS = [];
+        this.FACE_CONNECTIONS = [];
+        this.HAND_CONNECTIONS = [];
+        this.KPS_MAPPING = {};
+        this.loadConfig();
+    }
+
+    async loadConfig() {
+        try {
+            const response = await fetch('/static/simplified_kps_connections.json');
+            const kps = await response.json();
+            this.POSE_KPS = kps['pose_kps'];
+            this.FACE_KPS = kps['face_kps'];
+            this.HAND_KPS = kps['hand_kps'];
+            this.POSE_CONNECTIONS = kps['pose_connections'];
+            this.FACE_CONNECTIONS = kps['face_contours'];
+            this.HAND_CONNECTIONS = kps['hand_connections'];
+            this.KPS_MAPPING = kps['mp_idx_to_kps_idx'];
+            console.log(this.KPS_MAPPING);
+            console.log(`[ArSL] Loaded skeleton connections.`);
+        } catch (err) {
+            console.error("[ArSL] Failed to load skeleton config:", err);
+        }
+    }
+
+    draw(landmarks, vizConfig) {
+        const { overlayCtx, elements } = this.ui;
+        overlayCtx.clearRect(0, 0, elements.overlayCanvas.width, elements.overlayCanvas.height);
+        if (!landmarks || landmarks.length === 0 || (!vizConfig.lines && !vizConfig.points)) return;
+
+        const w = elements.overlayCanvas.width;
+        const h = elements.overlayCanvas.height;
+        const scaled = landmarks.map(p => ({ x: p[0] * w, y: p[1] * h }));
+
+        if (vizConfig.points) {
+            const drawPoints = (mp_idx, mp_idx_map_kps, color) => {
+                overlayCtx.beginPath();
+                overlayCtx.fillStyle = color;
+                mp_idx.forEach(idx => {
+                    const p = scaled[mp_idx_map_kps[idx]];
+                    if (p && (p.x !== 0 || p.y !== 0)) {
+                        overlayCtx.moveTo(p.x + 2, p.y);
+                        overlayCtx.arc(p.x, p.y, 2, 0, 2 * Math.PI);
+                    }
+                });
+                overlayCtx.fill();
+            };
+            if (vizConfig.pose) drawPoints(this.POSE_KPS, this.KPS_MAPPING['pose'], '#0d9165');
+            if (vizConfig.face) drawPoints(this.FACE_KPS, this.KPS_MAPPING['face'], '#d1880a');
+            if (vizConfig.hands) {
+                drawPoints(this.HAND_KPS, this.KPS_MAPPING['rh'], '#ca3a3a');
+                drawPoints(this.HAND_KPS, this.KPS_MAPPING['lh'], '#ca3a3a');
+            }
+        }
+
+        if (vizConfig.lines) {
+            const drawLines = (connections, mp_idx_map_kps, color) => {
+                if (!connections.length) return;
+                overlayCtx.beginPath();
+                overlayCtx.lineWidth = 2;
+                overlayCtx.lineJoin = 'round';
+                overlayCtx.strokeStyle = color;
+                connections.forEach(([s, e]) => {
+                    const p1 = scaled[mp_idx_map_kps[s]], p2 = scaled[mp_idx_map_kps[e]];
+                    if (p1 && p2 && (p1.x || p1.y) && (p2.x || p2.y)) {
+                        overlayCtx.moveTo(p1.x, p1.y);
+                        overlayCtx.lineTo(p2.x, p2.y);
+                    }
+                });
+                overlayCtx.stroke();
+            };
+            if (vizConfig.pose) drawLines(this.POSE_CONNECTIONS, this.KPS_MAPPING['pose'], '#10b981');
+            if (vizConfig.face) Object.values(this.FACE_CONNECTIONS).forEach(sub => drawLines(sub, this.KPS_MAPPING['face'], '#f59e0b'));
+            if (vizConfig.hands) {
+                drawLines(this.HAND_CONNECTIONS, this.KPS_MAPPING['rh'], '#ef4444');
+                drawLines(this.HAND_CONNECTIONS, this.KPS_MAPPING['lh'], '#ef4444');
+            }
+        }
+    }
+}
+
+class SignSocket {
+    constructor(app) {
+        this.app = app;
+        this.isOpen = false;
+        this.connect();
+    }
+
+    connect() {
+        this.socket = new WebSocket(this.app.config.wsUrl);
+        this.socket.onopen = () => { this.isOpen = true; this.app.ui.updateStatus('connected'); };
+        this.socket.onclose = () => { this.isOpen = false; this.app.ui.updateStatus('disconnected'); };
+        this.socket.onerror = (e) => { console.error("WS Error", e); this.app.ui.updateStatus('error'); };
+        this.socket.onmessage = (e) => this.app.handleMessage(JSON.parse(e.data));
+    }
+
+    send(blob, needLandmarks) {
+        if (!this.isOpen) return;
+        const header = new Uint8Array([needLandmarks ? 1 : 0]);
+        this.socket.send(new Blob([header, blob], { type: 'image/jpeg' }));
+    }
+}
+
+class WebcamHandler {
+    constructor(app) {
+        this.app = app;
+        this.lastFrameTime = 0;
+        this.isSending = false;
+    }
+
+    async start() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" },
+                audio: false
+            });
+            const { video, canvas, overlayCanvas } = this.app.ui.elements;
+            video.srcObject = stream;
+            video.onloadedmetadata = () => {
+                const ratio = video.videoWidth / video.videoHeight;
+                canvas.width = this.app.config.processWidth;
+                canvas.height = this.app.config.processWidth / ratio;
+                overlayCanvas.width = canvas.width;
+                overlayCanvas.height = canvas.height;
+                requestAnimationFrame((t) => this.loop(t));
+            };
+        } catch (err) {
+            console.error("Camera error:", err);
+            alert("Please allow camera access.");
+        }
+    }
+
+    loop(timestamp) {
+        requestAnimationFrame((t) => this.loop(t));
+        const interval = 1000 / this.app.config.fps;
+        const elapsed = timestamp - this.lastFrameTime;
+        if (elapsed > interval) {
+            this.lastFrameTime = timestamp - (elapsed % interval);
+            if (this.app.socket.isOpen && !this.isSending && this.app.ui.elements.video.readyState === 4) {
+                this.processFrame();
+            }
+        }
+    }
+
+    processFrame() {
+        const { viz } = this.app.config;
+        const needLandmarks = (viz.lines || viz.points) && (viz.face || viz.pose || viz.hands);
+        this.isSending = true;
+
+        const { ui } = this.app;
+        ui.ctx.drawImage(ui.elements.video, 0, 0, ui.elements.canvas.width, ui.elements.canvas.height);
+        ui.elements.canvas.toBlob((blob) => {
+            if (blob) this.app.socket.send(blob, needLandmarks);
+            this.isSending = false;
+        }, 'image/jpeg', this.app.config.jpgQuality);
+    }
+}
+
+class ArSLApp {
+    constructor() {
+        this.config = new AppConfig();
+        this.session = new SessionManager(this.config);
+        this.ui = new UIManager(this);
+        this.drawer = new SkeletonDrawer(this.ui);
+        this.socket = new SignSocket(this);
+        this.webcam = new WebcamHandler(this);
+
+        this.state = {
+            lastFrameWord: "",
+            stabilityCounter: 0
         };
-    } catch (err) {
-        console.error("Camera access denied:", err);
-        alert("Please allow camera access to use this app.");
+
+        this.init();
+    }
+
+    init() {
+        this.webcam.start();
+    }
+
+    handleMessage(data) {
+        // console.log(data.landmarks);
+        this.drawer.draw(data.landmarks, this.config.viz);
+
+        if (data.status === "idle" || !data.detected_sign) {
+            this.state.stabilityCounter = 0;
+            this.state.lastFrameWord = "";
+            this.ui.updatePrediction(data, 0);
+            return;
+        }
+
+        const { sign_ar } = data.detected_sign;
+        if (sign_ar === this.state.lastFrameWord) {
+            this.state.stabilityCounter++;
+        } else {
+            this.state.stabilityCounter = 0;
+            this.state.lastFrameWord = sign_ar;
+        }
+
+        if (this.state.stabilityCounter === this.config.STABILITY_THRESHOLD) {
+            this.session.addWord(sign_ar, (word, buffer) => {
+                this.ui.addToHistoryLog(word);
+                this.ui.renderSentence(buffer);
+                this.speakText(word);
+            });
+        }
+        this.ui.updatePrediction(data, this.state.stabilityCounter);
+    }
+
+    speakText(text) {
+        if (!text) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = this.config.lang;
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    speakSentence() {
+        this.speakText(this.session.sentenceBuffer.join(" "));
+    }
+
+    clearSession() {
+        this.session.reset();
+        this.ui.renderSentence([]);
+        this.ui.clearHistoryUI();
+        this.handleMessage({ status: "idle" });
     }
 }
 
-function loop(timestamp) {
-    requestAnimationFrame(loop);
-    const interval = 1000 / CONFIG.fps;
-    const elapsed = timestamp - state.lastFrameTime;
-    if (elapsed > interval) {
-        state.lastFrameTime = timestamp - (elapsed % interval);
-        if (state.isSocketOpen && !state.isSending && elVideo.readyState === 4) {
-            processFrame();
-        }
-    }
-}
-
-function processFrame() {
-    needLandmarks = (CONFIG.viz.lines || CONFIG.viz.points) &&
-        (CONFIG.viz.face || CONFIG.viz.pose || CONFIG.viz.hands);
-    state.isSending = true;
-    elCtx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
-    elCanvas.toBlob((blob) => {
-        if (blob && state.isSocketOpen) {
-            const header = new Uint8Array(1);
-            header[0] = needLandmarks ? 1 : 0;
-            const finalBlob = new Blob([header, blob], { type: 'image/jpeg' });
-            socket.send(finalBlob);
-        }
-    }, 'image/jpeg', CONFIG.jpgQuality);
-    state.isSending = false;
-}
-
-initConfig();
-setupWebcam();
+// Global initialization
+window.addEventListener('DOMContentLoaded', () => {
+    window.app = new ArSLApp();
+});
