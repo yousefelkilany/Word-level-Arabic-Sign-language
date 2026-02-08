@@ -221,13 +221,13 @@ class UIManager {
     }
 
     updatePrediction(data, stabilityCounter) {
-        if (data.status === "idle" || !data.detected_sign) {
-            this.elements.arText.textContent = "...";
-            this.elements.enText.textContent = "...";
-            this.elements.confVal.textContent = "0%";
-            this.elements.confBar.style.width = "0%";
+        if (data.status === "idle") {
+            this.elements.arText.textContent = this.elements.enText.textContent = "...";
+            this.elements.confVal.textContent = this.elements.confBar.style.width = "0%";
             return;
         }
+
+        if (!data.detected_sign) return;
 
         const { sign_ar, sign_en } = data.detected_sign;
         const confidencePct = Math.round(data.confidence * 100);
@@ -235,8 +235,7 @@ class UIManager {
         if (stabilityCounter === this.app.config.STABILITY_THRESHOLD) {
             this.elements.arText.textContent = sign_ar;
             this.elements.enText.textContent = sign_en;
-            this.elements.confVal.textContent = `${confidencePct}%`;
-            this.elements.confBar.style.width = `${confidencePct}%`;
+            this.elements.confVal.textContent = this.elements.confBar.style.width = `${confidencePct}%`;
 
             this.elements.arText.style.transform = "scale(1.2)";
             setTimeout(() => this.elements.arText.style.transform = "scale(1)", 200);
@@ -321,8 +320,9 @@ class UIManager {
 }
 
 class SkeletonDrawer {
-    constructor(ui) {
-        this.ui = ui;
+    constructor(App) {
+        this.app = App;
+        this.ui = App.ui;
         this.POSE_KPS = [];
         this.FACE_KPS = [];
         this.HAND_KPS = [];
@@ -344,7 +344,6 @@ class SkeletonDrawer {
             this.FACE_CONNECTIONS = kps['face_contours'];
             this.HAND_CONNECTIONS = kps['hand_connections'];
             this.KPS_MAPPING = kps['mp_idx_to_kps_idx'];
-            console.log(this.KPS_MAPPING);
             console.log(`[ArSL] Loaded skeleton connections.`);
         } catch (err) {
             console.error("[ArSL] Failed to load skeleton config:", err);
@@ -352,13 +351,16 @@ class SkeletonDrawer {
     }
 
     draw(landmarks, vizConfig) {
-        const { overlayCtx, elements } = this.ui;
-        overlayCtx.clearRect(0, 0, elements.overlayCanvas.width, elements.overlayCanvas.height);
+        const { overlayCtx } = this.ui;
+        const { overlayCanvas } = this.app.ui.elements;
+
+        const w = overlayCanvas.width;
+        const h = overlayCanvas.height;
+        overlayCtx.clearRect(0, 0, w, h);
         if (!landmarks || landmarks.length === 0 || (!vizConfig.lines && !vizConfig.points)) return;
 
-        const w = elements.overlayCanvas.width;
-        const h = elements.overlayCanvas.height;
-        const scaled = landmarks.map(p => ({ x: p[0] * w, y: p[1] * h }));
+        const { sx, sy, ratio } = this.ui.video_rect;
+        const scaled = landmarks.map(p => ({ x: p[0] * w / ratio + sx / 2, y: p[1] * h + sy / 2 }));
 
         if (vizConfig.points) {
             const drawPoints = (mp_idx, mp_idx_map_kps, color) => {
@@ -445,11 +447,20 @@ class WebcamHandler {
             const { video, canvas, overlayCanvas } = this.app.ui.elements;
             video.srcObject = stream;
             video.onloadedmetadata = () => {
-                const ratio = video.videoWidth / video.videoHeight;
+                const sw = video.videoWidth;
+                const sh = video.videoHeight;
+                const ratio = sw / sh;
                 canvas.width = this.app.config.processWidth;
                 canvas.height = this.app.config.processWidth / ratio;
                 overlayCanvas.width = canvas.width;
                 overlayCanvas.height = canvas.height;
+                const minDim = Math.min(sw, sh);
+                const sx = (sw - minDim) / 2;
+                const sy = (sh - minDim) / 2;
+                this.app.ui.video_rect = {
+                    sx, sy, ratio, minDim
+                };
+
                 requestAnimationFrame((t) => this.loop(t));
             };
         } catch (err) {
@@ -471,13 +482,20 @@ class WebcamHandler {
     }
 
     processFrame() {
+        const { video, canvas } = this.app.ui.elements;
+        const { sx, sy, minDim } = this.app.ui.video_rect;
+
+        this.app.ui.ctx.drawImage(
+            video,
+            sx, sy, minDim, minDim,
+            0, 0, canvas.width, canvas.height
+        );
+
         const { viz } = this.app.config;
         const needLandmarks = (viz.lines || viz.points) && (viz.face || viz.pose || viz.hands);
         this.isSending = true;
 
-        const { ui } = this.app;
-        ui.ctx.drawImage(ui.elements.video, 0, 0, ui.elements.canvas.width, ui.elements.canvas.height);
-        ui.elements.canvas.toBlob((blob) => {
+        canvas.toBlob((blob) => {
             if (blob) this.app.socket.send(blob, needLandmarks);
             this.isSending = false;
         }, 'image/jpeg', this.app.config.jpgQuality);
@@ -489,7 +507,7 @@ class ArSLApp {
         this.config = new AppConfig();
         this.session = new SessionManager(this.config);
         this.ui = new UIManager(this);
-        this.drawer = new SkeletonDrawer(this.ui);
+        this.drawer = new SkeletonDrawer(this);
         this.socket = new SignSocket(this);
         this.webcam = new WebcamHandler(this);
 
@@ -506,15 +524,17 @@ class ArSLApp {
     }
 
     handleMessage(data) {
-        // console.log(data.landmarks);
-        this.drawer.draw(data.landmarks, this.config.viz);
+        if (data.landmarks)
+            this.drawer.draw(data.landmarks, this.config.viz);
 
-        if (data.status === "idle" || !data.detected_sign) {
+        if (data.status === "idle") {
             this.state.stabilityCounter = 0;
             this.state.lastFrameWord = "";
             this.ui.updatePrediction(data, 0);
             return;
         }
+
+        if (!data.detected_sign) return;
 
         const { sign_ar } = data.detected_sign;
         if (sign_ar === this.state.lastFrameWord) {

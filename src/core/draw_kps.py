@@ -24,11 +24,13 @@ from core.mediapipe_utils import (
     mp_pose_landmark,
     pose_kps_mp_idx,
 )
+from core.utils import get_default_logger
 
 landmark_styling_fallback = DrawingSpec(
     color=(224, 224, 224), thickness=1, circle_radius=1
 )
 connection_styling_fallback = landmark_styling_fallback
+logger = get_default_logger()
 
 
 def get_lms_list(kps, kps_idx, lms_num, return_as_lm=True):
@@ -64,82 +66,136 @@ def draw_kps_on_image(
     return annotated_image
 
 
-def get_pose_lms_list(pose_kps, return_as_lm=True):
+def get_pose_lms_list(frame_kps, return_as_lm=True):
     return get_lms_list(
-        pose_kps,
+        frame_kps[KP2SLICE["pose"]],
         pose_kps_mp_idx,
         len(mp_pose_landmark),
         return_as_lm,
     )
 
 
-def draw_pose_kps_on_image(rgb_image, pose_kps):
+def draw_pose_kps_on_image(
+    rgb_image, frame_kps, landmark_style=None, connection_style=None
+):
     return draw_kps_on_image(
         rgb_image,
-        get_pose_lms_list(pose_kps),
+        get_pose_lms_list(frame_kps),
         POSE_KPS_CONNECTIONS,
-        get_default_pose_landmarks_style(),
+        landmark_style or get_default_pose_landmarks_style(),
+        connection_style,
     )
 
 
-def get_face_lms_list(face_kps, return_as_lm=True):
+def get_face_lms_list(frame_kps, return_as_lm=True):
     return get_lms_list(
-        face_kps,
+        frame_kps[KP2SLICE["face"]],
         face_kps_mp_idx,
         face_mesh.FACEMESH_NUM_LANDMARKS_WITH_IRISES,
         return_as_lm,
     )
 
 
-def draw_face_kps_on_image(rgb_image, face_kps):
+def draw_face_kps_on_image(
+    rgb_image, frame_kps, landmark_style=None, connection_style=None
+):
     return draw_kps_on_image(
         rgb_image,
-        get_face_lms_list(face_kps),
+        get_face_lms_list(frame_kps),
         FACE_KPS_CONNECTIONS,
-        get_default_face_mesh_tesselation_style(),
+        landmark_style or get_default_face_mesh_tesselation_style(),
+        connection_style or get_default_face_mesh_tesselation_style(),
     )
 
 
-def get_hand_lms_list(hand_kps, return_as_lm=True):
+def get_hand_lms_list(frame_kps, handedness, return_as_lm=True):
     return get_lms_list(
-        hand_kps,
+        frame_kps[KP2SLICE[handedness]],
         hand_kps_mp_idx,
         len(hands.HandLandmark),
         return_as_lm,
     )
 
 
-def draw_hand_kps_on_image(rgb_image, hand_kps):
+def draw_hand_kps_on_image(
+    rgb_image, frame_kps, handedness, landmark_style=None, connection_style=None
+):
     return draw_kps_on_image(
         rgb_image,
-        get_hand_lms_list(hand_kps),
+        get_hand_lms_list(frame_kps, handedness),
         HAND_KPS_CONNECTIONS,
-        get_default_hand_landmarks_style(),
-        get_default_hand_connections_style(),
+        landmark_style or get_default_hand_landmarks_style(),
+        connection_style or get_default_hand_connections_style(),
     )
 
 
-def draw_all_kps_on_image(rgb_image, frame_kps, return_separate_images=False):
+def draw_all_kps_on_image(
+    rgb_image,
+    frame_kps,
+    return_separate_images=False,
+    pose_landmark_style=None,
+    pose_connection_style=None,
+    face_landmark_style=None,
+    face_connection_style=None,
+    hand_landmark_style=None,
+    hand_connection_style=None,
+):
     pose_image, face_image, rh_image, lh_image = (None,) * 4
     annotated_image = np.copy(rgb_image)
     if return_separate_images:
         pose_image = draw_pose_kps_on_image(
-            annotated_image, frame_kps[KP2SLICE["pose"]]
+            annotated_image,
+            frame_kps,
+            pose_landmark_style,
+            pose_connection_style,
         )
         face_image = draw_face_kps_on_image(
-            annotated_image, frame_kps[KP2SLICE["face"]]
+            annotated_image,
+            frame_kps,
+            face_landmark_style,
+            face_connection_style,
         )
-        rh_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["rh"]])
-        lh_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["lh"]])
+        rh_image = draw_hand_kps_on_image(
+            annotated_image,
+            frame_kps,
+            "rh",
+            hand_landmark_style,
+            hand_connection_style,
+        )
+        lh_image = draw_hand_kps_on_image(
+            annotated_image,
+            frame_kps,
+            "lh",
+            hand_landmark_style,
+            hand_connection_style,
+        )
 
     annotated_image = draw_pose_kps_on_image(
-        annotated_image, frame_kps[KP2SLICE["pose"]]
+        annotated_image,
+        frame_kps,
+        pose_landmark_style,
+        pose_connection_style,
     )
     annotated_image = draw_face_kps_on_image(
-        annotated_image, frame_kps[KP2SLICE["face"]]
+        annotated_image,
+        frame_kps,
+        face_landmark_style,
+        face_connection_style,
     )
-    annotated_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["rh"]])
-    annotated_image = draw_hand_kps_on_image(annotated_image, frame_kps[KP2SLICE["lh"]])
+    annotated_image = draw_hand_kps_on_image(
+        annotated_image,
+        frame_kps,
+        "rh",
+        hand_landmark_style,
+        hand_connection_style,
+    )
+    annotated_image = draw_hand_kps_on_image(
+        annotated_image,
+        frame_kps,
+        "lh",
+        hand_landmark_style,
+        hand_connection_style,
+    )
     return annotated_image, pose_image, face_image, rh_image, lh_image
 
 

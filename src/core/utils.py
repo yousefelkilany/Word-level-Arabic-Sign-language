@@ -55,7 +55,10 @@ def get_default_logger() -> logging.Logger:
     if default_logger:
         return default_logger
 
+    logging_level = logging.DEBUG
+
     default_logger = logging.getLogger("wl-ar-sl")
+    default_logger.setLevel(logging_level)
 
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
@@ -64,8 +67,8 @@ def get_default_logger() -> logging.Logger:
 
     file_handler = logging.FileHandler(os_join(LOGS_DIR, "server_producer.log"))
     file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging_level)
     default_logger.addHandler(file_handler)
-    default_logger.setLevel(logging.DEBUG)
 
     return default_logger
 

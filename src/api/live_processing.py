@@ -19,12 +19,12 @@ from modelling.model import onnx_inference
 
 logger = get_default_logger()
 
-NUM_IDLE_FRAMES = 15
+NUM_IDLE_FRAMES = 45
 HISTORY_LEN = 5
-HISTORY_THRESHOLD = 2
+HISTORY_THRESHOLD = 3
 MIN_SIGN_FRAMES = 15
 MAX_SIGN_FRAMES = SEQ_LEN
-CONFIDENCE_THRESHOLD = 0.7
+CONFIDENCE_THRESHOLD = 0.8
 EXT_FRAME = ".jpg"
 
 
@@ -44,8 +44,14 @@ async def consumer_handler(
     client_buffer = []
     client_state = get_default_state()
 
+    async def send_over_ws(response):
+        try:
+            await websocket.send_json(response)
+        except Exception as e:
+            logger.error(f"[Client {client_info}] Error sending response: {e}")
+
     motion_detector = MotionDetector()
-    mp_processor = await LandmarkerProcessor.create_async(None, True)
+    mp_processor = await LandmarkerProcessor.create_async(None, False)
 
     start_time = int(time.time())
     last_processed_ts = start_time
@@ -84,24 +90,25 @@ async def consumer_handler(
             client_state["is_idle"] = False
             client_state["idle_frames_num"] = 0
 
-            response = {}
-            try:
-                now_ms = int((time.time() - start_time) * 1000)
-                if now_ms <= last_processed_ts:
-                    now_ms = last_processed_ts + 1
-                last_processed_ts = now_ms
+            now_ms = int((time.time() - start_time) * 1000)
+            if now_ms <= last_processed_ts:
+                now_ms = last_processed_ts + 1
+            last_processed_ts = now_ms
 
-                mp_kps: np.ndarray
-                adjusted_kps: np.ndarray
-                (adjusted_kps, mp_kps) = await get_frame_kps(
-                    mp_processor, frame, now_ms
-                )
-                if draw_mode:
-                    response["landmarks"] = mp_kps[reduced_mp_kps_idx_view].tolist()
-                client_buffer.append(adjusted_kps)
+            mp_kps: np.ndarray
+            adjusted_kps: np.ndarray
+            try:
+                adjusted_kps, mp_kps = await get_frame_kps(mp_processor, frame)
             except Exception as e:
                 logger.error(f"[Client {client_info}] Error extracting keypoints: {e}")
                 continue
+
+            if draw_mode:
+                await send_over_ws(
+                    {"landmarks": mp_kps[reduced_mp_kps_idx_view].tolist()}
+                )
+
+            client_buffer.append(adjusted_kps)
 
             if len(client_buffer) < MIN_SIGN_FRAMES:
                 continue
@@ -131,7 +138,7 @@ async def consumer_handler(
                             and most_common_sign != client_state["last_sent_sign"]
                         ):
                             client_state["last_sent_sign"] = most_common_sign
-                            response.update(
+                            await send_over_ws(
                                 {
                                     "detected_sign": {
                                         "sign_ar": AR_WORDS[pred_idx],
@@ -143,11 +150,6 @@ async def consumer_handler(
 
             except Exception as e:
                 logger.error(f"[Client {client_info}] Error detecting sign: {e}")
-
-            try:
-                await websocket.send_json(response)
-            except Exception as e:
-                logger.error(f"[Client {client_info}] Error sending response: {e}")
 
     except fastapi.WebSocketDisconnect:
         logger.info(f"[Client {client_info}] Consumer disconnected")
@@ -182,7 +184,7 @@ async def producer_handler(
             frame = await asyncio.to_thread(
                 cv2.imdecode,
                 np.frombuffer(data[1:], np.uint8),  # type: ignore
-                cv2.IMREAD_COLOR,  # type: ignore
+                cv2.IMREAD_COLOR_RGB,  # type: ignore
             )
             if frame is not None:
                 if buffer.full():

@@ -19,18 +19,6 @@ from core.constants import (
 from core.utils import get_default_logger
 
 delegate = [BaseOptions.Delegate.CPU, BaseOptions.Delegate.GPU][int(use_gpu)]
-pose_base_options = BaseOptions(
-    model_asset_path=os_join(LANDMARKERS_DIR, "pose_landmarker.task"),
-    delegate=delegate,
-)
-face_base_options = BaseOptions(
-    model_asset_path=os_join(LANDMARKERS_DIR, "face_landmarker.task"),
-    delegate=delegate,
-)
-hand_base_options = BaseOptions(
-    model_asset_path=os_join(LANDMARKERS_DIR, "hand_landmarker.task"),
-    delegate=delegate,
-)
 
 # The idea of points selection is inspired from MuteMotion notebook, I then updated
 # magic numbers to corresponding keypoints names from mediapipe class members definitions
@@ -178,6 +166,7 @@ hands_model: HandLandmarker
 
 class LandmarkerProcessor:
     def __init__(self):
+        self.video_mode: bool
         self.pose_model: PoseLandmarker
         self.face_model: FaceLandmarker
         self.hands_model: HandLandmarker
@@ -186,42 +175,54 @@ class LandmarkerProcessor:
 
     @classmethod
     def create(
-        cls, landmarkers: Optional[list[str]] = None, inference_mode: bool = False
+        cls,
+        landmarkers: Optional[list[str]] = None,
+        video_mode: bool = False,
     ):
         self = cls()
         self.landmarkers = landmarkers or ["pose", "face", "hands"]
-        self.init_mediapipe_landmarkers(inference_mode)
+        self.video_mode = video_mode
+        self.__init_mediapipe_landmarkers()
         return self
 
     @classmethod
     async def create_async(
-        cls, landmarkers: Optional[list[str]] = None, inference_mode: bool = False
+        cls, landmarkers: Optional[list[str]] = None, video_mode: bool = False
     ) -> "LandmarkerProcessor":
-        self = cls()
-        self.landmarkers = landmarkers or ["pose", "face", "hands"]
-        await asyncio.to_thread(self.init_mediapipe_landmarkers, inference_mode)
-        return self
+        return await asyncio.to_thread(cls.create, landmarkers, video_mode)
 
-    def init_mediapipe_landmarkers(self, inference_mode: bool = False):
+    def __init_mediapipe_landmarkers(self):
         running_mode = (
-            vision.RunningMode.VIDEO if inference_mode else vision.RunningMode.IMAGE
+            vision.RunningMode.VIDEO if self.video_mode else vision.RunningMode.IMAGE
         )
 
         if "pose" in self.landmarkers:
+            pose_base_options = BaseOptions(
+                model_asset_path=os_join(LANDMARKERS_DIR, "pose_landmarker.task"),
+                delegate=delegate,
+            )
             pose_options = vision.PoseLandmarkerOptions(
                 base_options=pose_base_options, running_mode=running_mode
             )
             self.pose_model = vision.PoseLandmarker.create_from_options(pose_options)
 
         if "face" in self.landmarkers:
+            face_base_options = BaseOptions(
+                model_asset_path=os_join(LANDMARKERS_DIR, "face_landmarker.task"),
+                delegate=delegate,
+            )
             face_options = vision.FaceLandmarkerOptions(
                 base_options=face_base_options, running_mode=running_mode, num_faces=1
             )
             self.face_model = vision.FaceLandmarker.create_from_options(face_options)
 
         if "hands" in self.landmarkers:
+            hand_base_options = BaseOptions(
+                model_asset_path=os_join(LANDMARKERS_DIR, "hand_landmarker.task"),
+                delegate=delegate,
+            )
             hands_options = vision.HandLandmarkerOptions(
-                base_options=hand_base_options, running_mode=running_mode, num_hands=2
+                base_options=hand_base_options, running_mode=running_mode, num_hands=1
             )
             self.hands_model = vision.HandLandmarker.create_from_options(hands_options)
 
@@ -255,8 +256,8 @@ class LandmarkerProcessor:
         lh_kps = all_kps[KP2SLICE["lh"]]
         np_xyzv = np.dtype((float, FEAT_DIM))
 
-        def lm_xyzv(lm):
-            return (lm.x, lm.y, lm.z, getattr(lm, "visibility", 1.0))
+        def lm_xyzv(lm, v=1.0):
+            return (lm.x, lm.y, lm.z, v)
 
         frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
 
@@ -266,17 +267,18 @@ class LandmarkerProcessor:
 
         def get_pose():
             nonlocal pose_kps, pose_kps_raw
-            if timestamp_ms == -1:
-                results = self.pose_model.detect(frame)
-            else:
+            if self.video_mode:
                 results = self.pose_model.detect_for_video(frame, timestamp_ms)
+            else:
+                results = self.pose_model.detect(frame)
 
             if results.pose_landmarks is None or len(results.pose_landmarks) == 0:
                 return
 
             lms = results.pose_landmarks[0]
             pose_kps[:] = np.fromiter(
-                (lm_xyzv(lms[idx]) for idx in pose_kps_mp_idx), dtype=np_xyzv
+                (lm_xyzv(lms[idx], lms[idx].visibility) for idx in pose_kps_mp_idx),
+                dtype=np_xyzv,
             )
             if adjusted:
                 if return_both:
@@ -286,10 +288,10 @@ class LandmarkerProcessor:
 
         def get_face():
             nonlocal face_kps, face_kps_raw
-            if timestamp_ms == -1:
-                results = self.face_model.detect(frame)
-            else:
+            if self.video_mode:
                 results = self.face_model.detect_for_video(frame, timestamp_ms)
+            else:
+                results = self.face_model.detect(frame)
             if results.face_landmarks is None or len(results.face_landmarks) == 0:
                 return
 
@@ -305,11 +307,11 @@ class LandmarkerProcessor:
 
         def get_hands():
             nonlocal rh_kps, lh_kps, rh_kps_raw, lh_kps_raw
-            if timestamp_ms == -1:
-                results = self.hands_model.detect(frame)
-            else:
+            if self.video_mode:
                 results = self.hands_model.detect_for_video(frame, timestamp_ms)
-            if results.hand_landmarks is None:
+            else:
+                results = self.hands_model.detect(frame)
+            if results.hand_landmarks is None or len(results.hand_landmarks) == 0:
                 return
 
             for handedness, hand_lms in zip(results.handedness, results.hand_landmarks):
